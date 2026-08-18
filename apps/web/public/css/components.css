@@ -451,3 +451,86 @@ textarea.form-control { resize: vertical; min-height: 90px; }
   margin-top: 24px;
 }
 .form-submit:hover { background: var(--ember-700); box-shadow: 0 6px 28px rgba(255,107,53,.5); }
+
+/* ── LEGAL COMPLIANCE MODAL (HTML5 <dialog>) ── */
+.legal-modal {
+  border: 1px solid var(--line);
+  background: var(--charcoal-900);
+  color: var(--cream-50);
+  border-radius: 24px;
+  padding: 0;
+  max-width: 820px;
+  width: 92vw;
+  max-height: 85vh;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(255,107,53,0.15);
+  margin: auto;
+  overflow: hidden;
+}
+.legal-modal::backdrop {
+  background: rgba(11, 9, 8, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.legal-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--line);
+  background: var(--charcoal-950);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.legal-modal-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--cream-50);
+  margin: 0;
+}
+.legal-modal-close {
+  background: var(--charcoal-800);
+  border: 1px solid var(--line);
+  color: var(--smoke-400);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.legal-modal-close:hover {
+  background: var(--ember-500);
+  color: var(--cream-50);
+  border-color: var(--ember-500);
+}
+.legal-modal-body {
+  padding: 32px;
+  overflow-y: auto;
+  max-height: calc(85vh - 90px);
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--smoke-400);
+}
+.legal-modal-body h2 {
+  font-family: 'Fraunces', serif;
+  color: var(--gold-400);
+  font-size: 1.25rem;
+  margin: 24px 0 12px;
+}
+.legal-modal-body h2:first-child { margin-top: 0; }
+.legal-modal-body p { margin-bottom: 14px; }
+.legal-modal-body ul { margin: 12px 0 20px 24px; }
+.legal-modal-body li { margin-bottom: 8px; }
+.legal-modal-body table {
+  width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 0.88rem;
+}
+.legal-modal-body th, .legal-modal-body td {
+  border: 1px solid var(--line); padding: 10px 14px; text-align: left;
+}
+.legal-modal-body th { background: var(--charcoal-800); color: var(--cream-50); }
+

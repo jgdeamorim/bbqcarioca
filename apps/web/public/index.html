@@ -1334,10 +1334,10 @@
       </div>
     </div>
     <div class="footer-legal-nav" style="border-top:1px solid var(--line); padding: 18px 0; display:flex; flex-wrap:wrap; gap:20px; font-size:0.8rem;">
-      <a href="legal/privacy.html" style="color:var(--smoke-400); text-decoration:none;"><span data-lang="en">Privacy Policy</span><span data-lang="pt">Política de Privacidade</span></a>
-      <a href="legal/terms.html" style="color:var(--smoke-400); text-decoration:none;"><span data-lang="en">Terms of Use</span><span data-lang="pt">Termos de Uso</span></a>
-      <a href="legal/cookies.html" style="color:var(--smoke-400); text-decoration:none;"><span data-lang="en">Cookie Policy</span><span data-lang="pt">Política de Cookies</span></a>
-      <a href="legal/accessibility.html" style="color:var(--smoke-400); text-decoration:none;"><span data-lang="en">Accessibility</span><span data-lang="pt">Acessibilidade</span></a>
+      <button type="button" onclick="openLegalModal('privacy')" style="background:none; border:none; color:var(--smoke-400); cursor:pointer; padding:0; font-size:inherit;"><span data-lang="en">Privacy Policy</span><span data-lang="pt">Política de Privacidade</span></button>
+      <button type="button" onclick="openLegalModal('terms')" style="background:none; border:none; color:var(--smoke-400); cursor:pointer; padding:0; font-size:inherit;"><span data-lang="en">Terms of Use</span><span data-lang="pt">Termos de Uso</span></button>
+      <button type="button" onclick="openLegalModal('cookies')" style="background:none; border:none; color:var(--smoke-400); cursor:pointer; padding:0; font-size:inherit;"><span data-lang="en">Cookie Policy</span><span data-lang="pt">Política de Cookies</span></button>
+      <button type="button" onclick="openLegalModal('accessibility')" style="background:none; border:none; color:var(--smoke-400); cursor:pointer; padding:0; font-size:inherit;"><span data-lang="en">Accessibility</span><span data-lang="pt">Acessibilidade</span></button>
     </div>
     <div class="footer-bottom">
       <p>© 2026 BBQ do Carioca. All rights reserved.</p>
@@ -1348,6 +1348,17 @@
     </div>
   </div>
 </footer>
+
+<!-- ══════════════════════════════════════ LEGAL COMPLIANCE MODAL ══════════════════════════════════════ -->
+<dialog id="legal-dialog" class="legal-modal" aria-labelledby="legal-dialog-title">
+  <div class="legal-modal-header">
+    <h3 id="legal-dialog-title" class="legal-modal-title">Legal Compliance</h3>
+    <button type="button" class="legal-modal-close" onclick="closeLegalModal()" aria-label="Close dialog">×</button>
+  </div>
+  <div id="legal-dialog-body" class="legal-modal-body">
+    <!-- Loaded dynamically -->
+  </div>
+</dialog>
 
 <!-- ══════════════════════════════════════ WHATSAPP WIDGET ══════════════════════════════════════ -->
 <div class="wa-widget">
@@ -1529,6 +1540,79 @@ function handleQuote(e) {
   const encodedMsg = encodeURIComponent(msgText);
   window.open(`https://wa.me/15614034603?text=${encodedMsg}`, '_blank', 'noopener,noreferrer');
 }
+
+/* ── LEGAL MODAL CONTROLLER ── */
+async function openLegalModal(type) {
+  const dialog = document.getElementById('legal-dialog');
+  const title = document.getElementById('legal-dialog-title');
+  const body = document.getElementById('legal-dialog-body');
+  
+  if (!dialog || !body || !title) return;
+  
+  const titles = {
+    privacy: { en: 'Privacy Policy', pt: 'Política de Privacidade' },
+    terms: { en: 'Terms of Use', pt: 'Termos de Uso' },
+    cookies: { en: 'Cookie Policy', pt: 'Política de Cookies' },
+    accessibility: { en: 'Accessibility Statement', pt: 'Declaração de Acessibilidade' }
+  };
+  
+  const lang = document.documentElement.lang === 'pt' ? 'pt' : 'en';
+  title.textContent = titles[type] ? titles[type][lang] : 'Legal Compliance';
+  
+  body.innerHTML = '<div style="text-align:center; padding: 40px; color: var(--smoke-400);">Loading document...</div>';
+  
+  if (typeof dialog.showModal === 'function') {
+    dialog.showModal();
+  } else {
+    dialog.setAttribute('open', '');
+  }
+  
+  try {
+    const res = await fetch(`legal/${type}.html`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const htmlText = await res.text();
+    
+    // Extract main content from fetched legal page
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlText, 'text/html');
+    const mainContent = doc.querySelector('main');
+    
+    if (mainContent) {
+      // Remove back link and header titles for clean modal view
+      mainContent.querySelector('.back-link')?.remove();
+      mainContent.querySelector('.legal-eyebrow')?.remove();
+      mainContent.querySelector('.legal-h1')?.remove();
+      body.innerHTML = mainContent.innerHTML;
+    } else {
+      body.innerHTML = htmlText;
+    }
+  } catch (err) {
+    body.innerHTML = `<div style="color:var(--ember-500); padding: 20px;">Could not load document (${err.message}). <a href="legal/${type}.html" target="_blank" style="color:var(--gold-400);">Open direct page →</a></div>`;
+  }
+}
+
+function closeLegalModal() {
+  const dialog = document.getElementById('legal-dialog');
+  if (!dialog) return;
+  if (typeof dialog.close === 'function') {
+    dialog.close();
+  } else {
+    dialog.removeAttribute('open');
+  }
+}
+
+// Close dialog on backdrop click
+document.getElementById('legal-dialog')?.addEventListener('click', (e) => {
+  const rect = e.target.getBoundingClientRect();
+  if (
+    e.clientX < rect.left ||
+    e.clientX > rect.right ||
+    e.clientY < rect.top ||
+    e.clientY > rect.bottom
+  ) {
+    closeLegalModal();
+  }
+});
 </script>
 <script src="js/i18n.js"></script>
 </body>
