@@ -452,242 +452,200 @@
     }
     @media(min-width:768px) { .ideal-grid { grid-template-columns: repeat(4,1fr); } }
     .ideal-tile {
-      background: var(--charcoal-800);
-      border: 1px solid var(--line); border-radius: 16px;
-      padding: 28px 20px; text-align: center;
-      transition: border-color .2s, transform .2s;
+      background: var(--charcoal-900);
+      border: 1px solid var(--line);
+      border-radius: 16px; padding: 24px 20px;
+      text-align: center; transition: border-color .2s;
     }
-    .ideal-tile:hover { border-color: var(--ember-500); transform: translateY(-2px); }
-    .ideal-icon { font-size: 1.8rem; margin-bottom: 12px; display: block; }
+    .ideal-tile:hover { border-color: var(--gold-400); }
+    .ideal-icon { font-size: 1.8rem; margin-bottom: 10px; display: block; }
     .ideal-title {
       font-family: 'Fraunces', serif; font-size: .95rem;
       font-weight: 700; color: var(--cream-50);
     }
 
-    /* ── TESTIMONIALS ── */
+    /* ── REVIEWS ── */
     .reviews-grid {
       display: grid; gap: 20px;
       grid-template-columns: 1fr;
+      margin-bottom: 40px;
     }
-    @media(min-width:640px) { .reviews-grid { grid-template-columns: repeat(2,1fr); } }
-    @media(min-width:1024px) { .reviews-grid { grid-template-columns: repeat(3,1fr); } }
+    @media(min-width:768px) { .reviews-grid { grid-template-columns: repeat(3,1fr); } }
     .review-card {
       background: var(--charcoal-900);
       border: 1px solid var(--line);
       border-radius: 20px; overflow: hidden;
-      transition: border-color .25s, transform .25s;
+      display: flex; flex-direction: column;
     }
-    .review-card:hover { border-color: rgba(217,164,65,.35); transform: translateY(-3px); }
     .review-img-wrap {
-      position: relative; overflow: hidden; height: 200px;
+      position: relative; height: 160px; overflow: hidden;
     }
     .review-img {
-      width: 100%; height: 100%; object-fit: cover; object-position: top;
-      filter: brightness(.75) saturate(.9);
-      transition: transform .5s, filter .3s;
+      width: 100%; height: 100%; object-fit: cover; object-position: center 30%;
+      filter: brightness(.75) saturate(1.1);
     }
-    .review-card:hover .review-img { transform: scale(1.04); filter: brightness(.85); }
     .review-img-fade {
-      position: absolute; bottom: 0; left: 0; right: 0; height: 80%;
-      background: linear-gradient(to top, var(--charcoal-900), transparent);
-      pointer-events: none;
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, var(--charcoal-900) 0%, transparent 100%);
     }
-    .review-body { padding: 20px 24px 24px; }
-    .review-stars { display: flex; gap: 3px; margin-bottom: 12px; }
-    .review-star { color: var(--gold-400); font-size: .85rem; }
+    .review-body { padding: 0 24px 24px; flex: 1; display: flex; flex-direction: column; }
+    .review-stars { color: var(--gold-400); font-size: .9rem; margin-bottom: 12px; margin-top: -10px; position: relative; z-index: 2; }
     .review-quote {
-      color: var(--cream-50); font-size: .92rem; line-height: 1.65;
-      font-style: italic; margin-bottom: 16px;
-      border-bottom: 1px solid var(--line); padding-bottom: 16px;
+      color: var(--cream-50); font-size: .9rem; line-height: 1.6;
+      font-style: italic; flex: 1; margin-bottom: 16px;
     }
     .review-name {
       font-family: 'Fraunces', serif; font-size: .95rem;
       font-weight: 700; color: var(--cream-50);
     }
     .review-meta {
-      font-family: 'IBM Plex Mono', monospace; font-size: .65rem;
-      color: var(--gold-400); letter-spacing: .12em; margin-top: 2px;
+      font-family: 'IBM Plex Mono', monospace; font-size: .68rem;
+      color: var(--smoke-400); margin-top: 2px;
     }
     .reviews-social {
       display: flex; align-items: center; justify-content: center;
-      gap: 16px; margin-top: 40px; flex-wrap: wrap;
+      gap: 16px; flex-wrap: wrap; text-align: center;
+      background: var(--charcoal-800); border: 1px solid var(--line);
+      border-radius: 999px; padding: 14px 28px; margin: 0 auto;
+      max-width: 600px;
     }
-    .social-avatars { display: flex; }
+    .social-avatars { display: flex; margin-right: -4px; }
     .social-avatar {
-      width: 42px; height: 42px; border-radius: 50%;
-      border: 2px solid var(--charcoal-900);
-      object-fit: cover; margin-left: -10px;
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 2px solid var(--charcoal-800); margin-right: -8px;
+      object-fit: cover;
     }
-    .social-avatar:first-child { margin-left: 0; }
     .social-text { font-size: .85rem; color: var(--smoke-400); }
     .social-text strong { color: var(--cream-50); }
 
     /* ── SERVICE AREA ── */
     .area-chips {
       display: flex; flex-wrap: wrap; gap: 10px;
-      justify-content: center;
+      justify-content: center; max-width: 860px; margin: 0 auto;
     }
     .area-chip {
-      font-family: 'IBM Plex Mono', monospace; font-size: .72rem;
-      padding: 8px 16px; border-radius: 999px;
+      font-family: 'IBM Plex Mono', monospace; font-size: .78rem;
+      padding: 8px 18px; border-radius: 999px;
       border: 1px solid var(--line); color: var(--smoke-400);
-      transition: border-color .2s, color .2s;
+      background: var(--charcoal-900); transition: border-color .2s;
     }
-    .area-chip:hover { border-color: var(--ember-500); color: var(--cream-50); }
+    .area-chip:hover { border-color: var(--gold-400); }
     .area-chip.hl { border-color: var(--ember-500); color: var(--cream-50); }
 
     /* ── QUOTE FORM ── */
     .form-wrap {
-      max-width: 680px; margin: 0 auto;
-      background: var(--charcoal-900); border: 1px solid var(--line);
-      border-radius: 24px; padding: 48px;
+      max-width: 640px; margin: 0 auto;
+      background: var(--charcoal-800);
+      border: 1px solid var(--line);
+      border-radius: 24px; padding: 40px 32px;
     }
-    @media(max-width:600px) { .form-wrap { padding: 28px 20px; border-radius: 16px; } }
+    @media(max-width:480px) { .form-wrap { padding: 28px 20px; } }
     .form-grid {
-      display: grid; gap: 16px;
+      display: grid; gap: 20px;
       grid-template-columns: 1fr;
     }
-    @media(min-width:520px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+    @media(min-width:560px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+    .form-full { grid-column: 1 / -1; }
     .form-field label {
       display: block; font-family: 'IBM Plex Mono', monospace;
-      font-size: .68rem; letter-spacing: .14em; color: var(--smoke-400);
-      margin-bottom: 7px; text-transform: uppercase;
+      font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--gold-400); margin-bottom: 8px;
     }
     .form-control {
-      width: 100%; background: var(--charcoal-800);
-      border: 1px solid var(--line); border-radius: 12px;
-      padding: 13px 16px; color: var(--cream-50);
-      font-family: 'Manrope', sans-serif; font-size: .9rem;
+      width: 100%; background: var(--charcoal-900);
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 12px 16px; color: var(--cream-50);
+      font-family: 'Manrope', sans-serif; font-size: .92rem;
       transition: border-color .2s;
-      appearance: none; -webkit-appearance: none;
     }
-    .form-control::placeholder { color: rgba(166,157,147,.45); }
     .form-control:focus { outline: none; border-color: var(--ember-500); }
-    .form-control option { background: var(--charcoal-800); }
-    .form-full { grid-column: 1 / -1; }
-    textarea.form-control { resize: vertical; min-height: 90px; }
+    .form-control option { background: var(--charcoal-900); color: var(--cream-50); }
     .form-submit {
-      width: 100%; background: var(--ember-500);
-      color: var(--cream-50); font-weight: 700; font-size: 1rem;
-      padding: 16px; border-radius: 999px;
-      border: none; cursor: pointer;
+      width: 100%; margin-top: 24px;
+      background: var(--ember-500); color: var(--cream-50);
+      font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 1rem;
+      padding: 16px; border: none; border-radius: 999px; cursor: pointer;
       display: flex; align-items: center; justify-content: center; gap: 10px;
       transition: background .2s, box-shadow .2s;
       box-shadow: 0 4px 20px rgba(255,107,53,.35);
-      margin-top: 24px;
     }
     .form-submit:hover { background: var(--ember-700); box-shadow: 0 6px 28px rgba(255,107,53,.5); }
 
     /* ── FOOTER ── */
     footer {
-      border-top: 1px solid var(--line);
       background: var(--charcoal-950);
-      padding: 56px 20px 32px;
+      border-top: 1px solid var(--line);
+      padding: 60px 20px 40px; color: var(--smoke-400); font-size: .85rem;
     }
     .footer-inner { max-width: 1160px; margin: 0 auto; }
     .footer-top {
-      display: flex; flex-wrap: wrap; gap: 40px;
-      justify-content: space-between; margin-bottom: 40px;
+      display: flex; flex-wrap: wrap; gap: 40px; justify-content: space-between;
+      margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid var(--line);
     }
     .footer-brand-name {
       font-family: 'Fraunces', serif; font-size: 1.3rem;
       font-weight: 800; color: var(--cream-50); margin-bottom: 8px;
     }
-    .footer-brand-sub { color: var(--smoke-400); font-size: .85rem; max-width: 260px; line-height: 1.6; }
-    .footer-contact { font-size: .85rem; color: var(--smoke-400); line-height: 1.8; }
+    .footer-brand-sub { max-width: 380px; line-height: 1.6; }
+    .footer-contact p { margin-bottom: 6px; }
     .footer-contact a { color: var(--ember-500); text-decoration: none; }
     .footer-bottom {
-      border-top: 1px solid var(--line); padding-top: 24px;
-      display: flex; flex-wrap: wrap; justify-content: space-between;
-      align-items: center; gap: 12px;
-      font-size: .78rem; color: var(--smoke-400);
+      display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between;
+      align-items: center; font-size: .8rem;
     }
-    .footer-lang { display: flex; gap: 16px; }
+    .footer-lang { display: flex; gap: 12px; }
     .footer-lang-btn {
-      background: none; border: none; cursor: pointer;
-      color: var(--smoke-400); font-size: .78rem;
-      transition: color .2s;
+      background: none; border: none; color: var(--smoke-400);
+      cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: .75rem;
     }
-    .footer-lang-btn:hover { color: var(--cream-50); }
+    .footer-lang-btn.active { color: var(--gold-400); font-weight: 700; }
 
     /* ── WHATSAPP WIDGET ── */
-    .wa-widget { position: fixed; bottom: 24px; right: 24px; z-index: 90; }
-    .wa-btn {
-      width: 60px; height: 60px; border-radius: 50%;
-      background: #25D366; color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 6px 20px rgba(37,211,102,.45);
-      transition: transform .25s, box-shadow .25s;
-      position: relative; text-decoration: none;
-    }
-    .wa-btn:hover { transform: scale(1.08); box-shadow: 0 8px 28px rgba(37,211,102,.55); }
-    @keyframes pulse-ring {
-      0% { transform: scale(.9); opacity: .6; }
-      100% { transform: scale(1.45); opacity: 0; }
-    }
-    .wa-btn::before {
-      content: ''; position: absolute; inset: -4px; border-radius: 50%;
-      border: 2px solid #25D366; animation: pulse-ring 2.2s ease-out infinite;
+    .wa-widget {
+      position: fixed; bottom: 24px; right: 24px; z-index: 70;
+      display: flex; align-items: center; gap: 12px;
     }
     .wa-bubble {
-      position: absolute; bottom: 72px; right: 0;
-      background: #fff; color: #1a1a1a;
-      padding: 12px 18px; border-radius: 16px 16px 4px 16px;
-      font-size: .85rem; font-weight: 600; white-space: nowrap;
-      box-shadow: 0 8px 24px rgba(0,0,0,.25);
-      opacity: 0; transform: translateY(8px) scale(.95);
+      background: var(--charcoal-800); border: 1px solid var(--line);
+      color: var(--cream-50); font-size: .82rem; padding: 10px 16px;
+      border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,.5);
+      position: relative; opacity: 0; transform: scale(.9);
       transition: opacity .3s, transform .3s; pointer-events: none;
     }
-    .wa-bubble.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
-    .wa-bubble::after {
-      content: ''; position: absolute; bottom: -6px; right: 22px;
-      border: 6px solid transparent; border-top-color: #fff;
-    }
+    .wa-bubble.show { opacity: 1; transform: scale(1); pointer-events: auto; }
     .wa-close {
-      position: absolute; top: -8px; right: -8px;
-      width: 22px; height: 22px; border-radius: 50%;
-      background: #333; color: #fff; font-size: .72rem;
+      position: absolute; top: -6px; right: -6px;
+      background: var(--charcoal-900); border: 1px solid var(--line);
+      color: var(--smoke-400); border-radius: 50%; width: 18px; height: 18px;
+      font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .wa-btn {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: #25D366; color: #fff;
       display: flex; align-items: center; justify-content: center;
-      cursor: pointer; border: none;
+      text-decoration: none; box-shadow: 0 4px 20px rgba(37,211,102,.4);
+      transition: transform .2s, box-shadow .2s;
     }
+    .wa-btn:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(37,211,102,.6); }
 
-    /* ── ANIMATIONS ── */
-    @keyframes flicker {
-      0%,100% { transform: scaleY(1) translateY(0); opacity: 1; }
-      25%  { transform: scaleY(1.08) translateY(-2px); opacity: .9; }
-      50%  { transform: scaleY(.95) translateY(1px); }
-      75%  { transform: scaleY(1.05) translateY(-1px); opacity: .95; }
-    }
-    .flame { animation: flicker 1.9s ease-in-out infinite; transform-origin: bottom center; }
-    .flame-2 { animation-delay: .35s; }
-
-    @media (prefers-reduced-motion: reduce) {
-      .reveal { opacity: 1; transform: none; transition: none; }
-      .flame, .wa-btn::before { animation: none; }
-      .marquee-inner { animation: none; }
-      html { scroll-behavior: auto; }
-    }
-
-    /* ── MOBILE NAV (hamburger) ── */
-    .mob-toggle {
-      display: flex; align-items: center; justify-content: center;
-      width: 40px; height: 40px; border-radius: 10px;
-      background: var(--charcoal-800); border: none; cursor: pointer;
-      color: var(--cream-50);
-    }
-    @media(min-width:900px) { .mob-toggle { display: none; } }
+    /* ── MOBILE MENU OVERLAY ── */
     .mob-menu {
-      display: none; position: fixed; inset: 64px 0 0;
-      background: var(--charcoal-950); z-index: 55;
-      flex-direction: column; align-items: center; justify-content: center;
-      gap: 32px;
+      position: fixed; inset: 0; z-index: 55;
+      background: rgba(11,9,8,.97); backdrop-filter: blur(20px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 24px; opacity: 0; pointer-events: none; transition: opacity .3s;
     }
-    .mob-menu.open { display: flex; }
+    .mob-menu.open { opacity: 1; pointer-events: auto; }
     .mob-link {
-      font-family: 'Fraunces', serif; font-size: 1.5rem;
-      font-weight: 700; color: var(--cream-50); text-decoration: none;
+      font-family: 'Fraunces', serif; font-size: 1.6rem; font-weight: 700;
+      color: var(--cream-50); text-decoration: none; transition: color .2s;
     }
     .mob-link:hover { color: var(--ember-500); }
+    .mob-toggle {
+      background: none; border: none; color: var(--cream-50);
+      cursor: pointer; padding: 6px; display: flex;
+    }
+    @media(min-width:640px) { .mob-toggle { display: none; } }
   </style>
 
   <script type="application/ld+json">
@@ -696,12 +654,12 @@
     "@type":"Caterer",
     "name":"BBQ do Carioca",
     "telephone":"+1-561-403-4603",
-    "slogan":"Authentic Brazilian Churrasco, Fired Live at Your Event.",
+    "slogan":"Authentic Brazilian Churrasco in Florida",
     "priceRange":"$$–$$$",
     "servesCuisine":["Brazilian barbecue","Churrasco"],
     "areaServed":["Palm Beach County","Boca Raton","West Palm Beach","Delray Beach","Miami","Fort Lauderdale","Pompano Beach","Boynton Beach","Jupiter","Orlando"],
     "url":"https://bbqdocarioca.com",
-    "contactPoint":{"@type":"ContactPoint","telephone":"+1-561-403-4603","contactType":"customer service","contactOption":"TollFree","availableLanguage":["English","Portuguese"]}
+    "contactPoint":{"@type":"ContactPoint","telephone":"+1-561-403-4603","contactType":"customer service","availableLanguage":["English","Portuguese"]}
   }
   </script>
 </head>
@@ -717,14 +675,14 @@
       <span class="logo-text">BBQ <em>do</em> Carioca</span>
     </a>
 
-    <nav aria-label="Primary navigation">
+    <nav aria-label="Main navigation">
       <div class="lang-toggle">
         <button id="lang-en" class="lang-btn active" aria-label="Switch to English">EN</button>
         <button id="lang-pt" class="lang-btn" aria-label="Mudar para Português">PT</button>
       </div>
       <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27d%20like%20a%20quote%20for%20my%20event." target="_blank" rel="noopener" class="cta-nav" style="margin-left:12px">
         <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        <span data-lang="en">Get Quote</span><span data-lang="pt">Orçamento</span>
+        <span data-i18n="nav.cta"><span data-lang="en">Get Quote</span><span data-lang="pt">Orçamento</span></span>
       </a>
       <button class="mob-toggle" id="mob-toggle" aria-label="Toggle menu" aria-expanded="false">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -737,10 +695,10 @@
 
 <!-- Mobile Nav -->
 <div class="mob-menu" id="mob-menu" role="dialog" aria-label="Mobile navigation">
-  <a href="#experience" class="mob-link" onclick="closeMob()"><span data-lang="en">Experience</span><span data-lang="pt">Experiência</span></a>
-  <a href="#meet" class="mob-link" onclick="closeMob()"><span data-lang="en">About</span><span data-lang="pt">Sobre</span></a>
-  <a href="#packages" class="mob-link" onclick="closeMob()"><span data-lang="en">Packages</span><span data-lang="pt">Pacotes</span></a>
-  <a href="#quote" class="mob-link" onclick="closeMob()"><span data-lang="en">Get Quote</span><span data-lang="pt">Orçamento</span></a>
+  <a href="#experience" class="mob-link" onclick="closeMob()"><span data-i18n="nav.experience"><span data-lang="en">Experience</span><span data-lang="pt">Experiência</span></span></a>
+  <a href="#meet" class="mob-link" onclick="closeMob()"><span data-i18n="nav.about"><span data-lang="en">About</span><span data-lang="pt">Sobre o Carioca</span></span></a>
+  <a href="#packages" class="mob-link" onclick="closeMob()"><span data-i18n="nav.packages"><span data-lang="en">Packages</span><span data-lang="pt">Pacotes</span></span></a>
+  <a href="#quote" class="mob-link" onclick="closeMob()"><span data-i18n="nav.quote"><span data-lang="en">Get Quote</span><span data-lang="pt">Orçamento</span></span></a>
   <a href="https://wa.me/15614034603" target="_blank" rel="noopener" class="btn-primary" style="font-size:.95rem;padding:14px 28px">WhatsApp</a>
 </div>
 
@@ -748,7 +706,10 @@
 
 <!-- ══════════════════════════════════════ HERO ══════════════════════════════════════ -->
 <section class="hero" aria-label="Hero">
-  <div class="hero-bg" id="hero-bg"></div>
+  <picture class="hero-bg" id="hero-bg">
+    <source media="(max-width: 768px)" srcset="img/bg-slider-01_mobile.png" />
+    <img src="img/bg-slider-01.png" alt="O Verdadeiro Churrasco Brasileiro na Flórida" fetchpriority="high" decoding="async" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;" />
+  </picture>
   <div class="hero-overlay"></div>
   <div class="hero-overlay-side"></div>
   <canvas id="ember-canvas" aria-hidden="true"></canvas>
@@ -756,38 +717,38 @@
   <div class="hero-content">
     <div class="hero-eyebrow reveal">
       <span class="eyebrow-dot"></span>
-      <span class="eyebrow-text">
-        <span data-lang="en">LIVE-FIRE BRAZILIAN CHURRASCO • FLORIDA, USA</span>
-        <span data-lang="pt">CHURRASCO BRASILEIRO AO VIVO • FLÓRIDA, EUA</span>
+      <span class="eyebrow-text" data-i18n="hero.eyebrow">
+        <span data-lang="en">AUTHENTIC BRAZILIAN CHURRASCO • SERVING ALL FLORIDA</span>
+        <span data-lang="pt">CHURRASCO BRASILEIRO • ATENDIMENTO EM TODA A FLÓRIDA</span>
       </span>
     </div>
 
-    <h1 class="hero-h1 reveal reveal-d1">
-      <span data-lang="en">Authentic Brazilian<br>Churrasco, Fired<br>Live at Your Event.</span>
-      <span data-lang="pt">Churrasco brasileiro<br>autêntico, assado ao<br>vivo no seu evento.</span>
+    <h1 class="hero-h1 reveal reveal-d1" data-i18n-html="hero.headline">
+      <span data-lang="en">THE REAL BRAZILIAN<br>CHURRASCO<br>in Florida!</span>
+      <span data-lang="pt">O VERDADEIRO<br>CHURRASCO BRASILEIRO<br>na Flórida!</span>
     </h1>
 
-    <p class="hero-sub reveal reveal-d2">
-      <span data-lang="en">A professional churrasqueiro brings the fire, the premium cuts and the full service — so you can stay with your guests.</span>
-      <span data-lang="pt">Um churrasqueiro profissional leva o fogo, os cortes premium e o serviço completo — você fica com seus convidados.</span>
+    <p class="hero-sub reveal reveal-d2" data-i18n="hero.sub">
+      <span data-lang="en">We bring flavor, quality and tradition to your event! A professional churrasqueiro handles the fire, premium selected meats and full service so you can enjoy your guests.</span>
+      <span data-lang="pt">Levamos sabor, qualidade e tradição para o seu evento! Um churrasqueiro profissional cuida do fogo, das carnes selecionadas e do serviço completo para você aproveitar com seus convidados.</span>
     </p>
 
     <div class="hero-ctas reveal reveal-d3">
-      <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27d%20like%20a%20free%20quote%20for%20my%20event." target="_blank" rel="noopener" class="btn-primary">
+      <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27d%20like%20a%20quote%20for%20my%20event." target="_blank" rel="noopener" class="btn-primary">
         <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        <span data-lang="en">Get My Free Quote</span><span data-lang="pt">Pedir Meu Orçamento</span>
+        <span data-i18n="hero.cta_primary"><span data-lang="en">Request a Quote!</span><span data-lang="pt">Solicite seu ORÇAMENTO!</span></span>
       </a>
       <a href="#packages" class="btn-secondary">
-        <span data-lang="en">See Packages</span><span data-lang="pt">Ver Pacotes</span>
+        <span data-i18n="hero.cta_secondary"><span data-lang="en">See Packages</span><span data-lang="pt">Ver Pacotes</span></span>
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </div>
 
     <div class="hero-tags reveal reveal-d4">
-      <span class="hero-tag"><span data-lang="en">On-site live fire</span><span data-lang="pt">Fogo ao vivo no local</span></span>
-      <span class="hero-tag"><span data-lang="en">Premium Brazilian cuts</span><span data-lang="pt">Cortes brasileiros premium</span></span>
-      <span class="hero-tag"><span data-lang="en">Bilingual EN/PT</span><span data-lang="pt">Bilíngue EN/PT</span></span>
-      <span class="hero-tag"><span data-lang="en">Florida-wide service</span><span data-lang="pt">Atendemos toda a Flórida</span></span>
+      <span class="hero-tag" data-i18n="hero.tag_1">🥩 <span data-lang="en">Selected Premium Meats</span><span data-lang="pt">Carnes Selecionadas e Premium</span></span>
+      <span class="hero-tag" data-i18n="hero.tag_2">🔪 <span data-lang="en">Professional & Custom Prep</span><span data-lang="pt">Preparo Profissional e Personalizado</span></span>
+      <span class="hero-tag" data-i18n="hero.tag_3">👥 <span data-lang="en">Events of All Sizes</span><span data-lang="pt">Eventos de Todos os Tamanhos</span></span>
+      <span class="hero-tag" data-i18n="hero.tag_4">📅 <span data-lang="en">Birthdays & Corporate Events</span><span data-lang="pt">Aniversários, Festas e Confraternizações</span></span>
     </div>
   </div>
 </section>
@@ -807,9 +768,9 @@
         <path class="flame flame-2" d="M12 23c-3.5 0-6-2.5-6-6 0-2.5 1.5-4.5 3-6.5.5 2 1.5 3 3 3 0-3 2-6.5 5-9-1 4 1 6 1 9 2 0 3-1.5 3-4 1.5 2 3 4 3 7 0 3.5-2.5 6-6 6.5z"/>
       </svg>
     </span>
-    <p class="relief-h2 reveal">
-      <span data-lang="en">You host. We master the fire.</span>
-      <span data-lang="pt">Você cuida dos convidados. Nós cuidamos do fogo.</span>
+    <p class="relief-h2 reveal" data-i18n="relief.text">
+      <span data-lang="en">⭐ THE FULL BRAZILIAN CHURRASCO EXPERIENCE FOR YOU!</span>
+      <span data-lang="pt">⭐ EXPERIÊNCIA COMPLETA DO BRASIL PARA VOCÊ!</span>
     </p>
   </div>
 </div>
@@ -818,14 +779,14 @@
 <section class="section" id="experience">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal"><span data-lang="en">THE EXPERIENCE</span><span data-lang="pt">A EXPERIÊNCIA</span></p>
-      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">Why clients choose us</span><span data-lang="pt">Por que nos escolhem</span></h2>
+      <p class="section-label reveal" data-i18n="experience.label"><span data-lang="en">THE EXPERIENCE</span><span data-lang="pt">DIFERENCIAIS DO CARIOCA</span></p>
+      <h2 class="section-h2 reveal reveal-d1" data-i18n="experience.title"><span data-lang="en">Why clients choose us</span><span data-lang="pt">Por que nos escolhem</span></h2>
     </div>
     <div class="exp-grid">
       <article class="exp-card reveal">
         <img
           src="https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=800&q=80&auto=format&fit=crop"
-          alt="Skewers over glowing charcoal — live fire Brazilian churrasco style"
+          alt="Espeto sobre a brasa — churrasco brasileiro autêntico"
           class="exp-card-img"
           loading="lazy"
         />
@@ -833,14 +794,14 @@
           <div class="exp-card-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="#FF6B35"><path class="flame" d="M12 23c-3.5 0-6-2.5-6-6 0-2.5 1.5-4.5 3-6.5.5 2 1.5 3 3 3 0-3 2-6.5 5-9-1 4 1 6 1 9 2 0 3-1.5 3-4 1.5 2 3 4 3 7 0 3.5-2.5 6-6 6.5z"/></svg>
           </div>
-          <h3 class="exp-card-title"><span data-lang="en">Live Fire, Brazilian Style</span><span data-lang="pt">Fogo de chão, jeito brasileiro</span></h3>
-          <p class="exp-card-text"><span data-lang="en">Skewers over glowing charcoal, the way it's done in Brazil. No ovens, no shortcuts — the fire is the show.</span><span data-lang="pt">Espeto sobre a brasa, do jeito que se faz no Brasil. Sem forno, sem atalho — o fogo é o espetáculo.</span></p>
+          <h3 class="exp-card-title" data-i18n="experience.card1_title"><span data-lang="en">Authentic Brazilian BBQ</span><span data-lang="pt">Churrasco Autêntico</span></h3>
+          <p class="exp-card-text" data-i18n="experience.card1_text"><span data-lang="en">Skewers over glowing charcoal, cooked to perfection the way it's done in Brazil. The live fire is the center of your party.</span><span data-lang="pt">Espetos e cortes preparados sobre a brasa, no ponto certo, do jeito que se faz no Brasil. O fogo e o aroma são o espetáculo do seu evento.</span></p>
         </div>
       </article>
       <article class="exp-card reveal reveal-d1">
         <img
           src="https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80&auto=format&fit=crop"
-          alt="Premium Brazilian cuts — picanha and hand-selected meats"
+          alt="Cortes de carne brasileiros selecionados — Picanha e carnes nobres"
           class="exp-card-img"
           loading="lazy"
         />
@@ -848,14 +809,14 @@
           <div class="exp-card-icon">
             <svg width="22" height="22" fill="none" stroke="#FF6B35" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
-          <h3 class="exp-card-title"><span data-lang="en">Premium Cuts</span><span data-lang="pt">Cortes Premium</span></h3>
-          <p class="exp-card-text"><span data-lang="en">Picanha and hand-selected cuts, seasoned simply, grilled to perfection in front of your guests.</span><span data-lang="pt">Picanha e cortes selecionados, temperados com simplicidade e grelhados na frente dos seus convidados.</span></p>
+          <h3 class="exp-card-title" data-i18n="experience.card2_title"><span data-lang="en">Selected Premium Meats</span><span data-lang="pt">Carnes Selecionadas e Premium</span></h3>
+          <p class="exp-card-text" data-i18n="experience.card2_text"><span data-lang="en">Juicy Picanha, flank steak, artisan sausages, and prime cuts seasoned with Brazilian tradition to amaze your guests.</span><span data-lang="pt">Picanha Suculenta, fraldinha, linguiças artesanais e cortes nobres temperados com a tradição brasileira para impressionar seus convidados.</span></p>
         </div>
       </article>
       <article class="exp-card reveal reveal-d2">
         <img
           src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&q=80&auto=format&fit=crop"
-          alt="Full service setup — BBQ do Carioca brings the grill and the team"
+          alt="Serviço completo de churrasco no seu evento na Flórida"
           class="exp-card-img"
           loading="lazy"
         />
@@ -863,45 +824,49 @@
           <div class="exp-card-icon">
             <svg width="22" height="22" fill="none" stroke="#FF6B35" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           </div>
-          <h3 class="exp-card-title"><span data-lang="en">Full Service & Setup</span><span data-lang="pt">Serviço Completo</span></h3>
-          <p class="exp-card-text"><span data-lang="en">We bring the grill, the structure and the service. You bring the guests.</span><span data-lang="pt">Levamos a churrasqueira, a estrutura e o serviço. Você só chama os convidados.</span></p>
+          <h3 class="exp-card-title" data-i18n="experience.card3_title"><span data-lang="en">Professionalism & Punctuality</span><span data-lang="pt">Profissionalismo e Pontualidade</span></h3>
+          <p class="exp-card-text" data-i18n="experience.card3_text"><span data-lang="en">We bring the structure, arrive early, and deliver attentive, customized service from start to finish.</span><span data-lang="pt">Levamos a estrutura necessária, chegamos com antecedência e oferecemos um atendimento rápido e personalizado do início ao fim.</span></p>
         </div>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ══════════════════════════════════════ MEET ══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════ MEET BRUNO CARIOCA ══════════════════════════════════════ -->
 <section class="section section-alt" id="meet">
   <div class="section-inner">
     <div class="meet-grid">
-      <div class="reveal">
+      <div class="meet-img-col reveal">
         <div class="meet-img-wrap">
           <img
             src="img/Bruno-Carioca.png"
-            alt="Bruno Carioca — professional churrasqueiro founder of BBQ do Carioca"
+            alt="Bruno Carioca — Especialista em Churrasco Brasileiro"
             class="meet-img"
             loading="lazy"
           />
           <div class="meet-img-overlay"></div>
           <div class="meet-img-footer">
             <div class="meet-name">Bruno Carioca</div>
-            <span class="meet-title-tag">FOUNDER · CHURRASCO SPECIALIST</span>
+            <span class="meet-title-tag" data-i18n="meet.title_tag">CHURRASQUEIRO PROFISSIONAL</span>
           </div>
           <div class="rio-badge">
-            <div class="rio-badge-text">RIO DE JANEIRO — WHERE IT STARTED</div>
+            <div class="rio-badge-text" data-i18n="meet.badge"><span data-lang="en">RIO DE JANEIRO — TRADITION & FIRE</span><span data-lang="pt">RIO DE JANEIRO — TRADIÇÃO E SABOR</span></div>
           </div>
         </div>
       </div>
       <div class="reveal reveal-d1">
-        <p class="section-label"><span data-lang="en">FROM RIO WITH FIRE</span><span data-lang="pt">DO RIO COM FOGO</span></p>
-        <h2 class="section-h2" style="margin-bottom:24px"><span data-lang="en">The man behind the fire.</span><span data-lang="pt">O homem por trás do fogo.</span></h2>
-        <p class="meet-copy">
-          <span data-lang="en">Long before Florida, he built his name the Brazilian way — skewer in one hand and hours of <em>resenha</em> around the grill. The cold beer stayed in Rio. The fire came with him.</span>
-          <span data-lang="pt">Antes da Flórida, ele fez nome do jeito brasileiro — espeto numa mão e horas de resenha em volta da brasa. A gelada ficou no Rio. O fogo, ele trouxe.</span>
+        <p class="section-label" data-i18n="meet.label"><span data-lang="en">FROM RIO WITH FIRE</span><span data-lang="pt">DO RIO COM FOGO</span></p>
+        <h2 class="section-h2" style="margin-bottom:24px" data-i18n="meet.title"><span data-lang="en">The specialist behind the fire.</span><span data-lang="pt">O especialista por trás do fogo.</span></h2>
+        <p class="meet-copy" data-i18n="meet.copy">
+          <span data-lang="en">Straight from Rio de Janeiro to Florida, Carioca brings a passion for authentic Brazilian churrasco. A master of live-fire barbecue, Bruno brings true Carioca warmth and craftsmanship to your event.</span>
+          <span data-lang="pt">Diretamente do Rio de Janeiro para a Flórida, o Carioca traz na bagagem a paixão e o domínio completo do verdadeiro churrasco brasileiro. Com anos de experiência na brasa, ele combina cortes de carne selecionados, ponto perfeito e a simpatia carioca para transformar o seu evento em uma festa inesquecível.</span>
         </p>
-        <p class="meet-copy-note" data-lang="en"><em>resenha</em> (n.) — the untranslatable Brazilian art of good company around the fire.</p>
-        <p class="meet-sig">— O Carioca</p>
+        <p class="meet-copy-note" style="color:var(--gold-400);margin-bottom:16px" data-i18n="meet.note">
+          🗣️ <span data-lang="en"><strong>Note:</strong> Bruno is a native Brazilian churrasqueiro (speaks Portuguese). Full bilingual customer support is available for scheduling and event planning!</span>
+          <span data-lang="pt">🗣️ <strong>Nota:</strong> Churrasqueiro nativo do Rio de Janeiro. Atendimento rápido e personalizado no WhatsApp!</span>
+        </p>
+        <p class="meet-copy-note" data-i18n="meet.slogan"><em data-lang="en">"More than a barbecue, an unforgettable experience!"</em><em data-lang="pt">"Mais que um churrasco, uma experiência inesquecível!"</em></p>
+        <p class="meet-sig">— BBQ do Carioca</p>
       </div>
     </div>
   </div>
@@ -911,57 +876,57 @@
 <section class="section" id="packages">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal"><span data-lang="en">PACKAGES</span><span data-lang="pt">PACOTES</span></p>
-      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">Choose your experience</span><span data-lang="pt">Escolha sua experiência</span></h2>
+      <p class="section-label reveal" data-i18n="packages.label"><span data-lang="en">PACKAGES & SERVICES</span><span data-lang="pt">PACOTES & SERVIÇOS</span></p>
+      <h2 class="section-h2 reveal reveal-d1" data-i18n="packages.title"><span data-lang="en">Choose your ideal experience</span><span data-lang="pt">Escolha a experiência ideal para seu evento</span></h2>
     </div>
     <div class="pkg-grid">
       <!-- Signature (anchor) -->
       <article class="pkg-card featured reveal">
-        <span class="pkg-badge"><span data-lang="en">SIGNATURE</span><span data-lang="pt">ASSINATURA</span></span>
-        <h3 class="pkg-title" style="margin-top:12px"><span data-lang="en">Premium Churrasco Experience</span><span data-lang="pt">Experiência Premium de Churrasco</span></h3>
-        <p class="pkg-price">US$70–100<span>+/guest</span></p>
-        <ul class="pkg-list" aria-label="Package includes">
-          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-lang="en">Custom menu & hand-selected premium cuts</span><span data-lang="pt">Cardápio personalizado e cortes premium selecionados</span></li>
-          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-lang="en">Full service & elevated presentation</span><span data-lang="pt">Serviço completo e apresentação elevada</span></li>
-          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-lang="en">Ideal for 20+ guests</span><span data-lang="pt">Ideal para 20+ convidados</span></li>
+        <span class="pkg-badge" data-i18n="packages.badge_signature"><span data-lang="en">PREMIUM SIGNATURE</span><span data-lang="pt">ASSINATURA PREMIUM</span></span>
+        <h3 class="pkg-title" style="margin-top:12px" data-i18n="packages.title_signature"><span data-lang="en">Full Brazilian Experience</span><span data-lang="pt">Experiência Completa do Brasil</span></h3>
+        <p class="pkg-price" data-i18n="packages.price_signature"><span data-lang="en">Custom Quote</span><span data-lang="pt">Sob Consulta</span></p>
+        <ul class="pkg-list" aria-label="Pacote inclui">
+          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-i18n="packages.sig_item_1"><span data-lang="en">Hand-selected premium meats (Picanha, Flank, Sausages, Chicken)</span><span data-lang="pt">Carnes premium selecionadas (Picanha, Fraldinha, Linguiça, Frango)</span></span></li>
+          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-i18n="packages.sig_item_2"><span data-lang="en">Traditional sides (Farofa, Vinagrete, Garlic Bread)</span><span data-lang="pt">Acompanhamentos típicos (Farofa, Vinagrete, Pão de Alho)</span></span></li>
+          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-i18n="packages.sig_item_3"><span data-lang="en">Full professional churrasqueiro service throughout the event</span><span data-lang="pt">Serviço de churrasqueiro profissional completo durante o evento</span></span></li>
+          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-i18n="packages.sig_item_4"><span data-lang="en">Ideal for events of all sizes</span><span data-lang="pt">Ideal para eventos de todos os tamanhos</span></span></li>
         </ul>
-        <a href="https://wa.me/15614034603?text=Hi%2C%20I%27m%20interested%20in%20the%20Premium%20Churrasco%20Experience." target="_blank" rel="noopener" class="pkg-cta primary">
-          <span data-lang="en">Request This Package</span><span data-lang="pt">Solicitar este Pacote</span>
+        <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27m%20interested%20in%20the%20Full%20Brazilian%20Experience." target="_blank" rel="noopener" class="pkg-cta primary">
+          <span data-i18n="packages.cta_request"><span data-lang="en">Request Quote</span><span data-lang="pt">Solicitar Orçamento</span></span>
         </a>
       </article>
 
       <!-- Full BBQ -->
       <article class="pkg-card reveal reveal-d1">
-        <span class="pkg-badge-inline"><span data-lang="en">MOST BOOKED</span><span data-lang="pt">MAIS PEDIDO</span></span>
-        <h3 class="pkg-title"><span data-lang="en">Full Churrasco</span><span data-lang="pt">Churrasco Completo</span></h3>
-        <p class="pkg-price neutral">from US$500</p>
+        <span class="pkg-badge-inline" data-i18n="packages.badge_popular"><span data-lang="en">MOST POPULAR</span><span data-lang="pt">MAIS PEDIDO</span></span>
+        <h3 class="pkg-title" data-i18n="packages.title_full"><span data-lang="en">Full Churrasco</span><span data-lang="pt">Churrasco Completo</span></h3>
+        <p class="pkg-price neutral" data-i18n="packages.price_full"><span data-lang="en">Custom Quote</span><span data-lang="pt">Sob Consulta</span></p>
         <ul class="pkg-list">
-          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-lang="en">Specialist + full structure & grill</span><span data-lang="pt">Especialista + estrutura completa e churrasqueira</span></li>
-          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-lang="en">Menu-defined meats & sides</span><span data-lang="pt">Carnes e acompanhamentos definidos no cardápio</span></li>
-          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-lang="en">Ideal for small & medium events</span><span data-lang="pt">Ideal para eventos pequenos e médios</span></li>
+          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-i18n="packages.full_item_1"><span data-lang="en">Specialist on site + full structure & grill</span><span data-lang="pt">Churrasqueiro especialista no local + churrasqueira/estrutura</span></span></li>
+          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-i18n="packages.full_item_2"><span data-lang="en">Meats & sides tailored to your event</span><span data-lang="pt">Carnes e acompanhamentos ajustados ao seu gosto</span></span></li>
+          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-i18n="packages.full_item_3"><span data-lang="en">Ideal for birthdays, parties & gatherings</span><span data-lang="pt">Ideal para aniversários, festas e reuniões familiares</span></span></li>
         </ul>
-        <a href="https://wa.me/15614034603?text=Hi%2C%20I%27m%20interested%20in%20the%20Full%20Churrasco%20package." target="_blank" rel="noopener" class="pkg-cta outline">
-          <span data-lang="en">Request This Package</span><span data-lang="pt">Solicitar este Pacote</span>
+        <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27m%20interested%20in%20the%20Full%20Churrasco%20package." target="_blank" rel="noopener" class="pkg-cta outline">
+          <span data-i18n="packages.cta_request"><span data-lang="en">Request Quote</span><span data-lang="pt">Solicitar Orçamento</span></span>
         </a>
       </article>
 
       <!-- The Churrasqueiro -->
       <article class="pkg-card reveal reveal-d2">
-        <h3 class="pkg-title" style="margin-top:22px"><span data-lang="en">The Churrasqueiro</span><span data-lang="pt">O Churrasqueiro</span></h3>
-        <p class="pkg-price neutral">US$50–75<span>/hour</span></p>
+        <h3 class="pkg-title" style="margin-top:22px" data-i18n="packages.title_chef"><span data-lang="en">Churrasqueiro Service</span><span data-lang="pt">Serviço de Churrasqueiro</span></h3>
+        <p class="pkg-price neutral" data-i18n="packages.price_chef"><span data-lang="en">Hourly Rate</span><span data-lang="pt">Por Hora</span></p>
         <ul class="pkg-list">
-          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-lang="en">Professional on-site specialist</span><span data-lang="pt">Especialista profissional no local</span></li>
-          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-lang="en">Prep, fire & service</span><span data-lang="pt">Preparo, fogo e serviço</span></li>
-          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-lang="en">You provide meats & sides</span><span data-lang="pt">Você fornece carnes e acompanhamentos</span></li>
+          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-i18n="packages.chef_item_1"><span data-lang="en">Professional grill master at your location</span><span data-lang="pt">Especialista profissional no comando da sua churrasqueira</span></span></li>
+          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-i18n="packages.chef_item_2"><span data-lang="en">Prep, live grilling and carving</span><span data-lang="pt">Preparo, fogo e corte das carnes ao vivo</span></span></li>
+          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-i18n="packages.chef_item_3"><span data-lang="en">You provide the meats, we guarantee perfection</span><span data-lang="pt">Você fornece as carnes e nós garantimos a perfeição do assado</span></span></li>
         </ul>
-        <a href="https://wa.me/15614034603?text=Hi%2C%20I%27m%20interested%20in%20The%20Churrasqueiro%20service." target="_blank" rel="noopener" class="pkg-cta outline">
-          <span data-lang="en">Request This Package</span><span data-lang="pt">Solicitar este Pacote</span>
+        <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27m%20interested%20in%20The%20Churrasqueiro%20service." target="_blank" rel="noopener" class="pkg-cta outline">
+          <span data-i18n="packages.cta_request"><span data-lang="en">Request Quote</span><span data-lang="pt">Solicitar Orçamento</span></span>
         </a>
       </article>
     </div>
-    <p class="pkg-note reveal">
-      <span data-lang="en">Example: a full package for 10 guests starts around <strong style="color:var(--cream-50)">US$600</strong>, depending on menu and setup.</span>
-      <span data-lang="pt">Exemplo: pacote completo para 10 convidados a partir de <strong style="color:var(--cream-50)">US$600</strong>, dependendo do cardápio e estrutura.</span>
+    <p class="pkg-note reveal" data-i18n="packages.note">
+      📍 <strong style="color:var(--cream-50)"><span data-lang="en">Florida-Wide Service!</span><span data-lang="pt">Atendimento em toda a Flórida!</span></strong> <span data-lang="en">Custom quotes tailored to guest count and location.</span><span data-lang="pt">Orçamentos personalizados de acordo com o número de convidados e localização.</span>
     </p>
   </div>
 </section>
@@ -970,25 +935,29 @@
 <section class="section section-alt" id="how">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal"><span data-lang="en">HOW IT WORKS</span><span data-lang="pt">COMO FUNCIONA</span></p>
-      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">Simple. Professional. Stress-free.</span><span data-lang="pt">Simples. Profissional. Sem estresse.</span></h2>
+      <p class="section-label reveal" data-i18n="how.label"><span data-lang="en">HOW IT WORKS</span><span data-lang="pt">PASSO A PASSO</span></p>
+      <h2 class="section-h2 reveal reveal-d1" data-i18n="how.title"><span data-lang="en">How catering works</span><span data-lang="pt">Como funciona o atendimento</span></h2>
     </div>
     <div class="steps-grid">
       <div class="step reveal">
         <div class="step-num" aria-hidden="true">01</div>
-        <h3 class="step-title"><span data-lang="en">Tell us about your event</span><span data-lang="pt">Conte sobre seu evento</span></h3>
+        <h3 class="step-title" data-i18n="how.step1_title"><span data-lang="en">Tell us about your event</span><span data-lang="pt">Conte sobre seu evento</span></h3>
+        <p style="color:var(--smoke-400);font-size:.85rem;margin-top:6px" data-i18n="how.step1_desc"><span data-lang="en">Date, Florida city, and estimated guest count.</span><span data-lang="pt">Data, cidade na Flórida e número estimado de convidados.</span></p>
       </div>
       <div class="step reveal reveal-d1">
         <div class="step-num" aria-hidden="true">02</div>
-        <h3 class="step-title"><span data-lang="en">We design your menu</span><span data-lang="pt">Montamos seu cardápio</span></h3>
+        <h3 class="step-title" data-i18n="how.step2_title"><span data-lang="en">We customize the menu</span><span data-lang="pt">Personalizamos o cardápio</span></h3>
+        <p style="color:var(--smoke-400);font-size:.85rem;margin-top:6px" data-i18n="how.step2_desc"><span data-lang="en">Choose your favorite cuts and traditional sides.</span><span data-lang="pt">Escolha os cortes e acompanhamentos favoritos.</span></p>
       </div>
       <div class="step reveal reveal-d2">
         <div class="step-num" aria-hidden="true">03</div>
-        <h3 class="step-title"><span data-lang="en">We bring the fire</span><span data-lang="pt">Levamos o fogo</span></h3>
+        <h3 class="step-title" data-i18n="how.step3_title"><span data-lang="en">We bring the fire</span><span data-lang="pt">Levamos o fogo e a brasa</span></h3>
+        <p style="color:var(--smoke-400);font-size:.85rem;margin-top:6px" data-i18n="how.step3_desc"><span data-lang="en">We arrive early with full setup and prep everything on site.</span><span data-lang="pt">Chegamos com antecedência e preparamos tudo no local.</span></p>
       </div>
       <div class="step reveal reveal-d3">
         <div class="step-num" aria-hidden="true">04</div>
-        <h3 class="step-title"><span data-lang="en">You enjoy the party</span><span data-lang="pt">Você curte a festa</span></h3>
+        <h3 class="step-title" data-i18n="how.step4_title"><span data-lang="en">You enjoy the party</span><span data-lang="pt">Você aproveita a festa</span></h3>
+        <p style="color:var(--smoke-400);font-size:.85rem;margin-top:6px" data-i18n="how.step4_desc"><span data-lang="en">Freshly grilled meats served continuously to your guests.</span><span data-lang="pt">Churrasco servido quentinho sem você se preocupar.</span></p>
       </div>
     </div>
   </div>
@@ -998,25 +967,25 @@
 <section class="section" id="ideal">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal"><span data-lang="en">PERFECT FOR</span><span data-lang="pt">IDEAL PARA</span></p>
-      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">Any occasion worth celebrating</span><span data-lang="pt">Qualquer ocasião que merece comemoração</span></h2>
+      <p class="section-label reveal" data-i18n="ideal.label"><span data-lang="en">EVENTS</span><span data-lang="pt">EVENTOS</span></p>
+      <h2 class="section-h2 reveal reveal-d1" data-i18n="ideal.title"><span data-lang="en">Events of all sizes</span><span data-lang="pt">Atendemos eventos de todos os tamanhos</span></h2>
     </div>
     <div class="ideal-grid">
       <div class="ideal-tile reveal">
         <span class="ideal-icon" aria-hidden="true">🏡</span>
-        <p class="ideal-title"><span data-lang="en">Backyard Gatherings</span><span data-lang="pt">Reuniões em Casa</span></p>
+        <p class="ideal-title" data-i18n="ideal.item1"><span data-lang="en">Backyard Gatherings</span><span data-lang="pt">Reuniões em Casa & Quintal</span></p>
       </div>
       <div class="ideal-tile reveal reveal-d1">
         <span class="ideal-icon" aria-hidden="true">🎂</span>
-        <p class="ideal-title"><span data-lang="en">Birthdays & Parties</span><span data-lang="pt">Aniversários</span></p>
+        <p class="ideal-title" data-i18n="ideal.item2"><span data-lang="en">Birthdays & Celebrations</span><span data-lang="pt">Aniversários & Comemorações</span></p>
       </div>
       <div class="ideal-tile reveal reveal-d2">
         <span class="ideal-icon" aria-hidden="true">💼</span>
-        <p class="ideal-title"><span data-lang="en">Corporate Events</span><span data-lang="pt">Confraternizações</span></p>
+        <p class="ideal-title" data-i18n="ideal.item3"><span data-lang="en">Corporate Events</span><span data-lang="pt">Confraternizações & Empresas</span></p>
       </div>
       <div class="ideal-tile reveal reveal-d3">
-        <span class="ideal-icon" aria-hidden="true">💍</span>
-        <p class="ideal-title"><span data-lang="en">Weddings & Receptions</span><span data-lang="pt">Casamentos</span></p>
+        <span class="ideal-icon" aria-hidden="true">🥩</span>
+        <p class="ideal-title" data-i18n="ideal.item4"><span data-lang="en">Family Parties</span><span data-lang="pt">Festas & Encontros de Família</span></p>
       </div>
     </div>
   </div>
@@ -1026,8 +995,8 @@
 <section class="section section-alt" id="reviews">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal"><span data-lang="en">TESTIMONIALS</span><span data-lang="pt">DEPOIMENTOS</span></p>
-      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">What clients say</span><span data-lang="pt">O que os clientes dizem</span></h2>
+      <p class="section-label reveal" data-i18n="reviews.label"><span data-lang="en">TESTIMONIALS</span><span data-lang="pt">DEPOIMENTOS</span></p>
+      <h2 class="section-h2 reveal reveal-d1" data-i18n="reviews.title"><span data-lang="en">What our Florida clients say</span><span data-lang="pt">O que dizem nossos clientes na Flórida</span></h2>
     </div>
 
     <div class="reviews-grid">
@@ -1038,15 +1007,15 @@
           <div class="review-img-fade"></div>
         </div>
         <div class="review-body">
-          <div class="review-stars" aria-label="5 out of 5 stars">
+          <div class="review-stars" aria-label="5 stars">
             <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
           </div>
-          <blockquote class="review-quote">
-            <span data-lang="en">"Bruno brought the whole experience to our backyard. The picanha was unbelievable — guests were literally lining up for seconds. Worth every cent."</span>
-            <span data-lang="pt">"Bruno trouxe a experiência completa para o nosso quintal. A picanha foi inacreditável — os convidados ficaram na fila para repetir. Valeu cada centavo."</span>
+          <blockquote class="review-quote" data-i18n="reviews.review1_quote">
+            <span data-lang="en">"Bruno brought the full Brazilian churrasco experience right to our backyard in Boca. Perfect Picanha and 10/10 service!"</span>
+            <span data-lang="pt">"O Carioca trouxe a experiência do verdadeiro churrasco brasileiro para a nossa casa em Boca Raton. Picanha no ponto perfeito e atendimento nota 10!"</span>
           </blockquote>
           <p class="review-name">Marcus A.</p>
-          <p class="review-meta">BOCA RATON, FL · <span data-lang="en">BIRTHDAY PARTY</span><span data-lang="pt">ANIVERSÁRIO</span></p>
+          <p class="review-meta" data-i18n="reviews.review1_meta">BOCA RATON, FL · <span data-lang="en">BIRTHDAY</span><span data-lang="pt">ANIVERSÁRIO</span></p>
         </div>
       </article>
 
@@ -1057,15 +1026,15 @@
           <div class="review-img-fade"></div>
         </div>
         <div class="review-body">
-          <div class="review-stars" aria-label="5 out of 5 stars">
+          <div class="review-stars" aria-label="5 stars">
             <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
           </div>
-          <blockquote class="review-quote">
-            <span data-lang="en">"We hired him for our company holiday party in West Palm. The setup was seamless, the food was incredible. Everyone kept asking where we found him."</span>
-            <span data-lang="pt">"Contratamos para nossa festa corporativa. A organização foi impecável, a comida incrível. Todo mundo perguntou onde encontramos ele."</span>
+          <blockquote class="review-quote" data-i18n="reviews.review2_quote">
+            <span data-lang="en">"We hired him for our company event in West Palm. Flawless organization, punctual, and top-tier meats!"</span>
+            <span data-lang="pt">"Contratamos para a confraternização da nossa empresa em West Palm. Organização impecável, pontualidade e carne de primeiríssima qualidade."</span>
           </blockquote>
           <p class="review-name">Jennifer L.</p>
-          <p class="review-meta">WEST PALM BEACH, FL · <span data-lang="en">CORPORATE EVENT</span><span data-lang="pt">EVENTO CORPORATIVO</span></p>
+          <p class="review-meta" data-i18n="reviews.review2_meta">WEST PALM BEACH, FL · <span data-lang="en">CORPORATE</span><span data-lang="pt">EVENTO CORPORATIVO</span></p>
         </div>
       </article>
 
@@ -1076,15 +1045,15 @@
           <div class="review-img-fade"></div>
         </div>
         <div class="review-body">
-          <div class="review-stars" aria-label="5 out of 5 stars">
+          <div class="review-stars" aria-label="5 stars">
             <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
           </div>
-          <blockquote class="review-quote">
-            <span data-lang="en">"I'm Brazilian and I was skeptical — until I tasted it. This is the real thing. Authentic churrasco the way my family makes it. Highly recommended."</span>
-            <span data-lang="pt">"Sou brasileiro e estava cético — até provar. Isso é de verdade. Churrasco autêntico do jeito que minha família faz. Recomendo muito."</span>
+          <blockquote class="review-quote" data-i18n="reviews.review3_quote">
+            <span data-lang="en">"Authentic churrasco just like back home in Brazil! So great to find this quality here in Miami. Highly recommend!"</span>
+            <span data-lang="pt">"Churrasco autêntico do jeito que a gente gosta no Brasil! Muito bom encontrar um profissional desse nível aqui em Miami. Recomendo demais!"</span>
           </blockquote>
           <p class="review-name">Rafael M.</p>
-          <p class="review-meta">MIAMI, FL · <span data-lang="en">FAMILY GATHERING</span><span data-lang="pt">REUNIÃO DE FAMÍLIA</span></p>
+          <p class="review-meta" data-i18n="reviews.review3_meta">MIAMI, FL · <span data-lang="en">FAMILY GATHERING</span><span data-lang="pt">REUNIÃO DE FAMÍLIA</span></p>
         </div>
       </article>
     </div>
@@ -1097,9 +1066,9 @@
         <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80&auto=format&fit=crop&faces=1" alt="" class="social-avatar" loading="lazy" aria-hidden="true"/>
         <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80&auto=format&fit=crop&faces=1" alt="" class="social-avatar" loading="lazy" aria-hidden="true"/>
       </div>
-      <p class="social-text">
-        <span data-lang="en"><strong>★ 5.0</strong> — Trusted by families, companies & couples across Florida</span>
-        <span data-lang="pt"><strong>★ 5.0</strong> — Escolhido por famílias, empresas e casais em toda a Flórida</span>
+      <p class="social-text" data-i18n-html="reviews.social">
+        <span data-lang="en"><strong>★ 5.0</strong> — Authentic Brazilian BBQ approved by families & companies across Florida!</span>
+        <span data-lang="pt"><strong>★ 5.0</strong> — Churrasco autêntico aprovado por famílias e empresas em toda a Flórida!</span>
       </p>
     </div>
   </div>
@@ -1109,11 +1078,11 @@
 <section class="section" id="area">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal"><span data-lang="en">SERVICE AREA</span><span data-lang="pt">ÁREA DE ATENDIMENTO</span></p>
-      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">We serve all of Florida</span><span data-lang="pt">Atendemos toda a Flórida</span></h2>
-      <p style="color:var(--smoke-400);margin-top:12px;font-size:.9rem" class="reveal reveal-d2">
-        <span data-lang="en">Based in Palm Beach County (561). Available statewide for larger events.</span>
-        <span data-lang="pt">Base em Palm Beach County (561). Disponíveis para todo o estado em eventos maiores.</span>
+      <p class="section-label reveal" data-i18n="area.label"><span data-lang="en">SERVICE AREA</span><span data-lang="pt">COBERTURA</span></p>
+      <h2 class="section-h2 reveal reveal-d1" data-i18n="area.title"><span data-lang="en">Serving all of Florida</span><span data-lang="pt">Atendimento em toda a Flórida</span></h2>
+      <p style="color:var(--smoke-400);margin-top:12px;font-size:.9rem" class="reveal reveal-d2" data-i18n="area.sub">
+        <span data-lang="en">Based in Palm Beach County (+1 561 403-4603). Available statewide for events.</span>
+        <span data-lang="pt">Base em Palm Beach County (+1 561 403-4603). Disponíveis para atendimento em todo o estado.</span>
       </p>
     </div>
     <div class="area-chips">
@@ -1140,26 +1109,26 @@
 <section class="section section-alt" id="quote">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal"><span data-lang="en">FREE QUOTE</span><span data-lang="pt">ORÇAMENTO GRÁTIS</span></p>
-      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">Let's plan your event</span><span data-lang="pt">Vamos planejar seu evento</span></h2>
-      <p style="color:var(--smoke-400);margin-top:12px;font-size:.9rem" class="reveal reveal-d2">
-        <span data-lang="en">Fill in the details and we'll reply on WhatsApp, usually within a few hours.</span>
-        <span data-lang="pt">Preencha os dados e respondemos no WhatsApp, geralmente em poucas horas.</span>
+      <p class="section-label reveal" data-i18n="quote.label"><span data-lang="en">FREE QUOTE</span><span data-lang="pt">SOLICITE SEU ORÇAMENTO</span></p>
+      <h2 class="section-h2 reveal reveal-d1" data-i18n="quote.title"><span data-lang="en">Request your Quote!</span><span data-lang="pt">Solicite seu ORÇAMENTO!</span></h2>
+      <p style="color:var(--smoke-400);margin-top:12px;font-size:.9rem" class="reveal reveal-d2" data-i18n="quote.sub">
+        <span data-lang="en">Fast & personalized service. Fill in the details and we'll reply immediately on WhatsApp.</span>
+        <span data-lang="pt">Atendimento rápido e personalizado. Preencha os dados e respondemos imediatamente no WhatsApp.</span>
       </p>
     </div>
     <div class="form-wrap reveal">
       <form id="quote-form" novalidate onsubmit="handleQuote(event)">
         <div class="form-grid">
           <div class="form-field">
-            <label for="event-date"><span data-lang="en">Event Date</span><span data-lang="pt">Data do Evento</span></label>
+            <label for="event-date" data-i18n="quote.field_date"><span data-lang="en">Event Date</span><span data-lang="pt">Data do Evento</span></label>
             <input type="date" id="event-date" name="date" class="form-control" required />
           </div>
           <div class="form-field">
-            <label for="event-city"><span data-lang="en">City / Area</span><span data-lang="pt">Cidade / Região</span></label>
-            <input type="text" id="event-city" name="city" class="form-control" placeholder="e.g. Boca Raton" required />
+            <label for="event-city" data-i18n="quote.field_city"><span data-lang="en">Florida City / Area</span><span data-lang="pt">Cidade / Região na Flórida</span></label>
+            <input type="text" id="event-city" name="city" class="form-control" placeholder="e.g. Boca Raton, Miami" required />
           </div>
           <div class="form-field">
-            <label for="event-guests"><span data-lang="en">Est. Guests</span><span data-lang="pt">Convidados Estimados</span></label>
+            <label for="event-guests" data-i18n="quote.field_guests"><span data-lang="en">Guest Count</span><span data-lang="pt">Número de Convidados</span></label>
             <select id="event-guests" name="guests" class="form-control" required>
               <option value="" disabled selected><span data-lang="en">Select…</span><span data-lang="pt">Escolha…</span></option>
               <option value="1–10">1–10</option>
@@ -1170,20 +1139,20 @@
             </select>
           </div>
           <div class="form-field">
-            <label for="event-grill"><span data-lang="en">Have a grill?</span><span data-lang="pt">Tem churrasqueira?</span></label>
+            <label for="event-grill" data-i18n="quote.field_grill"><span data-lang="en">Grill on site?</span><span data-lang="pt">Tem churrasqueira no local?</span></label>
             <select id="event-grill" name="grill" class="form-control">
-              <option value="yes"><span data-lang="en">Yes</span><span data-lang="pt">Sim</span></option>
-              <option value="no"><span data-lang="en">No — bring one</span><span data-lang="pt">Não — pode trazer</span></option>
+              <option value="yes" data-i18n="quote.grill_yes"><span data-lang="en">Yes, grill available</span><span data-lang="pt">Sim, tenho churrasqueira</span></option>
+              <option value="no" data-i18n="quote.grill_no"><span data-lang="en">No — please bring setup</span><span data-lang="pt">Não — preciso que leve a estrutura</span></option>
             </select>
           </div>
           <div class="form-field form-full">
-            <label for="event-notes"><span data-lang="en">Meats & notes (optional)</span><span data-lang="pt">Carnes e observações (opcional)</span></label>
-            <textarea id="event-notes" name="notes" class="form-control" placeholder="Picanha, sausage, vegetarian sides…" rows="3"></textarea>
+            <label for="event-notes" data-i18n="quote.field_notes"><span data-lang="en">Meats & notes (optional)</span><span data-lang="pt">Carnes e observações (opcional)</span></label>
+            <textarea id="event-notes" name="notes" class="form-control" placeholder="Picanha, sausage, garlic bread, preferences..." rows="3"></textarea>
           </div>
         </div>
         <button type="submit" class="form-submit">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          <span data-lang="en">Get My Free Quote on WhatsApp</span><span data-lang="pt">Pedir Orçamento no WhatsApp</span>
+          <span data-i18n="quote.submit"><span data-lang="en">Request Quote on WhatsApp</span><span data-lang="pt">Pedir Orçamento no WhatsApp</span></span>
         </button>
       </form>
     </div>
@@ -1198,19 +1167,23 @@
     <div class="footer-top">
       <div>
         <p class="footer-brand-name">BBQ do Carioca</p>
-        <p class="footer-brand-sub">
-          <span data-lang="en">Authentic Brazilian churrasco with flavor, quality and service in Florida.</span>
-          <span data-lang="pt">Churrasco brasileiro com sabor, qualidade e atendimento na Flórida.</span>
+        <p class="footer-brand-sub" data-i18n="footer.sub">
+          <span data-lang="en">Authentic Brazilian churrasco with flavor, quality and service across Florida.</span>
+          <span data-lang="pt">O Verdadeiro Churrasco Brasileiro com sabor, qualidade e atendimento em toda a Flórida.</span>
+        </p>
+        <p style="color:var(--ember-500);font-size:.85rem;margin-top:6px;font-style:italic" data-i18n="footer.slogan">
+          <span data-lang="en">"More than a barbecue, an unforgettable experience!"</span>
+          <span data-lang="pt">"Mais que um churrasco, uma experiência inesquecível!"</span>
         </p>
       </div>
       <div class="footer-contact">
         <p style="font-family:'IBM Plex Mono',monospace;color:var(--cream-50);margin-bottom:4px">+1 (561) 403-4603</p>
         <p>Florida – USA</p>
-        <p style="margin-top:10px"><a href="https://wa.me/15614034603" target="_blank" rel="noopener">WhatsApp</a></p>
+        <p style="margin-top:10px"><a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27d%20like%20a%20quote%20for%20my%20event." target="_blank" rel="noopener">WhatsApp</a></p>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 BBQ do Carioca. All rights reserved.</p>
+      <p data-i18n="footer.rights">© 2026 BBQ do Carioca. <span data-lang="en">All rights reserved. Fast & Personalized Service.</span><span data-lang="pt">Todos os direitos reservados. Atendimento Rápido e Personalizado.</span></p>
       <div class="footer-lang">
         <button id="footer-lang-en" class="footer-lang-btn">English</button>
         <button id="footer-lang-pt" class="footer-lang-btn">Português</button>
@@ -1223,34 +1196,15 @@
 <div class="wa-widget">
   <div id="wa-bubble" class="wa-bubble">
     <button class="wa-close" id="wa-close" aria-label="Close notification">×</button>
-    <span data-lang="en">Let's chat about your event!</span>
-    <span data-lang="pt">Vamos conversar sobre seu evento?</span>
+    <span data-i18n="wa.bubble"><span data-lang="en">Request a quote on WhatsApp!</span><span data-lang="pt">Solicite seu ORÇAMENTO no WhatsApp!</span></span>
   </div>
   <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27d%20like%20a%20quote%20for%20my%20event." target="_blank" rel="noopener" class="wa-btn" aria-label="Chat on WhatsApp">
     <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
   </a>
 </div>
 
+<script src="js/i18n.js"></script>
 <script>
-/* ── LANGUAGE ── */
-function setLang(lang) {
-  document.documentElement.lang = lang;
-  try { localStorage.setItem('bbq-lang', lang); } catch(e){}
-  ['lang-en', 'footer-lang-en'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('active', lang === 'en');
-  });
-  ['lang-pt', 'footer-lang-pt'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('active', lang === 'pt');
-  });
-}
-document.getElementById('lang-en')?.addEventListener('click', () => setLang('en'));
-document.getElementById('lang-pt')?.addEventListener('click', () => setLang('pt'));
-document.getElementById('footer-lang-en')?.addEventListener('click', () => setLang('en'));
-document.getElementById('footer-lang-pt')?.addEventListener('click', () => setLang('pt'));
-try { if (localStorage.getItem('bbq-lang') === 'pt') setLang('pt'); } catch(e){}
-
 /* ── MOBILE MENU ── */
 const mobMenu = document.getElementById('mob-menu');
 const mobToggle = document.getElementById('mob-toggle');
