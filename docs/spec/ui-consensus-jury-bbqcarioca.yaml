@@ -1,0 +1,60 @@
+# BBQ Carioca UI Consensus Jury
+# Framework mandatório de decisões visuais e técnicas para os 3 Portais (Tri-Tenant SPA)
+# A inteligência artificial DEVE ler este arquivo (ou recuperá-lo via DAG) ANTES de codar qualquer componente.
+
+version: "1.0.0"
+governance: "medido=verdade"
+architecture: "Tri-Tenant React 19 SPA (Vite + Cloudflare Assets)"
+
+core_skills_required:
+  - id: "shadcn-ui"
+    role: "Componentização base (Atoms/Molecules)"
+    rules:
+      - "Nenhum componente de terceiros inchado. Copiar, colar e adaptar radix-ui + tailwind."
+      - "Composição total usando `asChild` via `@radix-ui/react-slot`."
+      - "Acessibilidade WCAG 2.1 AA obrigatória (`aria-invalid`, `sr-only`)."
+  
+  - id: "ui-ux-pro-max"
+    role: "Hierarquia Visual e Tipografia"
+    rules:
+      - "Thumb Zone Absolute: Botões de ação críticos ('Aprovar Orçamento', 'Aceitar Evento') SEMPRE na metade inferior (Bottom Sheet ou FAB)."
+      - "Proibido div soup. Usar `grid` e `flex` semântico."
+      - "Proibido `space-y-*` ou `space-x-*` do Tailwind. Usar EXCLUSIVAMENTE `gap-*`."
+      - "Ícones e Avatares usam `size-*` (ex: `size-10`)."
+
+  - id: "color-expert"
+    role: "Semântica de Cores (Theming)"
+    rules:
+      - "Proibido hardcodar cores nominais fora do branding (ex: `bg-blue-500`). Usar variáveis CSS (Tailwind v4) como `bg-primary`, `bg-destructive`."
+      - "Modo Escuro Native-First: Fundos `bg-zinc-950` a `bg-zinc-900`, com bordas sutis `border-zinc-800`."
+
+mobile_first_mandates:
+  - "Qualquer UI projetada deve começar assumindo a largura `max-w-sm` (Mobile Screen)."
+  - "Menu Horizontal/Vertical Desktop deve obrigatoriamente colapsar para 'Bottom Navigation Bar' ou 'Drawer Hamburger' em telas `< 768px`."
+  - "Tabelas complexas mudam para exibição em 'Cards' responsivos em telas pequenas, ou habilitam `overflow-x-auto` isolado."
+
+tenant_specific_layouts:
+  admin:
+    domain: "admin.bbqcarioca.work"
+    user_id: "Manager"
+    layout: "VerticalLayout"
+    vibe: "Control Plane Executivo. Denso, técnico, métricas precisas. Menus laterais, DataGrids."
+    brand_accent: "Indigo / Primary Brand"
+  
+  careers:
+    domain: "careers.bbqcarioca.work"
+    user_id: "Pitmaster / Staff"
+    layout: "BlankLayout + BottomNav"
+    vibe: "Aplicativo Mobile de Missões. Focado em tarefas, feed vertical de cards, botão gigante de 'Aceitar Missão'."
+    brand_accent: "Amber / Fire (bg-amber-500/10 glows)"
+
+  portal:
+    domain: "portal.bbqcarioca.work"
+    user_id: "Customer"
+    layout: "BlankLayout + Centered Form"
+    vibe: "Elegante, focado em conversão e confiança. Vidro escuro (Glassmorphism), check-out experience."
+    brand_accent: "Blue / Trust (bg-blue-500/10 glows)"
+
+execution_trigger:
+  prompt: "Use o ui-ux-pro-max, o shadcn-ui e o color-expert para construir a Sidebar do Admin"
+  action: "O Agente invocará o DAG, cruzará com este arquivo YAML e com a ADR-0007, e gerará React TSX semântico seguindo a cartilha."
