@@ -1,7 +1,7 @@
 # Implementation Plan: BBQ Carioca SuperAdmin Dashboard (Fase 3 UI/UX)
 
 ## 1. Visão Geral (Sovereign Dashboard UX)
-O Dashboard Operacional (`admin.bbqcarioca.work`) atuará como o **Control Plane 360** da operação logística. Ele herdará diretamente as diretrizes visuais e ergonômicas estabelecidas no *Adsentice OS*, utilizando os mesmos padrões de Bento Grid, Glassmorphism e Semantic Motion.
+O Dashboard Operacional (`admin.bbqdocarioca.work`) atuará como o **Control Plane 360** da operação logística. Ele herdará diretamente as diretrizes visuais e ergonômicas estabelecidas no *Adsentice OS*, utilizando os mesmos padrões de Bento Grid, Glassmorphism e Semantic Motion.
 
 Este documento aprofunda os padrões de interface da **Fase 3** (O Módulo Administrativo).
 

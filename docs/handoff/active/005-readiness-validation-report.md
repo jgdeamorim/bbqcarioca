@@ -28,7 +28,7 @@ As documentações mais recentes foram consultadas via MCP Context7 para evitar 
 
 ## 3. Auditoria DAG (Knowledge Graph)
 
-O rastreamento via `adsentice_conversation_search` e do corpus `bbqcarioca-self` atesta que:
+O rastreamento via `adsentice_conversation_search` e do corpus `bbqdocarioca-self` atesta que:
 1. **Infraestrutura:** Os limites do Free Tier da Cloudflare (D1 5M reads/day, R2 10GB/month) suportam a carga matemática e lógica dos nós do Triângulo Logístico sem invocar cobranças inesperadas. O envio arbitrário de Email foi isolado para a fase paga.
 2. **Compliance Legal:** PII sensível (SSN) e auto-retenções crônicas foram rechaçadas e a ADR-0005 agora reflete exatamente o documento fundador.
 3. **Design System:** A herança da experiência do usuário (Glassmorphism, Bento Grid) tem rastreabilidade completa até a raiz de UI do Adsentice (ADR-0093 / ADR-0101).

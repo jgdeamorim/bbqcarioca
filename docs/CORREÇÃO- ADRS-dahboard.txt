@@ -1,0 +1,862 @@
+2. O maior problema: a ADR ficou para trás do nosso escopo
+
+A documentação descreve:
+
+Careers
+   ↓
+Candidate
+   ↓
+Talent
+   ↓
+Matching
+
+Mas o que nós definimos posteriormente é:
+
+CUSTOMER
+   ↓
+SERVICE REQUEST
+   ↓
+PRICING
+   ↓
+REGIONAL MANAGER
+   ↓
+QUOTE
+   ↓
+STRIPE PAYMENT
+   ↓
+EVENT
+   ↓
+SMART SCHEDULING
+   ↓
+TALENT
+   ↓
+CROSS-DOCK / LOCATION
+   ↓
+STAFF ASSIGNMENT
+   ↓
+EVENT
+   ↓
+FEEDBACK
+   ↓
+QUALITY SCORE
+   ↓
+GOOGLE REVIEW
+
+E ainda:
+
+STAFF
+   ↓
+PERFORMANCE
+   ↓
+RELIABILITY SCORE
+   ↓
+FUTURE MATCHING
+
+Nada disso está adequadamente representado na ADR atual.
+
+Portanto, eu não jogaria fora a ADR. Eu faria uma ADR-0005 v2.
+
+3. O modelo de domínio precisa ser corrigido
+
+A ADR fala muito em talents, locations e workers.
+
+Eu acho que isso é insuficiente.
+
+O núcleo deveria ser:
+
+Person
+│
+├── Candidate
+├── Talent
+└── Provider
+
+Depois:
+
+Person
+  │
+  ├── Skills
+  ├── Certifications
+  ├── Availability
+  ├── Locations
+  └── Communication Preferences
+
+E separadamente:
+
+Customer
+ServiceRequest
+Quote
+Order
+Event
+StaffRequirement
+Assignment
+Payment
+Feedback
+Review
+
+Essa separação é fundamental.
+
+4. Está faltando o ServiceRequest
+
+Esse é, na minha opinião, o maior objeto ausente na ADR.
+
+Nós estabelecemos que o sistema não será apenas um banco de talentos.
+
+O objeto central comercial deveria ser:
+
+SERVICE REQUEST
+
+Exemplo:
+
+Service:
+BBQ Catering
+
+
+Location:
+Fort Lauderdale
+
+
+Date:
+2026-09-05
+
+
+Guests:
+120
+
+
+Duration:
+5 hours
+
+
+Requested staff:
+7
+
+A partir disso:
+
+ServiceRequest
+      ↓
+Pricing Engine
+      ↓
+Quote
+      ↓
+Manager Approval
+      ↓
+Payment
+      ↓
+Event
+
+Sem esse objeto, o restante fica artificialmente centrado no candidato.
+
+5. Está faltando Pricing
+
+Nós já definimos um sistema de preços.
+
+A ADR deveria ter:
+
+Pricing Engine
+
+com:
+
+Service Price
+Staff Cost
+Equipment Cost
+Travel Cost
+Cross-Dock Cost
+Discount
+Tax
+Margin
+
+E:
+
+Quote
+
+com:
+
+DRAFT
+PENDING_APPROVAL
+APPROVED
+SENT
+ACCEPTED
+EXPIRED
+CANCELLED
+
+Isso também conecta diretamente ao gerente regional.
+
+6. Está faltando Regional Manager / RBAC
+
+A documentação fala em:
+
+SuperAdmin Zero Trust
+
+Isso é correto, mas insuficiente.
+
+Precisamos de:
+
+SUPERADMIN
+    │
+    ├── REGIONAL_MANAGER
+    │
+    └── OPERATIONS_ADMIN
+
+E eventualmente:
+
+REGIONAL_MANAGER
+    │
+    └── Florida
+
+Isso precisa entrar no modelo de autorização.
+
+Não basta simplesmente:
+
+JWT válido = administrador
+
+Precisamos:
+
+Authenticated
+      ↓
+Identity
+      ↓
+Role
+      ↓
+Region
+      ↓
+Permission
+
+Exemplo:
+
+Bruno
+role = REGIONAL_MANAGER
+region = FLORIDA
+permissions =
+    quote.read
+    quote.approve
+    event.manage
+    talent.read
+    assignment.manage
+7. Zero Trust JWT: a ideia está certa, mas o código da ADR está incompleto
+
+A ADR fala:
+
+verifyZeroTrustJWT()
+
+Isso está correto conceitualmente.
+
+Mas não podemos tratar simplesmente:
+
+ZERO_TRUST_AUDIENCE
+
+como se fosse suficiente.
+
+A documentação oficial da Cloudflare determina a validação do Cf-Access-Jwt-Assertion usando as chaves públicas do Access e a verificação da audiência (AUD). A própria Cloudflare recomenda validar o header JWT, e não depender apenas do cookie.
+
+Então nosso middleware deverá validar pelo menos:
+
+signature
+issuer
+audience
+expiration
+not-before
+
+e depois aplicar autorização de aplicação:
+
+role
+region
+permission
+
+Isso precisa ser explicitado na ADR.
+
+8. O Haversine está correto, mas existe um erro conceitual
+
+A ADR diz:
+
+Haversine + estimatedTravelMinutes baseado em 35 mph.
+
+O Haversine é excelente para o MVP.
+
+Mas:
+
+estimatedTravelMinutes = miles / 35
+
+não é Travel Time real.
+
+É:
+
+estimated_drive_time_heuristic
+
+Eu renomearia.
+
+Porque posteriormente teremos:
+
+Straight-line distance
+        ↓
+Heuristic travel estimate
+        ↓
+Driving distance
+        ↓
+Driving ETA
+
+Isso é importante porque você mesmo identificou que trânsito e rodovias da Flórida importam.
+
+Não devemos documentar uma estimativa de 35 mph como "Travel Time" real.
+
+9. E o algoritmo de matching está simplificado demais
+
+A ADR atual praticamente reduz:
+
+Distance
+Travel Time
+
+a um Distance Score.
+
+Nós definimos algo muito mais rico:
+
+MATCH SCORE
+│
+├── Role Match
+├── Skill Match
+├── Availability
+├── Location
+├── Travel Time
+├── Service Area
+├── Experience
+├── Language
+├── Reliability
+├── Event Experience
+└── Conflict Detection
+
+E principalmente:
+
+MATCH SCORE
+      ↓
+RECOMMENDATION
+      ↓
+HUMAN APPROVAL
+
+Não:
+
+MATCH SCORE
+      ↓
+AUTOMATIC HIRING
+
+Isso deveria ficar explícito.
+
+10. Cross-Dock está bom, mas precisa virar entidade de domínio
+
+A ADR já percebeu isso corretamente.
+
+Mas eu iria além:
+
+Hub
+├── Location
+├── Capacity
+├── Operating Hours
+├── Pickup Windows
+├── Staff Capacity
+├── Equipment Capacity
+└── Service Area
+
+E:
+
+Candidate
+     ↓
+Candidate → Hub
+     ↓
+Hub → Event
+
+Não devemos presumir que todo candidato obrigatoriamente passa pelo Hub.
+
+Existem três modos:
+
+DIRECT
+CANDIDATE → EVENT
+
+
+HUB
+CANDIDATE → HUB → EVENT
+
+
+MULTI_HUB
+CANDIDATE → HUB A → HUB B → EVENT
+
+Isso torna o motor logístico muito mais robusto.
+
+11. R2 está bom, mas a política de upload precisa ser mais explícita
+
+A ADR diz:
+
+R2 exclusivamente para fotos/portfólio/certificações.
+
+Isso é uma decisão nova, e eu gosto dela.
+
+Mas precisamos especificar:
+
+allowed MIME
+max file size
+object naming
+expiration
+private/public
+virus/malware scanning strategy
+retention
+authorization
+
+E principalmente:
+
+Presigned URL é bearer token.
+
+A Cloudflare alerta que qualquer pessoa com a URL pode utilizá-la até expirar. Também recomenda limitar Content-Type e configurar CORS adequadamente.
+
+Portanto:
+
+POST /upload-url
+        ↓
+authorization
+        ↓
+generate short-lived URL
+        ↓
+PUT R2
+        ↓
+confirm object
+        ↓
+D1
+
+e não simplesmente:
+
+give candidate R2 URL
+12. A parte de D1 está correta
+
+Aqui a documentação está boa.
+
+O uso de:
+
+env.DB.batch([...])
+
+é válido e a documentação atual do D1 confirma que batches são executados sequencialmente e funcionam como transações: se uma instrução falha, a sequência é abortada/revertida.
+
+Também continuam válidos os limites Free documentados atualmente: 5 milhões de rows read/dia, 100 mil rows written/dia e 5 GB de storage.
+
+13. O Free Tier está corretamente pensado
+
+A documentação está alinhada com o que verificamos.
+
+Cloudflare Workers Free atualmente:
+
+100 mil requests/dia;
+D1 disponível;
+R2 Free com 10 GB;
+egress R2 sem cobrança;
+Workers Paid começa em US$5/mês.
+
+D1 também permanece disponível no Free para prototipagem/experimentação.
+
+Então a estratégia:
+
+Fase 0 = $0
+Fase 1 = $5
+
+continua coerente.
+
+14. O e-mail está correto, mas falta entrar no modelo
+
+A ADR menciona e-mail no roadmap, mas nós já decidimos algo mais específico:
+
+Canal oficial
+EMAIL
+Opcional
+WHATSAPP
+SMS
+PHONE
+
+E a Cloudflare atualmente confirma:
+
+Email Routing → Free;
+envio para destinatários arbitrários → Workers Paid;
+Workers Paid → 3.000 outbound emails/mês incluídos.
+
+Portanto eu colocaria:
+
+Communication
+├── Email
+├── WhatsApp
+├── SMS
+└── Phone
+
+e:
+
+preferred_contact_method
+
+no perfil.
+
+15. Stripe está completamente ausente
+
+Isso precisa entrar na próxima versão da ADR.
+
+Nós já decidimos:
+
+V1
+Stripe Checkout
+      ↓
+Payment
+      ↓
+Webhook
+      ↓
+D1
+V2
+Stripe Connect
+      ↓
+Providers
+      ↓
+Payouts
+
+A Stripe confirma que Connect é justamente destinado a plataformas que movimentam pagamentos entre clientes, plataforma e prestadores, incluindo onboarding, pagamentos e payouts.
+
+E os webhooks devem alimentar o estado financeiro do sistema; a Stripe documenta eventos como payment_intent.succeeded e charge.dispute.created.
+
+Então eu adicionaria:
+
+Payment
+Refund
+Dispute
+Payout
+FinancialTransaction
+16. Precisamos separar Order State de Payment State
+
+Isso é essencial.
+
+ORDER
+DRAFT
+QUOTED
+APPROVED
+BOOKED
+COMPLETED
+CANCELLED
+
+e:
+
+PAYMENT
+UNPAID
+PARTIALLY_PAID
+PAID
+REFUNDED
+PARTIALLY_REFUNDED
+FAILED
+DISPUTED
+
+Não misturar.
+
+17. Feedback e reputação também estão ausentes
+
+Nós já definimos:
+
+Customer Feedback
+Staff Feedback
+Event Quality
+Reliability Score
+Google Review
+
+A ADR precisa ter isso.
+
+Fluxo:
+
+EVENT COMPLETED
+       │
+       ├── Customer Feedback
+       │
+       └── Staff Feedback
+               │
+               ▼
+          Quality Score
+               │
+               ▼
+        Matching Engine
+
+E:
+
+Customer
+   ↓
+Feedback
+   ↓
+Google Review Invitation
+
+Mas sem review gating.
+
+Ou seja, não:
+
+5 estrelas → Google
+1 estrela → esconder
+
+O convite público deve ser neutro.
+
+18. O retention_until está muito melhor que hardcode
+
+Essa parte eu aprovo.
+
+A ADR corrigiu uma preocupação que tínhamos levantado:
+
+retention_until
+
+em vez de:
+
+if rejected > 180 days
+
+Isso é muito melhor.
+
+Mas eu mudaria:
+
+"deleção ao fim do período contratual de exclusividade"
+
+porque isso pode não ser a justificativa correta para todas as categorias de dados.
+
+Melhor:
+
+retention_policy
+retention_until
+deletion_reason
+legal_hold
+
+Assim a política fica configurável por categoria.
+
+19. "Zero-PDF Friction" é uma boa decisão, mas não proibiria PDF para sempre
+
+Eu escreveria:
+
+MVP não exige currículo em PDF.
+
+Não:
+
+"PDF é proibido."
+
+Porque futuramente podemos receber:
+
+currículo;
+portfolio;
+food certifications;
+insurance certificate;
+business documents.
+
+Então:
+
+Structured profile = primary
+R2 documents = optional
+
+é melhor.
+
+20. Está faltando Audit Log
+
+Eu colocaria como requisito obrigatório:
+
+audit_logs
+──────────────
+actor_id
+action
+entity_type
+entity_id
+before
+after
+ip
+created_at
+
+Exemplo:
+
+Bruno
+APPROVED
+Candidate #182
+2026-08-18
+
+ou:
+
+Manager
+CHANGED_PRICE
+Quote #1024
+$2,900 → $3,100
+
+Isso é importantíssimo quando entrarmos em pricing + payments + staff assignments.
+
+21. Está faltando idempotência
+
+Principalmente para:
+
+Stripe webhook;
+candidatura;
+upload confirmation;
+assignment;
+notifications.
+
+Por exemplo:
+
+Stripe webhook
+event_id = evt_123
+
+Se chegar duas vezes:
+
+evt_123
+evt_123
+
+não podemos registrar o pagamento duas vezes.
+
+Precisamos:
+
+processed_webhook_events
+
+ou mecanismo equivalente.
+
+22. Está faltando observabilidade
+
+Eu adicionaria:
+
+request_id
+correlation_id
+error_code
+created_at
+
+E logs estruturados.
+
+Especialmente:
+
+Service Request
+      ↓
+Quote
+      ↓
+Payment
+      ↓
+Event
+      ↓
+Assignment
+
+Todos devem poder ser rastreados pelo mesmo correlation_id.
+
+23. E eu não colocaria JWT próprio
+
+A ADR menciona:
+
+JWT
+
+Eu deixaria claro:
+
+Não estamos criando nosso sistema próprio de autenticação JWT.
+
+Usaremos:
+
+Cloudflare Access
+      ↓
+Access JWT
+      ↓
+Worker validation
+
+Isso é uma diferença arquitetural importante.
+
+Minha avaliação da ADR atual
+
+Eu daria:
+
+Área	Avaliação
+Cloudflare architecture	9/10
+D1/R2	9/10
+Security foundation	8/10
+Careers MVP	8/10
+Location Intelligence	7/10
+Smart Matching	6/10
+Scheduling	5/10
+Commercial/Pricing	2/10
+Stripe/Payments	0/10
+Feedback/Reputation	0/10
+Regional management	4/10
+Full business model	5/10
+
+Não porque o documento esteja ruim. Ele simplesmente foi congelado antes de terminarmos de expandir o conceito.
+
+O que eu faria agora
+
+Eu não começaria a codificar baseado nessa ADR exatamente como está.
+
+Eu criaria:
+
+ADR-0005 v2 — Sovereign BBQ Talent & Field-Service Operations OS
+
+Com estes domínios:
+
+01 Identity & Access
+02 People & Talent
+03 Skills & Certifications
+04 Availability
+05 Locations
+06 Hubs / Cross-Docks
+07 Customers
+08 Service Requests
+09 Pricing
+10 Quotes
+11 Regional Management
+12 Events
+13 Smart Scheduling
+14 Smart Matching
+15 Assignments
+16 Payments
+17 Stripe
+18 Provider Settlements
+19 Communications
+20 Customer Feedback
+21 Staff Feedback
+22 Reputation / Reviews
+23 Documents / R2
+24 Retention / Privacy
+25 Audit / Observability
+
+E o modelo conceitual principal:
+
+                         CUSTOMER
+                            │
+                            ▼
+                     SERVICE REQUEST
+                            │
+                            ▼
+                         PRICING
+                            │
+                            ▼
+                     REGIONAL MANAGER
+                            │
+                            ▼
+                          QUOTE
+                            │
+                            ▼
+                         STRIPE
+                            │
+                            ▼
+                          EVENT
+                            │
+                 ┌──────────┴──────────┐
+                 ▼                     ▼
+          SMART MATCHING          SCHEDULING
+                 │                     │
+                 └──────────┬──────────┘
+                            ▼
+                    STAFF ASSIGNMENTS
+                            │
+                 ┌──────────┴──────────┐
+                 ▼                     ▼
+              TALENT                 HUB
+                 │                     │
+                 └──────────┬──────────┘
+                            ▼
+                          EVENT
+                            │
+                            ▼
+                       COMPLETED
+                            │
+                 ┌──────────┴──────────┐
+                 ▼                     ▼
+             CUSTOMER               STAFF
+             FEEDBACK               FEEDBACK
+                 │                     │
+                 └──────────┬──────────┘
+                            ▼
+                    QUALITY / RELIABILITY
+                            │
+                            ▼
+                     FUTURE MATCHING
+E um princípio que eu colocaria no topo da ADR:
+
+The platform does not merely recruit people. It converts customer service requests into priced, approved, paid, geographically feasible, staffed, executed, and evaluated events.
+
+Esse é o contexto semântico correto da plataforma que construímos juntos.
+
+A ADR anexada é uma boa fundação de infraestrutura, mas o contexto semântico dela ainda está estreito demais. Ela descreve muito bem como hospedar o sistema, porém ainda não descreve completamente o que o sistema é.
+
+Eu considero essa a principal correção antes de avançarmos para schema D1, endpoints e UI do dashboard.

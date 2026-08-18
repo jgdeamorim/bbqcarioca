@@ -1,0 +1,2782 @@
+Sim. Podemos começar e operar o MVP inteiro no plano Free da Cloudflare, e eu inclusive acho que devemos fazer assim para o BBQ do Carioca neste estágio.
+
+Verifiquei os limites atuais da Cloudflare para 2026.
+
+O stack que caberia no Free
+Componente	Free atualmente	Para nosso MVP
+Cloudflare Workers	100.000 requests/dia	Mais que suficiente
+D1	5 milhões rows lidas/dia	Mais que suficiente
+D1	100.000 rows escritas/dia	Mais que suficiente
+D1 storage	5 GB	Muito suficiente inicialmente
+R2	10 GB	Ótimo para currículos/fotos inicialmente
+R2 operações	1M Class A + 10M Class B/mês	Muito suficiente
+Egress R2	Grátis	Excelente
+Workers Builds	3.000 min/mês	Suficiente
+Zero Trust/Access	Pode ser usado para proteger o painel	Adequado ao MVP
+
+Os números de D1 e R2 são particularmente confortáveis para nosso caso.
+
+Então eu faria exatamente assim
+                 BBQ DO CARIOCA
+                       │
+          ┌────────────┴────────────┐
+          │                         │
+       WEBSITE                  ADMIN
+          │                         │
+          ▼                         ▼
+     Cloudflare                 Zero Trust
+          │                         │
+          └────────────┬────────────┘
+                       ▼
+                  Worker API
+                       │
+             ┌─────────┴─────────┐
+             ▼                   ▼
+            D1                   R2
+       dados estruturados     arquivos
+
+Custo inicial: $0/mês, desde que permaneçamos dentro das cotas Free.
+
+E tem uma característica importante: a própria documentação da Cloudflare confirma que o D1 continua disponível no Workers Free para prototipagem e experimentação. Quando uma conta Free ultrapassa os limites diários, as queries passam a retornar erro até o reset; não é simplesmente uma cobrança surpresa.
+
+Onde eu colocaria o limite
+
+Eu não tentaria colocar tudo no Free indefinidamente.
+
+Quando o BBQ começar a ter, por exemplo:
+
+grande volume de candidatos;
+muitos uploads;
+tráfego elevado;
+centenas/milhares de operações administrativas;
+necessidade de processamento mais pesado;
+automações mais sofisticadas;
+
+aí avaliamos migrar para Workers Paid, que atualmente começa em US$5/mês.
+
+Mas não existe motivo técnico para pagar US$5 agora só para construir o sistema.
+
+E isso muda uma decisão anterior
+
+Eu retiro a necessidade de db.json como solução do MVP.
+
+Podemos começar diretamente com:
+
+TypeScript → Worker → D1
+
+e manter db.json somente como mock local/teste.
+
+Isso é melhor porque não teremos que migrar o sistema quando o primeiro candidato real entrar.
+
+Minha sugestão é construirmos primeiro um MVP extremamente pequeno, com apenas:
+
+/careers
+    ↓
+formulário
+    ↓
+POST /api/applications
+    ↓
+D1
+
+
+/admin
+    ↓
+Cloudflare Access
+    ↓
+lista de candidatos
+    ↓
+visualizar
+    ↓
+aprovar / rejeitar
+
+Depois adicionamos Chef / Caterer / Services / R2 / documentos sem quebrar essa base.
+
+E eu manteria uma preocupação desde o início: como estaremos armazenando dados pessoais de candidatos, a arquitetura deve nascer com minimização de dados, controle de acesso, retenção e auditoria em mente — não como um formulário improvisado que depois tentamos tornar seguro.
+
+
+
+
+----
+
+
+
+eu faria uma distinção importante: não precisamos escolher WhatsApp OU e-mail. Podemos desenhar o sistema para que e-mail seja o canal oficial inicial e WhatsApp seja um canal opcional de contato/convocação.
+
+E os dados atuais não sustentam a ideia de que "americano não usa WhatsApp". O uso é menor que em muitos países latino-americanos, mas em 2025 cerca de um terço dos adultos nos EUA declarou usar WhatsApp; entre hispânicos, a proporção foi bem maior, 56%.
+
+Para o nosso público potencial — brasileiros trabalhando ou buscando oportunidades na Flórida — WhatsApp pode ser particularmente útil.
+
+Eu estruturaria assim
+                    CANDIDATO
+                       │
+                 /careers
+                       │
+                Application
+                       │
+          ┌────────────┴────────────┐
+          │                         │
+       E-MAIL                   TELEFONE
+       obrigatório              opcional
+          │                         │
+          ▼                         ▼
+       D1 database             WhatsApp
+          │                    (se houver)
+          │
+          ▼
+    SUPERADMIN
+          │
+     ┌────┴─────┐
+     ▼          ▼
+   EMAIL     WHATSAPP
+   futuro     opcional
+Na primeira versão
+
+Eu colocaria:
+
+Obrigatório
+
+Nome
+E-mail
+Cidade
+Estado
+Área de interesse
+Experiência
+Disponibilidade
+Idiomas
+Autorização para trabalhar, quando necessário
+Consentimento apropriado
+
+Opcional
+
+Telefone
+WhatsApp
+LinkedIn
+Instagram
+Currículo
+
+Assim você não exclui um americano que não usa WhatsApp.
+
+E tem uma vantagem arquitetural muito boa
+
+Não precisamos criar "WhatsApp integration" agora.
+
+No banco podemos simplesmente ter:
+
+candidate
+├── email
+├── phone
+├── whatsapp_phone
+└── preferred_contact_method
+
+Com:
+
+preferred_contact_method
+
+
+EMAIL
+SMS
+WHATSAPP
+PHONE
+
+Inicialmente:
+
+preferred_contact_method = EMAIL
+
+Depois podemos acrescentar SMS.
+
+E o dashboard poderia mostrar:
+
+CONTACT CANDIDATE
+
+
+[ Email ]
+[ WhatsApp ]
+[ SMS ]
+[ Call ]
+
+Só aparecem os canais disponíveis.
+
+WhatsApp sem API paga
+
+A ideia que você trouxe no DAG é boa para contato manual iniciado pelo administrador.
+
+Por exemplo:
+
+https://wa.me/15551234567?text=...
+
+O administrador clica:
+
+Convocar via WhatsApp
+
+e o navegador abre o WhatsApp.
+
+Não precisamos de:
+
+Twilio;
+WhatsApp Business API;
+Z-API;
+servidor de mensagens.
+
+Isso significa que, nesse estágio, WhatsApp é apenas um mecanismo de abertura de conversa, não uma integração automatizada.
+
+Eu manteria exatamente essa separação.
+
+Mas não faria o WhatsApp ser o canal principal
+
+Eu faria:
+
+Fase 1 — agora
+
+E-mail = canal oficial
+
+Application
+    ↓
+D1
+    ↓
+SuperAdmin
+    ↓
+Email
+Fase 2
+
+WhatsApp = canal manual opcional
+
+SuperAdmin
+    ↓
+[ WhatsApp ]
+    ↓
+wa.me
+Fase 3
+
+SMS
+
+SuperAdmin
+    ↓
+SMS Provider
+    ↓
+Candidate
+Fase 4
+
+Se a operação justificar:
+
+WhatsApp Business/API
+
+SuperAdmin
+       ↓
+Messaging Service
+       ↓
+WhatsApp Business
+       ↓
+Candidate
+
+Isso evita colocar dependência externa no núcleo do sistema.
+
+Sobre o seu DAG: eu faria algumas correções
+
+A arquitetura geral está muito boa, mas eu faria três ajustes importantes.
+
+1. R2: sim, mas não chamaria de "95% de economia"
+
+A ideia de upload direto é tecnicamente correta. A Cloudflare documenta explicitamente o uso de presigned PUT URLs para permitir que o navegador envie arquivos diretamente ao R2 sem expor as credenciais da API.
+
+Então:
+
+Browser
+   │
+   │ request upload URL
+   ▼
+Worker
+   │
+   ▼
+Presigned URL
+   │
+   ▼
+Browser ──────────► R2
+
+é uma excelente arquitetura.
+
+Eu só evitaria colocar uma promessa quantitativa como "economiza 95% da CPU". O benefício real depende do fluxo e do tamanho dos arquivos.
+
+2. Retenção de 180 dias não deve ser regra automática ainda
+
+Aqui eu teria mais cautela.
+
+A ideia de data retention é excelente, mas não devemos decidir simplesmente:
+
+REJECTED → 180 dias → apagar
+
+antes de definirmos a política de retenção e as necessidades operacionais.
+
+Melhor:
+
+REJECTED
+   ↓
+retention_until
+   ↓
+Cron
+   ↓
+review policy
+   ↓
+DELETE / ANONYMIZE
+
+Assim a regra fica configurável.
+
+3. "SSN" não deve entrar no formulário inicial
+
+Esse é o ponto que eu mudaria com mais força.
+
+Eu não pediria SSN no primeiro cadastro.
+
+Para um banco de talentos, provavelmente basta algo como:
+
+Are you legally authorized to work in the United States?
+
+e, dependendo da função e do estágio do processo:
+
+Will you require employer sponsorship?
+
+A documentação de contratação necessária pode ser solicitada somente quando realmente necessária, em uma etapa posterior e apropriada.
+
+Isso reduz muito a quantidade de PII sensível armazenada no nosso D1/R2.
+
+E isso deixa o sistema muito elegante
+
+O candidato nem precisa saber que existe toda essa infraestrutura.
+
+Ele vê:
+
+JOIN OUR TEAM
+
+
+We're looking for:
+
+
+[ BBQ Chef          ▼ ]
+
+
+Location:
+
+
+[ Boca Raton        ▼ ]
+
+
+Experience:
+
+
+[ 3–5 years         ▼ ]
+
+
+Languages:
+
+
+☑ English
+☑ Portuguese
+☐ Spanish
+
+
+Email:
+
+
+[________________]
+
+
+Phone:
+
+
+[________________]
+
+
+WhatsApp:
+
+
+☑ I use WhatsApp
+
+
+Resume:
+
+
+[ Upload Resume ]
+
+
+[ APPLY NOW ]
+
+Depois:
+
+APPLICATION RECEIVED
+
+
+Thank you for your interest
+in BBQ do Carioca.
+
+
+We'll contact you by email
+if your profile matches an
+upcoming opportunity.
+
+E acabou.
+
+Nada de obrigar o americano a ter WhatsApp.
+
+No SuperAdmin
+
+Aí sim podemos aproveitar o melhor dos dois mundos.
+
+┌───────────────────────────────────────┐
+│ JOHN DOE                              │
+│ BBQ CHEF                              │
+│ Boca Raton, FL                        │
+├───────────────────────────────────────┤
+│ Email: john@email.com                 │
+│ Phone: +1 561...                      │
+│ WhatsApp: ✓                           │
+│ Languages: English / Portuguese       │
+│ Experience: 6 years                   │
+│ Status: APPROVED                      │
+├───────────────────────────────────────┤
+│ [ EMAIL ] [ WHATSAPP ] [ SMS ]        │
+└───────────────────────────────────────┘
+
+O SuperAdmin decide o canal, não o formulário.
+
+Minha visão para o projeto
+
+Eu acho que essa é uma evolução muito boa da ideia original.
+
+Não construiríamos um "sistema de WhatsApp".
+
+Construiríamos um Talent & Services CRM proprietário do BBQ do Carioca, onde WhatsApp, e-mail e SMS são simplesmente canais intercambiáveis.
+
+Isso é muito mais robusto:
+
+                 BBQ TALENT PLATFORM
+                         │
+              ┌──────────┴──────────┐
+              │                     │
+           PEOPLE                SERVICES
+              │                     │
+       ┌──────┼──────┐        ┌─────┼─────┐
+       ▼      ▼      ▼        ▼     ▼     ▼
+      Chef  Caterer Staff    BBQ   Events Private
+                              │
+                         SERVICE PROVIDERS
+                              │
+                              ▼
+                    ┌───────────────────┐
+                    │ CONTACT CHANNELS  │
+                    ├───────────────────┤
+                    │ Email             │
+                    │ WhatsApp          │
+                    │ SMS               │
+                    │ Phone             │
+                    └───────────────────┘
+
+E tudo isso pode continuar começando na infraestrutura Cloudflare que já planejamos. O R2 suporta tanto a API nativa de Workers quanto uma API compatível com S3, e presigned URLs são oficialmente suportadas para uploads diretos.
+
+Portanto: eu manteria e-mail como canal oficial do MVP, deixaria WhatsApp opcional desde o primeiro schema e prepararia o banco para SMS desde já. Assim não pagamos nada agora, não excluímos o público americano e também não perdemos a enorme vantagem operacional do WhatsApp para candidatos brasileiros.
+
+
+
+-----
+
+
+
+Sim, mas há uma mudança importante em relação ao que eu tinha dito antes: em 2026 a Cloudflare oferece o Email Service, porém o envio para destinatários arbitrários exige Workers Paid. No plano Free, o envio é gratuito apenas para endereços de destino verificados na própria conta.
+
+Então, para o nosso MVP, eu faria uma arquitetura híbrida.
+
+O que podemos fazer a $0
+
+Receber e-mails: sim.
+
+Podemos ter:
+
+careers@bbqdocarioca.com
+jobs@bbqdocarioca.com
+contact@bbqdocarioca.com
+admin@bbqdocarioca.com
+
+e usar Cloudflare Email Routing para encaminhar essas mensagens para um endereço existente. O Email Routing está disponível no Free.
+
+Também podemos fazer:
+
+candidato
+   ↓
+careers@bbqdocarioca.com
+   ↓
+Cloudflare Email Routing
+   ↓
+Worker
+   ↓
+D1 / processamento
+O problema é o disparo
+
+Para nosso sistema mandar:
+
+"Olá Jeferson, recebemos sua candidatura..."
+
+para um candidato qualquer, o Email Sending da Cloudflare atualmente requer Workers Paid. O plano Paid inclui 3.000 e-mails outbound/mês, depois US$0,35 por mil.
+
+Ou seja:
+
+Recurso	Free	Paid
+Receber/encaminhar e-mail	Sim	Sim
+Worker	Sim	Sim
+D1	Sim	Sim
+R2	Sim	Sim
+Turnstile	Sim	Sim
+Zero Trust/Access	Sim, conforme recurso/limites	Sim
+Enviar e-mail para candidato	Não	Sim
+E-mails outbound incluídos	—	3.000/mês
+Mas isso não significa que precisamos pagar agora
+
+Para o MVP de Careers, podemos começar assim:
+
+                 CANDIDATO
+                     │
+                     ▼
+             /careers/application
+                     │
+                     ▼
+              Cloudflare Worker
+                     │
+              ┌──────┴──────┐
+              ▼             ▼
+             D1          Admin Email
+                           │
+                           ▼
+                  Bruno recebe alerta
+
+O candidato envia a candidatura.
+
+O sistema grava no D1.
+
+O SuperAdmin recebe/consulta a candidatura.
+
+Não precisamos necessariamente mandar um e-mail automático para o candidato na primeira versão.
+
+Porém, eu acho que vale pagar US$5 quando chegarmos nessa etapa
+
+Porque aí podemos transformar o sistema em algo realmente profissional:
+
+CANDIDATO
+    │
+    ▼
+Application
+    │
+    ▼
+Worker
+    │
+    ├──► D1
+    │
+    └──► Email Service
+             │
+             ▼
+       candidato@email.com
+
+E podemos disparar:
+
+Application received
+
+Thank you for applying to BBQ do Carioca.
+Your application has been received.
+
+Depois:
+
+Application under review
+
+Interview invitation
+
+Application approved
+
+Event opportunity
+
+etc.
+
+A Cloudflare suporta envio diretamente pelo Worker através do binding env.EMAIL.send().
+
+E tem uma coisa muito boa aqui
+
+O próprio Email Service já configura a infraestrutura necessária de autenticação do domínio, incluindo SPF, DKIM e DMARC durante o onboarding do domínio.
+
+Então poderíamos ter:
+
+noreply@bbqdocarioca.com
+careers@bbqdocarioca.com
+jobs@bbqdocarioca.com
+events@bbqdocarioca.com
+support@bbqdocarioca.com
+
+sem precisar montar inicialmente um servidor de e-mail próprio.
+
+Eu faria o sistema preparado desde o começo
+
+No código, criaríamos uma abstração:
+
+EmailService
+    │
+    ├── sendApplicationReceived()
+    ├── sendApplicationStatusChanged()
+    ├── sendInterviewInvitation()
+    └── sendEventOpportunity()
+
+No começo:
+
+EMAIL_PROVIDER = "CLOUDFLARE"
+EMAIL_ENABLED = false
+
+Quando ativarmos o Paid:
+
+EMAIL_PROVIDER = "CLOUDFLARE"
+EMAIL_ENABLED = true
+
+E o restante do sistema não muda.
+
+E-mail + WhatsApp + SMS ficam independentes
+
+Isso é ainda melhor para o nosso projeto:
+
+                 NOTIFICATION SERVICE
+                         │
+          ┌──────────────┼──────────────┐
+          ▼              ▼              ▼
+        EMAIL         WHATSAPP         SMS
+          │              │              │
+     Cloudflare       wa.me/API       futuro
+
+E-mail é o canal institucional.
+
+WhatsApp é o canal operacional opcional.
+
+SMS entra depois quando houver necessidade.
+
+Isso resolve exatamente sua preocupação anterior com o público americano.
+
+Minha recomendação de custo
+
+Eu seguiria esta sequência:
+
+Fase 0 — $0
+
+Cloudflare Free:
+
+Pages/Workers
+D1
+R2
+Turnstile
+Email Routing
+Zero Trust
+Careers
+SuperAdmin
+cadastro de candidatos
+dashboard
+notificações internas
+Fase 1 — quando tivermos candidatos reais
+
+Workers Paid — US$5/mês
+
+Adicionar:
+
+e-mail automático;
+confirmação de candidatura;
+mudança de status;
+convite para entrevista;
+oportunidades de eventos.
+
+Os 3.000 e-mails/mês incluídos são bastante para o começo.
+
+Fase 2 — operação maior
+
+Adicionar eventualmente:
+
+SMS;
+WhatsApp Business;
+filas;
+automações;
+CRM;
+analytics operacional.
+
+Então sim: podemos construir a plataforma praticamente toda no Free. Eu só não tentaria forçar o envio de e-mails para candidatos dentro do Free, porque a Cloudflare mudou/expandiu o Email Service e hoje essa parte é Paid.
+
+E, sinceramente, US$5/mês quando chegarmos ao primeiro estágio de operação real é uma evolução muito mais limpa do que introduzir SendGrid, Resend, Mailgun ou outro fornecedor agora.
+
+
+
+----
+
+
+
+bbqdocarioca.com
+    ↓
+Site / marca / clientes
+    │
+    ├── /careers
+    ├── /services
+    └── /catering
+
+bbqdocarioca.work
+
+
+
+----
+
+
+
+Sim. E eu acho que isso eleva bastante o conceito do bbqdocarioca.work. Eu não trataria o dashboard apenas como um "banco de currículos"; ele pode evoluir para um Talent & Service Operations Dashboard, onde uma solicitação de serviço gera automaticamente uma necessidade de equipe e o sistema encontra os candidatos mais adequados.
+
+O conceito central
+CLIENTE
+   │
+   │ solicita serviço
+   ▼
+SERVICE REQUEST
+   │
+   ├── tipo de evento
+   ├── data
+   ├── horário
+   ├── localização
+   ├── quantidade de convidados
+   ├── tipo de serviço
+   └── necessidades especiais
+   │
+   ▼
+SMART MATCHING ENGINE
+   │
+   ├── disponibilidade
+   ├── distância
+   ├── função
+   ├── experiência
+   ├── idioma
+   ├── especialidades
+   ├── rating/histórico
+   └── status
+   │
+   ▼
+CANDIDATOS COMPATÍVEIS
+   │
+   ▼
+SCHEDULING
+   │
+   ▼
+CONFIRMAÇÃO DA EQUIPE
+O módulo que eu colocaria no dashboard
+Smart Scheduling
+
+Com quatro áreas:
+
+┌─────────────────────────────────────────────┐
+│ SMART SCHEDULING                            │
+├─────────────────────────────────────────────┤
+│                                             │
+│ Upcoming Events        12                   │
+│ Pending Assignments     5                   │
+│ Confirmed Staff        27                   │
+│ Coverage Issues         2                   │
+│                                             │
+├─────────────────────────────────────────────┤
+│ EVENT REQUESTS                              │
+│                                             │
+│ BBQ Wedding — Boca Raton                    │
+│ Aug 29 · 120 guests                         │
+│ Staff needed: 6                             │
+│                                             │
+│ [ FIND TALENT ]                             │
+└─────────────────────────────────────────────┘
+O ponto mais importante: o sistema não deve simplesmente "escolher candidatos"
+
+Ele deve gerar um matching score.
+
+Por exemplo:
+
+Candidate: Carlos Silva
+
+
+Role match              100%
+Availability             100%
+Distance                  92%
+Experience                95%
+Language                 100%
+Event experience          88%
+Reliability               94%
+─────────────────────────────
+MATCH SCORE               95%
+
+E então:
+
+BEST MATCHES
+
+
+1. Carlos Silva      95%
+2. João Santos       91%
+3. Marcos Oliveira   87%
+4. Pedro Costa       82%
+
+O SuperAdmin continua tomando a decisão.
+
+A IA/algoritmo recomenda; o administrador confirma.
+
+Isso é muito mais seguro operacionalmente.
+
+E podemos criar uma "necessidade de equipe"
+
+Imagine:
+
+Serviço solicitado
+BBQ Catering
+Boca Raton, FL
+Saturday, September 5
+5:00 PM – 10:00 PM
+120 guests
+
+O sistema pode calcular:
+
+STAFF REQUIREMENT
+
+
+1 × Pitmaster
+2 × Grill Assistant
+2 × Server
+1 × Bartender
+1 × Event Coordinator
+
+Então:
+
+TOTAL STAFF: 7
+
+E automaticamente procura pessoas disponíveis.
+
+O calendário passa a ser o coração do sistema
+
+Eu criaria:
+
+Operations Calendar
+
+Com visualizações:
+
+Day
+Week
+Month
+Events
+Staff
+Availability
+
+Por exemplo:
+
+           SATURDAY AUG 29
+
+
+5 PM ───────────────────────────── 10 PM
+
+
+EVENT #1024
+Boca Raton
+120 guests
+
+
+Pitmaster
+████████████████████ Carlos
+
+
+Grill
+████████████████████ João
+████████████████████ Marcos
+
+
+Server
+████████████████████ Ana
+████████████████████ Pedro
+
+Isso começa a parecer uma verdadeira ferramenta de field-service management, e não apenas um ATS.
+
+Disponibilidade do candidato
+
+No perfil do candidato, eu adicionaria:
+
+AVAILABILITY
+
+
+Mon    Available
+Tue    Available
+Wed    Available
+Thu    Available
+Fri    After 4 PM
+Sat    Available
+Sun    Available
+
+Mas também:
+
+SERVICE AREA
+
+
+Boca Raton
+Fort Lauderdale
+Delray Beach
+West Palm Beach
+Miami
+
+E:
+
+MAX TRAVEL DISTANCE
+
+
+50 miles
+
+Isso torna o matching muito melhor.
+
+E podemos ir além: conflitos
+
+Se Carlos já está escalado:
+
+Aug 29
+5 PM – 10 PM
+Boca Raton
+
+e aparece outra solicitação:
+
+Aug 29
+6 PM – 11 PM
+Miami
+
+o sistema deve dizer:
+
+CONFLICT DETECTED
+
+e não permitir que ele seja atribuído acidentalmente.
+
+Isso é uma função extremamente importante.
+
+Status operacional
+
+Eu criaria uma máquina de estados:
+
+REQUESTED
+    ↓
+MATCHING
+    ↓
+PROPOSED
+    ↓
+INVITED
+    ↓
+ACCEPTED
+    ↓
+CONFIRMED
+    ↓
+IN_PROGRESS
+    ↓
+COMPLETED
+
+E exceções:
+
+DECLINED
+CANCELLED
+NO_SHOW
+REPLACEMENT_REQUIRED
+
+O último é especialmente importante.
+
+Se um funcionário cancelar:
+
+Carlos
+CONFIRMED
+      ↓
+CANCELLED
+      ↓
+REPLACEMENT REQUIRED
+      ↓
+SMART MATCH
+      ↓
+João
+      ↓
+INVITED
+
+O dashboard imediatamente mostra:
+
+Coverage issue: 1 staff replacement required
+
+Isso também muda o banco D1
+
+Em vez de apenas:
+
+candidates
+applications
+services
+
+eu projetaria desde cedo algo parecido com:
+
+candidates
+candidate_availability
+candidate_skills
+candidate_locations
+
+
+service_requests
+service_types
+
+
+events
+event_staff_requirements
+
+
+staff_assignments
+availability_blocks
+
+
+notifications
+communications
+
+
+admin_users
+audit_logs
+
+E o relacionamento:
+
+SERVICE REQUEST
+      │
+      ▼
+EVENT
+      │
+      ├────────── STAFF REQUIREMENTS
+      │
+      ▼
+MATCHING ENGINE
+      │
+      ▼
+CANDIDATES
+      │
+      ▼
+STAFF ASSIGNMENTS
+E aqui está a oportunidade estratégica
+
+O bbqdocarioca.work poderia eventualmente deixar de ser somente:
+
+"Trabalhe conosco"
+
+e se tornar:
+
+BBQ do Carioca Talent & Service Network
+
+Com três grandes módulos:
+
+┌─────────────────────────────────────────┐
+│ BBQ DO CARIOCA WORK                    │
+├─────────────────────────────────────────┤
+│                                         │
+│  TALENT                                  │
+│  Candidates / Chefs / Caterers          │
+│                                         │
+│  SERVICES                                │
+│  Catering / BBQ / Events                │
+│                                         │
+│  OPERATIONS                              │
+│  Scheduling / Matching / Assignments    │
+│                                         │
+└─────────────────────────────────────────┘
+
+E o Smart Scheduling seria o elo entre quem oferece capacidade e quem precisa de uma equipe para um evento.
+
+Essa é, na minha opinião, uma ideia muito mais forte do que construir apenas um dashboard de candidatos. Estamos desenhando um pequeno sistema operacional para a operação de catering do BBQ do Carioca.
+
+E eu manteria isso compatível com nossa arquitetura Cloudflare Free no MVP, adicionando complexidade apenas quando houver demanda real.
+
+
+
+----
+
+
+
+Sim — e eu colocaria isso como um dos componentes centrais do Smart Scheduling. Mas faria uma distinção importante entre localização do candidato e distância operacional real.
+
+A ideia de "cross-docking" pode ser modelada no sistema como hubs/bases de operação: pontos onde equipe, equipamentos, insumos ou veículos podem se encontrar antes de seguir para o evento.
+
+1. O sistema passa a ter 3 pontos geográficos
+CANDIDATO
+    │
+    │ residência / área-base
+    ▼
+CROSS-DOCK / HUB
+    │
+    │ operação logística
+    ▼
+EVENTO
+
+Exemplo:
+
+Carlos
+Boca Raton
+      ↓ 8 mi
+Hub Boca Raton
+      ↓ 18 mi
+Evento Fort Lauderdale
+
+Então o sistema consegue avaliar:
+
+Carlos → Hub → Evento
+
+em vez de simplesmente:
+
+Carlos → Evento
+
+2. Eu criaria um módulo Location Intelligence
+
+No dashboard:
+
+┌─────────────────────────────────────────────┐
+│ LOCATION INTELLIGENCE                       │
+├─────────────────────────────────────────────┤
+│                                             │
+│ Event                                       │
+│ Boca Raton Wedding                          │
+│                                             │
+│ Event location                              │
+│ 26.3683, -80.1289                           │
+│                                             │
+│ Nearest Hub                                 │
+│ Boca Raton Hub                              │
+│ 7.8 mi                                      │
+│                                             │
+├─────────────────────────────────────────────┤
+│ CANDIDATE MATCH                             │
+│                                             │
+│ Carlos Silva          8.2 mi     95%        │
+│ João Santos          14.7 mi     91%        │
+│ Marcos Oliveira      21.3 mi     82%        │
+│                                             │
+└─────────────────────────────────────────────┘
+
+E filtros:
+
+[ Within 10 mi ]
+[ Within 25 mi ]
+[ Within 50 mi ]
+
+
+[ From Candidate ]
+[ From Hub ]
+[ From Event ]
+
+
+[ Driving Distance ]
+[ Estimated Time ]
+3. Não devemos depender da geolocalização automática do navegador
+
+Eu não usaria a localização atual do candidato como localização oficial.
+
+O cadastro deveria pedir:
+
+City
+State
+ZIP Code
+
+e opcionalmente:
+
+Preferred Service Area
+
+Depois nosso backend transforma isso em coordenadas.
+
+Isso é melhor para privacidade e também é mais útil operacionalmente.
+
+A Cloudflare consegue fornecer latitude/longitude aproximadas derivadas do IP através de request.cf, mas isso representa a localização da conexão/IP, não necessariamente o endereço residencial do candidato.
+
+Portanto:
+
+IP geolocation = sinal auxiliar
+
+ZIP/cidade informados pelo candidato = localização operacional
+
+4. Banco
+
+Eu criaria uma entidade própria:
+
+locations
+──────────────
+id
+type
+name
+address
+city
+state
+zip
+latitude
+longitude
+active
+
+Onde type poderia ser:
+
+CANDIDATE
+HUB
+CROSS_DOCK
+EVENT
+SERVICE_AREA
+
+E no candidato:
+
+candidate_locations
+────────────────────
+candidate_id
+location_id
+location_type
+is_primary
+max_travel_miles
+
+Assim não amarramos o sistema a uma única localização.
+
+5. E o algoritmo de matching fica muito mais inteligente
+
+Imagine:
+
+Evento
+Fort Lauderdale
+120 guests
+7 staff required
+Candidatos
+Carlos
+Boca Raton
+18 mi
+
+
+João
+Fort Lauderdale
+5 mi
+
+
+Marcos
+Miami
+31 mi
+
+Mas existe:
+
+Cross-Dock #01
+Fort Lauderdale
+
+O sistema pode calcular:
+
+DISTANCE SCORE
+
+
+João
+Candidate → Event
+5 mi
+★★★★★
+
+
+Carlos
+Candidate → Cross-Dock
+8 mi
+Cross-Dock → Event
+12 mi
+Total operational distance
+20 mi
+★★★★
+
+
+Marcos
+Candidate → Cross-Dock
+24 mi
+Cross-Dock → Event
+12 mi
+Total
+36 mi
+★★
+
+Isso começa a produzir uma recomendação realmente operacional.
+
+6. Mas eu adicionaria "Travel Time"
+
+Distância sozinha não é suficiente na Flórida.
+
+Carlos
+20 mi
+≈ 31 min
+
+
+João
+5 mi
+≈ 18 min
+
+
+Marcos
+36 mi
+≈ 42 min
+
+O ranking deveria considerar:
+
+MATCH SCORE
+├── Role compatibility
+├── Availability
+├── Experience
+├── Language
+├── Reliability
+├── Distance
+├── Travel time
+└── Hub/Cross-Dock compatibility
+
+Assim podemos chegar a:
+
+Carlos        94%
+João          93%
+Marcos        81%
+
+Mesmo que João esteja fisicamente mais próximo, Carlos pode ser melhor para aquele evento devido à especialização.
+
+7. Cross-docking pode virar uma entidade operacional muito poderosa
+
+Eu não limitaria o conceito a "local de encontro".
+
+Um Hub poderia ter:
+
+HUB
+│
+├── Staff
+├── Equipment
+├── Supplies
+├── Vehicles
+├── Pickup windows
+└── Events served
+
+Exemplo:
+
+BOCA RATON HUB
+
+
+Staff capacity: 15
+Equipment capacity: 4 events
+Pickup window:
+2:00 PM – 4:00 PM
+
+
+Coverage:
+Boca Raton
+Delray Beach
+Palm Beach
+Fort Lauderdale
+
+Aí o sistema começa a responder:
+
+"Qual hub consegue atender esse evento?"
+
+e:
+
+"Quais candidatos conseguem chegar a esse hub dentro da janela?"
+
+8. Isso combina perfeitamente com o Smart Scheduling
+
+Eu visualizo o fluxo assim:
+
+                SERVICE REQUEST
+                       │
+                       ▼
+                    EVENT
+                       │
+              ┌────────┴────────┐
+              ▼                 ▼
+          LOCATION             DATE
+              │                 │
+              └────────┬────────┘
+                       ▼
+              COVERAGE ENGINE
+                       │
+              ┌────────┴────────┐
+              ▼                 ▼
+             HUB             CANDIDATES
+              │                 │
+              └────────┬────────┘
+                       ▼
+                 SMART MATCH
+                       │
+                       ▼
+              STAFF ASSIGNMENT
+                       │
+                       ▼
+                 CONFIRMATION
+
+Isso é muito mais interessante que simplesmente "agenda de funcionários".
+
+9. E conseguimos fazer a primeira versão sem serviço de mapas caro
+
+O D1 suporta SQL/SQLite e funções matemáticas, então podemos armazenar latitude/longitude e fazer cálculos de distância no Worker/D1.
+
+Por exemplo, podemos calcular inicialmente a distância em linha reta (Haversine).
+
+Depois, quando a operação justificar, acrescentamos:
+
+Straight-line distance
+        ↓
+Driving distance
+        ↓
+Estimated travel time
+        ↓
+Traffic-aware ETA
+
+Não precisamos colocar uma API de mapas paga no MVP.
+
+10. E isso nos dá uma tela fantástica no SuperAdmin
+
+Eu faria algo semelhante a:
+
+SMART SCHEDULING
+────────────────────────────────────────
+
+
+EVENT
+BBQ Wedding
+Fort Lauderdale
+Sep 05 · 5:00 PM
+
+
+STAFF REQUIRED
+7
+
+
+COVERAGE
+██████████████████░░  6/7
+
+
+NEAREST HUB
+Fort Lauderdale Cross-Dock
+4.2 mi
+
+
+BEST AVAILABLE TALENT
+
+
+✓ João Santos
+  Pitmaster
+  5.1 mi
+  97% Match
+
+
+✓ Carlos Silva
+  Grill Master
+  12.4 mi
+  94% Match
+
+
+✓ Marcos Oliveira
+  Server
+  15.8 mi
+  89% Match
+
+
+⚠ 1 position still uncovered
+
+
+[ FIND REPLACEMENT ]
+
+E um mapa posteriormente:
+
+       CANDIDATE
+           ●
+           │
+           │ 8 mi
+           ▼
+       CROSS-DOCK
+           ◆
+           │
+           │ 12 mi
+           ▼
+         EVENT
+           ★
+Minha recomendação para o banco
+
+Eu já colocaria geolocalização no schema da primeira versão, mesmo que o mapa visual venha depois.
+
+Porque isso evita uma migração estrutural quando começarmos o Smart Scheduling.
+
+A arquitetura ficaria:
+
+D1
+│
+├── candidates
+├── candidate_locations
+├── candidate_skills
+├── candidate_availability
+│
+├── hubs
+├── hub_capacity
+├── hub_service_areas
+│
+├── service_requests
+├── events
+├── event_requirements
+│
+├── staff_assignments
+│
+└── location_calculations
+
+E o conceito de Cross-Dock/HUB deve ser configurável, não hardcoded. Hoje podemos ter 1 ou 2 pontos na Flórida; amanhã podem ser 10.
+
+Isso transforma o bbqdocarioca.work em algo muito mais poderoso: um sistema que não apenas encontra pessoas, mas calcula capacidade operacional, cobertura geográfica e logística para montar a equipe certa para cada evento.
+
+A própria Cloudflare permite inclusive escolher uma localização preferencial para o D1, embora isso seja sobre onde o banco é executado/armazenado — não deve ser confundido com a localização dos candidatos ou dos eventos.
+
+
+
+----
+
+
+
+Sim. E olhando agora para tudo que desenhamos — Talent Network + Services + Smart Scheduling + localização + Cross-Dock + canais de comunicação + Cloudflare — há algumas lacunas importantes que eu colocaria na arquitetura antes de começarmos a codificar.
+
+A principal conclusão é: não estamos mais desenhando um simples ATS (Applicant Tracking System). Estamos desenhando um pequeno Workforce & Event Operations Platform.
+
+As lacunas que eu fecharia
+1. Separar "candidato" de "profissional operacional"
+
+Essa é provavelmente a mais importante.
+
+Não devemos tratar:
+
+Candidate = Worker
+
+Um candidato pode estar:
+
+APPLIED
+   ↓
+SCREENING
+   ↓
+APPROVED
+   ↓
+TALENT_POOL
+   ↓
+ACTIVE_PROVIDER
+
+Portanto:
+
+Person
+ ├── Candidate Profile
+ ├── Worker Profile
+ └── Provider Profile
+
+Isso permite que uma pessoa seja, por exemplo:
+
+BBQ Chef + Caterer + Freelancer
+
+sem duplicar cadastro.
+
+2. Status operacional diferente de status de candidatura
+
+Precisamos de dois estados independentes.
+
+Recruiting
+NEW
+REVIEWING
+SHORTLISTED
+INTERVIEW
+APPROVED
+REJECTED
+Operational
+AVAILABLE
+LIMITED
+UNAVAILABLE
+SUSPENDED
+INACTIVE
+
+Porque alguém pode estar:
+
+APPROVED + UNAVAILABLE
+
+ou:
+
+APPROVED + AVAILABLE
+
+ou:
+
+APPROVED + SUSPENDED
+
+Isso evita muita confusão futura.
+
+3. Availability precisa ser muito mais sofisticada
+
+Não basta:
+
+"Disponível sábado."
+
+Precisamos de:
+
+DATE
+START TIME
+END TIME
+RECURRING
+SERVICE AREA
+MAX TRAVEL
+
+E eventualmente:
+
+BLACKOUT DATES
+PREFERRED EVENTS
+MINIMUM HOURS
+
+Exemplo:
+
+Carlos
+
+
+Fri
+17:00–23:00
+
+
+Sat
+10:00–23:00
+
+
+Sun
+Available
+
+
+Max travel:
+40 miles
+
+Isso alimentará diretamente o Smart Scheduling.
+
+4. Precisamos de "skills", "certifications" e "experience"
+
+Não colocar tudo em texto livre.
+
+Criaria taxonomias:
+
+SKILLS
+├── Brisket
+├── Ribs
+├── Brazilian BBQ
+├── Argentine Grill
+├── Smoker
+├── Open Fire
+└── Event Service
+
+E:
+
+CERTIFICATIONS
+├── Food Handler
+├── Food Safety
+├── Alcohol Service
+└── Other
+
+Isso permite fazer:
+
+"Encontre alguém com experiência em Brazilian BBQ + 100+ guest events."
+
+sem procurar manualmente em currículos.
+
+5. "Reliability Score"
+
+Esse é um refinamento que considero muito valioso.
+
+Não precisamos começar com uma avaliação pública.
+
+Internamente:
+
+Reliability Score
+─────────────────
+Attendance       98%
+Acceptance       94%
+On-time          96%
+Cancellation      2%
+Events completed  18
+
+Depois:
+
+Operational Score: 95
+
+Mas não deixaríamos isso decidir automaticamente a contratação.
+
+Ele serve como sinal operacional.
+
+6. Histórico de eventos
+
+Precisamos registrar:
+
+Carlos
+────────────────────
+Events completed: 23
+
+
+Last event:
+Aug 15
+
+
+Role:
+Pitmaster
+
+
+Client rating:
+4.9
+
+
+Manager rating:
+5.0
+
+
+No-show:
+0
+
+Isso transforma o banco de talentos em memória operacional da empresa.
+
+7. Não esquecer "Emergency Replacement"
+
+Eu colocaria isso como módulo próprio.
+
+EVENT
+  ↓
+STAFF CONFIRMED
+  ↓
+CANCELLATION
+  ↓
+COVERAGE ALERT
+  ↓
+SMART REPLACEMENT
+
+Dashboard:
+
+URGENT — Pitmaster replacement required
+
+E o algoritmo procura:
+
+Available
++
+Qualified
++
+Nearby
++
+Not conflicting
+
+Isso pode acabar sendo uma das funções mais úteis do sistema na prática.
+
+8. Distância não deve ser apenas "miles"
+
+Precisamos separar:
+
+Distance
+Travel Time
+Travel Cost
+
+Exemplo:
+
+Candidate → Event
+
+
+18 miles
+31 min
+$9 estimated travel cost
+
+Depois podemos criar:
+
+Travel Policy
+0–15 mi      Included
+15–30 mi     Standard
+30–50 mi     Travel premium
+50+ mi       Approval required
+
+Isso conecta localização diretamente com custo operacional.
+
+9. Cross-Dock precisa de capacidade
+
+Não basta existir:
+
+Boca Raton Hub
+
+Precisamos:
+
+HUB
+├── capacity
+├── operating_hours
+├── pickup_windows
+├── equipment_capacity
+├── staff_capacity
+└── service_area
+
+Então o sistema pode detectar:
+
+"Esse Cross-Dock não tem capacidade para processar 3 eventos simultaneamente."
+
+Isso já começa a ser logística, não apenas recrutamento.
+
+10. Event lifecycle
+
+Precisamos controlar o evento inteiro:
+
+LEAD
+ ↓
+QUOTE
+ ↓
+REQUESTED
+ ↓
+CONFIRMED
+ ↓
+STAFFING
+ ↓
+STAFF CONFIRMED
+ ↓
+EVENT DAY
+ ↓
+COMPLETED
+ ↓
+SETTLEMENT
+ ↓
+ARCHIVED
+
+E isso abre espaço futuramente para:
+
+orçamento;
+contrato;
+pagamento;
+comissão;
+custos;
+margem do evento.
+11. Financeiro operacional
+
+Não precisa entrar no MVP, mas eu deixaria o schema preparado.
+
+Por exemplo:
+
+EVENT
+├── revenue
+├── staff_cost
+├── travel_cost
+├── equipment_cost
+└── estimated_margin
+
+Assim futuramente o dashboard pode mostrar:
+
+Event revenue: $3,200
+Staff cost: $850
+Travel: $120
+Estimated margin: $2,230
+
+Isso transforma o sistema em ferramenta de gestão, não apenas RH.
+
+12. "Employee" versus "Independent Contractor"
+
+Aqui precisamos ter cuidado jurídico.
+
+Não colocaria simplesmente:
+
+[x] W-9 / 1099
+
+como se isso fosse uma escolha livre do candidato.
+
+A classificação de trabalhador/contratado depende de fatos e da legislação aplicável; não é determinada apenas pelo formulário escolhido.
+
+Então o sistema deve registrar:
+
+engagement_type
+
+mas deixar a classificação final para o processo administrativo/jurídico apropriado.
+
+E eu não armazenaria SSN no MVP.
+
+13. Background Check como módulo separado
+
+Se futuramente o BBQ contratar um serviço de background screening, isso merece um módulo específico.
+
+Não devemos simplesmente:
+
+upload background.pdf
+
+e colocar no perfil.
+
+Quando um empregador usa um consumer report de uma empresa de background screening, entram requisitos do FCRA, incluindo divulgação e autorização antes da consulta e procedimentos específicos antes/depois de uma decisão adversa.
+
+Então:
+
+Background Check
+        │
+        ├── Consent
+        ├── Provider
+        ├── Requested
+        ├── Completed
+        ├── Review
+        └── Adverse Action Workflow
+
+Isso eu deixaria fora do MVP.
+
+14. Cuidado com o "Smart Match"
+
+Aqui temos uma questão muito importante.
+
+Eu não deixaria o algoritmo dizer automaticamente:
+
+"Esse candidato foi rejeitado."
+
+O algoritmo pode:
+
+Rank candidates
+
+mas a decisão continua humana.
+
+A EEOC alerta que ferramentas algorítmicas/IA utilizadas em recrutamento podem gerar discriminação, inclusive afetando pessoas com deficiência.
+
+Então nosso princípio deveria ser:
+
+SMART MATCH
+      ↓
+RECOMMENDATION
+      ↓
+HUMAN REVIEW
+      ↓
+DECISION
+
+E guardar:
+
+match_score
+match_reasons
+algorithm_version
+admin_decision
+
+Isso é excelente para auditoria.
+
+15. E evitaríamos alguns campos perigosos
+
+Por exemplo, a EEOC recomenda cautela com perguntas sobre características pessoais protegidas, como raça, religião, nacionalidade, idade etc.
+
+Então eu não colocaria no formulário:
+
+Race
+Religion
+Age
+Gender
+
+a menos que exista uma finalidade legal específica e adequada.
+
+Idiomas, por outro lado, podem ser relevantes operacionalmente quando tratados como competência profissional:
+
+English
+Portuguese
+Spanish
+
+Mas eu estruturaria isso como language proficiency, e não como indicador de nacionalidade/etnia.
+
+16. Accessibility
+
+Essa eu colocaria desde o começo.
+
+O /careers precisa permitir candidatura por pessoas com deficiência.
+
+Principalmente:
+
+teclado;
+labels corretos;
+contraste;
+foco;
+mensagens de erro acessíveis;
+upload acessível;
+alternativa ao conteúdo visual;
+compatibilidade com screen readers.
+
+Isso é ainda mais importante se futuramente usarmos qualquer mecanismo automatizado de screening. A EEOC destaca a necessidade de acomodação razoável quando ferramentas algorítmicas podem excluir candidatos com deficiência.
+
+17. Audit Log
+
+Obrigatório no SuperAdmin, na minha opinião.
+
+Registrar:
+
+WHO
+WHAT
+WHEN
+FROM WHERE
+
+Exemplo:
+
+Admin: Bruno
+Action: Candidate approved
+Candidate: #1842
+Time: 2026-08-18 14:31
+
+Outro:
+
+Admin: Bruno
+Action: Staff assignment changed
+Event: #1024
+From: Carlos
+To: João
+
+Isso será extremamente útil quando o sistema crescer.
+
+18. Soft Delete
+
+Eu evitaria apagar registros diretamente.
+
+Em vez de:
+
+DELETE candidate
+
+usar:
+
+deleted_at
+deleted_by
+deletion_reason
+
+e depois uma rotina de retenção física.
+
+Isso combina muito melhor com auditoria e compliance.
+
+19. Versionamento das regras
+
+Esse é um detalhe técnico que eu considero muito inteligente para esse projeto.
+
+O algoritmo de matching pode mudar.
+
+Hoje:
+
+Distance       20%
+Availability   30%
+Skill          30%
+Experience     20%
+
+Amanhã:
+
+Distance       15%
+Availability   25%
+Skill          35%
+Experience     15%
+Reliability    10%
+
+Então guardar:
+
+matching_algorithm_version = "v1.0"
+
+no assignment é uma ótima prática.
+
+20. Offline / celular
+
+Como o Bruno e a equipe provavelmente usarão o dashboard em campo, eu pensaria mobile-first para o painel operacional.
+
+Não necessariamente um aplicativo nativo.
+
+Podemos fazer:
+
+PWA
+
+com:
+
+dashboard responsivo;
+notificações;
+acesso rápido;
+calendário;
+confirmação de equipe;
+status do evento.
+
+Isso pode ser muito mais barato e simples que criar iOS + Android.
+
+Minha arquitetura final ficaria assim
+                         BBQ DO CARIOCA
+                               │
+                ┌──────────────┴──────────────┐
+                │                             │
+             PUBLIC                       ADMIN
+                │                             │
+          Careers / Services          Zero Trust / Access
+                │                             │
+                └──────────────┬──────────────┘
+                               │
+                         Cloudflare Worker
+                               │
+        ┌──────────────┬───────┼──────────┬─────────────┐
+        ▼              ▼       ▼          ▼             ▼
+       D1             R2    Turnstile   Email       Audit Log
+        │
+        ├── People
+        ├── Candidates
+        ├── Skills
+        ├── Availability
+        ├── Locations
+        ├── Hubs
+        ├── Services
+        ├── Events
+        ├── Requirements
+        ├── Assignments
+        ├── Communications
+        └── Operations
+                               │
+                               ▼
+                     SMART MATCHING ENGINE
+                               │
+             ┌─────────────────┼─────────────────┐
+             ▼                 ▼                 ▼
+          TALENT            LOCATION          SCHEDULE
+             │                 │                 │
+             └─────────────────┼─────────────────┘
+                               ▼
+                      STAFFING RECOMMENDATION
+                               │
+                               ▼
+                         HUMAN APPROVAL
+E eu separaria o projeto em 4 motores
+
+Isso deixa nossa arquitetura conceitualmente muito limpa:
+
+1. Talent Engine
+
+Quem são as pessoas e o que elas sabem fazer.
+
+2. Location Engine
+
+Onde estão, onde podem atuar, hubs, cross-docks, distância e deslocamento.
+
+3. Scheduling Engine
+
+Quando estão disponíveis e quais conflitos existem.
+
+4. Matching Engine
+
+Qual combinação pessoa + função + localização + horário + evento faz mais sentido.
+
+Depois:
+
+5. Operations Engine
+
+Confirmação, substituição, execução e histórico do evento.
+
+O maior refinamento que eu faria agora
+
+Antes de escrever qualquer código, congelaria um ADR-0006 — Talent, Service & Smart Scheduling Domain Model.
+
+Nele definiríamos:
+
+Person
+Candidate
+Talent
+Provider
+Skill
+Certification
+Availability
+Location
+Hub
+CrossDock
+Service
+ServiceRequest
+Event
+StaffRequirement
+Assignment
+Communication
+Notification
+AuditLog
+
+e os estados de cada um.
+
+Isso vai evitar que comecemos fazendo um candidates simples e, três semanas depois, descubramos que precisamos desmontar tudo para acomodar eventos, logística, disponibilidade, cross-docking e matching.
+
+A arquitetura que você está imaginando já justifica esse cuidado. E, na minha avaliação, o diferencial real do BBQ do Carioca não será o formulário de "Trabalhe Conosco"; será o motor que transforma uma solicitação de evento em uma equipe viável, geograficamente eficiente e operacionalmente disponível.
+
+
+
+----
+
+
+
+Sistema de preços e conclusão de pagamento perante o gerente da região flórida;
+Feedback de serviõ e até mesmo o feedbacl do cliente solicitante para review google ou trustvox;
+
+Sim. E eu diria que esse é o próximo salto lógico: o sistema deixa de ser apenas Talent + Scheduling e passa a fechar o ciclo completo:
+
+Solicitação → orçamento → aprovação → pagamento → equipe → execução → feedback → reputação.
+
+Isso muda bastante o desenho do bbqdocarioca.work.
+
+Eu criaria 3 novos módulos
+BBQ DO CARIOCA WORK
+│
+├── TALENT
+│   ├── Candidates
+│   ├── Chefs
+│   ├── Caterers
+│   └── Providers
+│
+├── OPERATIONS
+│   ├── Service Requests
+│   ├── Smart Matching
+│   ├── Scheduling
+│   ├── Cross-Docks
+│   └── Staff Assignments
+│
+├── COMMERCIAL
+│   ├── Pricing
+│   ├── Quotes
+│   ├── Approvals
+│   ├── Payments
+│   └── Settlements
+│
+└── EXPERIENCE
+    ├── Customer Feedback
+    ├── Staff Feedback
+    ├── Reviews
+    └── Reputation
+
+E tem uma coisa importante: o pagamento não deve ficar diretamente ligado ao candidato. Ele deve estar ligado ao Service Order/Event, enquanto o pagamento da equipe é outro fluxo.
+
+1. Motor de preços
+
+Quando entra uma solicitação:
+
+BBQ Catering
+120 guests
+Boca Raton
+5 hours
+Saturday
+
+o sistema pode montar um Pricing Draft:
+
+SERVICE QUOTE #1042
+
+
+Food & BBQ              $1,800
+Pitmaster                 $350
+Grill Assistants          $280
+Servers                   $360
+Equipment                 $150
+Travel                     $90
+Cross-Dock                 $60
+──────────────────────────────
+Subtotal                $3,090
+
+
+Tax                       ---
+Discount                  -$100
+──────────────────────────────
+TOTAL                   $2,990
+
+Mas eu separaria:
+
+Preço comercial
+
+O que o cliente paga.
+
+Custo operacional
+
+O que o BBQ gasta para executar.
+
+Margem
+Customer Price
+     -
+Operational Cost
+     =
+Gross Margin
+
+Isso é extremamente importante para o gerente da Flórida.
+
+2. Gerente regional
+
+Eu criaria uma entidade:
+
+REGION
+
+e:
+
+REGIONAL MANAGER
+
+Por exemplo:
+
+Florida Region
+│
+└── Regional Manager
+      │
+      ├── Service Requests
+      ├── Quotes
+      ├── Events
+      ├── Staff
+      └── Payments
+
+E o SuperAdmin continua acima:
+
+SUPERADMIN
+     │
+     ├── Florida Manager
+     │       ├── Events
+     │       ├── Candidates
+     │       └── Payments
+     │
+     └── Future Regions
+
+Isso prepara o sistema para, no futuro:
+
+Florida
+Georgia
+Texas
+New York
+...
+
+sem reconstruir tudo.
+
+3. Workflow de aprovação
+
+Eu faria:
+
+SERVICE REQUEST
+       ↓
+PRICING DRAFT
+       ↓
+INTERNAL REVIEW
+       ↓
+MANAGER APPROVAL
+       ↓
+QUOTE SENT
+       ↓
+CUSTOMER ACCEPTED
+       ↓
+DEPOSIT REQUESTED
+       ↓
+PAYMENT
+       ↓
+BOOKED
+
+Isso é melhor do que permitir que qualquer funcionário altere preço e cobre o cliente.
+
+4. Pagamento
+
+Aqui eu não armazenaria cartão, CVV ou dados bancários no D1.
+
+O nosso sistema registra:
+
+payment
+──────────────
+id
+order_id
+provider
+external_payment_id
+amount
+currency
+status
+created_at
+paid_at
+
+e o processamento fica com um gateway.
+
+Para o mercado americano, Stripe é uma opção natural. O Stripe Payment Links permite criar links de pagamento para serviços, e o sistema também oferece checkout e invoices. (stripe.com)
+
+Então poderíamos ter no dashboard:
+
+QUOTE #1042
+
+
+Total: $2,990
+
+
+Deposit required:
+$1,000
+
+
+Remaining:
+$1,990
+
+
+[ SEND PAYMENT LINK ]
+
+O cliente recebe:
+
+Complete your deposit securely.
+
+E o Stripe retorna o resultado para nosso Worker através de webhook.
+
+STRIPE
+   ↓
+Webhook
+   ↓
+Cloudflare Worker
+   ↓
+D1
+   ↓
+Order = PAID
+
+O D1 nunca precisa conhecer o número do cartão.
+
+5. Pagamento parcial
+
+Eu colocaria isso desde o começo.
+
+ORDER
+$3,000
+
+
+Deposit
+$1,000 ✓
+
+
+Balance
+$2,000
+
+
+Final payment
+$2,000
+
+E futuramente:
+
+Deposit
+Progress Payment
+Final Payment
+Refund
+Partial Refund
+
+Isso deixa o sistema preparado para eventos maiores.
+
+6. E não confundir pagamento do cliente com pagamento da equipe
+
+Temos dois lados:
+
+CLIENT
+   │
+   │ $3,000
+   ▼
+BBQ DO CARIOCA
+   │
+   │ staff compensation
+   ▼
+TEAM / PROVIDERS
+
+No futuro:
+
+STAFF SETTLEMENT
+──────────────────
+Event #1042
+
+
+Carlos        $350
+João          $140
+Marcos        $140
+Ana           $180
+
+
+Travel         $90
+──────────────────
+Total         $900
+
+Isso pode ficar para uma fase posterior, mas eu deixaria o modelo preparado.
+
+7. Feedback precisa ser bilateral
+
+Essa parte que você trouxe é excelente.
+
+Não deveríamos ter apenas:
+
+Cliente avalia BBQ.
+
+Teríamos:
+
+Cliente → BBQ
+Food Quality       ★★★★★
+Service             ★★★★★
+Staff               ★★★★★
+Communication       ★★★★☆
+Value               ★★★★★
+Overall             ★★★★★
+BBQ → equipe
+Professionalism     ★★★★★
+Punctuality         ★★★★★
+Skill                ★★★★★
+Communication        ★★★★☆
+Reliability          ★★★★★
+
+Isso alimenta o nosso Reliability Score.
+
+8. E eu adicionaria feedback privado
+
+Nem todo feedback deve virar review público.
+
+Depois do evento:
+
+How was your experience?
+
+
+★★★★★
+
+Se o cliente der:
+
+5 estrelas
+
+Thank you!
+
+
+Would you like to share
+your experience publicly?
+
+
+[ Google Review ]
+
+Se der:
+
+1–3 estrelas
+
+We're sorry your experience
+didn't meet expectations.
+
+
+Tell us what happened:
+
+
+[________________________]
+
+
+[ SEND FEEDBACK ]
+
+Isso cria um canal de recuperação de serviço.
+
+Mas atenção: não devemos esconder avaliações negativas nem oferecer benefício em troca de avaliação positiva. O Google exige que reviews sejam autênticos e proíbe incentivos para publicar, alterar ou remover avaliações.
+
+Portanto, eu faria:
+
+Feedback interno
+      ↓
+TODOS os clientes
+      ↓
+Google Review
+      ↓
+convite neutro
+
+e não:
+
+5 estrelas → Google
+1 estrela → esconder
+9. Google é prioritário para a Flórida
+
+Eu colocaria Google Business Profile como primeira integração de reputação.
+
+O Google fornece oficialmente um link/QR code para solicitar reviews, inclusive permitindo enviar esse link por e-mail, WhatsApp etc.
+
+No nosso sistema:
+
+EVENT COMPLETED
+      ↓
+CUSTOMER FEEDBACK
+      ↓
+★★★★★
+      ↓
+"Share your experience"
+      ↓
+[ GOOGLE REVIEW ]
+
+O link seria configurado no painel:
+
+Settings
+→ Reputation
+→ Google Review URL
+
+Assim não hardcodamos o link.
+
+10. Trustvox eu deixaria como opção secundária
+
+Há uma questão estratégica aqui.
+
+O que antes era Trustvox agora aparece como RA Reviews, produto do Reclame AQUI, com foco forte no ecossistema brasileiro. A plataforma coleta reviews e os utiliza também em propriedades como Reclame AQUI e Google.
+
+Para uma operação cujo foco comercial é Florida/USA, eu não faria Trustvox/RA Reviews ser o centro da reputação.
+
+Eu faria:
+
+PRIMARY
+Google Reviews
+
+
+SECONDARY
+Internal BBQ Reviews
+
+
+OPTIONAL
+RA Reviews / Trustvox
+
+Se o BBQ continuar atendendo fortemente brasileiros, aí podemos avaliar a camada RA Reviews posteriormente.
+
+11. E o próprio BBQ pode ter Reviews no site
+
+Isso é muito interessante.
+
+bbqdocarioca.com/reviews
+
+Com:
+
+★★★★★
+4.9 / 5
+
+
+Based on 127 verified events
+
+Cada review interno poderia estar relacionado a:
+
+review
+──────────────
+event_id
+customer_id
+rating
+comment
+service_type
+location
+created_at
+verified
+published
+
+E:
+
+verified = true
+
+significa:
+
+review originado de um cliente que realmente teve um evento registrado no sistema.
+
+Isso cria uma excelente base de social proof.
+
+12. Eu também criaria "Event Quality Score"
+
+Depois de cada evento:
+
+EVENT QUALITY
+
+
+Customer
+★★★★★ 4.9
+
+
+Staff
+★★★★★ 4.8
+
+
+Operations
+★★★★★ 4.7
+
+
+Food
+★★★★★ 5.0
+
+
+Overall
+★★★★★ 4.85
+
+Isso permite descobrir:
+
+Qual região apresenta melhor performance?
+
+Qual serviço gera mais satisfação?
+
+Qual equipe tem melhor desempenho?
+
+Onde estamos perdendo margem?
+
+Aí o dashboard começa a gerar inteligência operacional real.
+
+13. E fecha um ciclo muito poderoso
+
+Agora temos:
+
+                 CUSTOMER
+                    │
+                    ▼
+             SERVICE REQUEST
+                    │
+                    ▼
+                 PRICING
+                    │
+                    ▼
+            MANAGER APPROVAL
+                    │
+                    ▼
+                 PAYMENT
+                    │
+                    ▼
+             SMART SCHEDULING
+                    │
+                    ▼
+                  EVENT
+                    │
+          ┌─────────┴─────────┐
+          ▼                   ▼
+       CUSTOMER             STAFF
+       FEEDBACK             FEEDBACK
+          │                   │
+          └─────────┬─────────┘
+                    ▼
+              QUALITY SCORE
+                    │
+                    ▼
+              FUTURE MATCHING
+                    │
+                    ▼
+             BETTER OPERATIONS
+
+Esse último passo é o diferencial.
+
+O feedback não fica parado no banco.
+
+Ele volta para o Matching Engine.
+
+Exemplo:
+
+Carlos tem excelente performance como Pitmaster em eventos de 100+ pessoas.
+
+Então, em um próximo evento semelhante, o sistema aumenta a relevância dele.
+
+Eu acrescentaria mais um módulo: Contracts & Documents
+
+Porque agora temos:
+
+preço + aprovação + pagamento + equipe + evento.
+
+Precisamos eventualmente guardar:
+
+QUOTE
+CONTRACT
+INVOICE
+PAYMENT RECEIPT
+STAFF AGREEMENT
+EVENT DOCUMENTS
+
+Mas novamente: R2 para arquivos, D1 para metadados.
+
+A arquitetura começa a ficar assim
+BBQ DO CARIOCA
+│
+├── CRM
+│   └── Customers
+│
+├── SALES
+│   ├── Service Requests
+│   ├── Pricing
+│   ├── Quotes
+│   └── Contracts
+│
+├── PAYMENTS
+│   ├── Deposits
+│   ├── Balances
+│   ├── Refunds
+│   └── Reconciliation
+│
+├── TALENT
+│   ├── Candidates
+│   ├── Providers
+│   ├── Skills
+│   └── Reliability
+│
+├── OPERATIONS
+│   ├── Events
+│   ├── Scheduling
+│   ├── Smart Matching
+│   ├── Hubs
+│   └── Cross-Docking
+│
+├── EXPERIENCE
+│   ├── Customer Feedback
+│   ├── Staff Feedback
+│   ├── Quality Score
+│   └── Reviews
+│
+└── ADMIN
+    ├── Users
+    ├── Regions
+    ├── Permissions
+    ├── Audit Log
+    └── Settings
+E eu vejo uma regra arquitetural fundamental surgindo:
+
+Service Request deve ser o objeto central do negócio.
+
+Não Candidate.
+
+Não Payment.
+
+Não Event.
+
+O fluxo é:
+
+Cliente solicita um serviço → BBQ monta preço → gerente aprova → cliente paga → sistema monta equipe → evento acontece → todos avaliam → dados alimentam a próxima operação.
+
+Isso é muito mais coerente com o negócio.
+
+E podemos continuar mantendo o núcleo Cloudflare/D1/R2/Workers; o gateway de pagamento e os canais externos entram como serviços periféricos, sem contaminar o banco com dados financeiros sensíveis.
+
+Para o MVP, eu priorizaria Service Request → Quote → Manager Approval → Payment Link → Event → Feedback, deixando settlement da equipe e integrações avançadas de reviews para a segunda camada.
+
+

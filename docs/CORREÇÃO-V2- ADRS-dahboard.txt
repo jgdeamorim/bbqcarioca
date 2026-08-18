@@ -1,0 +1,845 @@
+O documento deixa claro que a Fase 1 é o Portal de Talentos/Careers, com Cloudflare + D1 + R2 + Turnstile e sem exigir SSN/PDF.
+
+Minha avaliação
+
+Eu classificaria assim:
+
+Arquitetura: 8,5/10
+Modelo de dados: 6,5/10
+Segurança: 7/10
+Frontend: 6/10
+Preparação para o sistema completo: 5/10
+
+O problema não é a qualidade do código em si. O problema é que o Implementation Plan ainda está implementando um "Talent Portal", enquanto nosso contexto semântico final já é maior.
+
+1. Primeiro erro que precisa ser corrigido: domínio
+
+O documento continua usando:
+
+bbqcarioca.work
+bbqcarioca.com
+admin.bbqcarioca.work
+
+Nós já consolidamos:
+
+bbqdocarioca.com
+bbqdocarioca.work
+admin.bbqdocarioca.work
+
+Então todo o documento precisa ser corrigido antes de execução.
+
+Inclusive o código:
+
+https://bbqcarioca.work/api/v1/careers/apply
+
+deverá apontar para o domínio/API que efetivamente definirmos.
+
+2. A estrutura monorepo é boa
+
+Essa parte eu manteria:
+
+apps/
+├── web/
+└── api/
+
+E:
+
+apps/web
+apps/api
+
+é uma separação limpa.
+
+Também gostei da separação:
+
+routes/
+lib/
+schema.ts
+
+Isso facilita manutenção.
+
+Mas eu já prepararia:
+apps/api/src/
+├── routes/
+│   ├── careers.ts
+│   ├── customers.ts
+│   ├── services.ts
+│   ├── quotes.ts
+│   ├── events.ts
+│   ├── payments.ts
+│   ├── scheduling.ts
+│   ├── matching.ts
+│   └── feedback.ts
+│
+├── domain/
+├── services/
+├── repositories/
+├── middleware/
+├── lib/
+└── schema/
+
+Não precisamos implementar tudo agora.
+
+Mas a arquitetura não deve nos obrigar a reorganizar tudo depois.
+
+3. O maior problema está no banco
+
+O documento propõe:
+
+locations
+talents
+talent_documents
+
+Isso é insuficiente para o sistema que desenhamos.
+
+Eu mudaria para uma modelagem mais próxima de:
+
+people
+talents
+talent_roles
+skills
+talent_skills
+languages
+talent_languages
+locations
+talent_availability
+talent_documents
+
+Depois:
+
+customers
+service_requests
+quotes
+events
+event_requirements
+assignments
+
+E posteriormente:
+
+payments
+financial_transactions
+feedback
+reviews
+notifications
+audit_logs
+4. Eu NÃO colocaria languages TEXT como JSON
+
+O documento faz:
+
+languages TEXT NOT NULL
+
+e grava:
+
+["English", "Portuguese"]
+
+Funciona tecnicamente, mas não é o melhor modelo para o nosso caso.
+
+Porque depois queremos perguntar:
+
+Todos os candidatos que falam português?
+
+ou:
+
+English + Portuguese + Spanish?
+
+ou:
+
+English proficiency >= conversational?
+
+Então eu prefiro:
+
+languages
+talent_languages
+
+com algo como:
+
+talent_id
+language_code
+proficiency
+
+Exemplo:
+
+Carlos
+English      Fluent
+Portuguese   Native
+Spanish      Basic
+
+Isso alimenta diretamente o Smart Matching.
+
+5. Mesma coisa para skills
+
+Não quero:
+
+skills = "brisket, ribs, smoker"
+
+Quero:
+
+skills
+talent_skills
+
+Porque nosso futuro matching será:
+
+Event requires:
+Pitmaster
+Brisket
+100+ guests
+
+
+MATCH
+
+
+Carlos:
+Pitmaster ✓
+Brisket ✓
+100+ guests ✓
+
+Isso é muito mais poderoso.
+
+6. is_legally_authorized_us precisa ser melhor modelado
+
+O documento usa:
+
+is_legally_authorized_us TEXT NOT NULL DEFAULT 'YES'
+
+E o formulário exige:
+
+I am legally authorized to work in the United States.
+
+Eu mudaria.
+
+Primeiro porque não devemos ter um default YES para uma declaração de autorização de trabalho.
+
+Segundo porque:
+
+YES / NO
+
+pode ser insuficiente.
+
+Eu usaria algo como:
+
+work_authorization_status
+
+com:
+
+AUTHORIZED
+NOT_AUTHORIZED
+UNKNOWN
+
+E, dependendo do processo jurídico/contratual:
+
+requires_sponsorship
+
+se realmente necessário.
+
+E continua correto não pedir SSN no MVP.
+
+7. preferred_contact_method está correto conceitualmente
+
+Essa parte gostei:
+
+preferred_contact_method
+
+e:
+
+EMAIL
+WHATSAPP
+
+Mas eu expandiria para:
+
+EMAIL
+WHATSAPP
+SMS
+PHONE
+
+E separaria:
+
+phone
+whatsapp_phone
+
+como o documento já começou a fazer.
+
+Muito bom para nosso desenho futuro.
+
+8. O problema do WhatsApp no código
+
+O documento faz:
+
+data.hasWhatsapp ? data.phone : null
+
+Isso pressupõe:
+
+telefone = WhatsApp.
+
+Não devemos fazer isso.
+
+Melhor:
+
+phone
+whatsappPhone
+hasWhatsapp
+
+Se o candidato marcar WhatsApp e informar outro número, armazenamos o número real.
+
+9. Falta status do candidato
+
+Isso é obrigatório para o dashboard.
+
+Hoje temos:
+
+talents
+
+mas não:
+
+status
+
+Precisamos:
+
+NEW
+REVIEWING
+SHORTLISTED
+INTERVIEW
+APPROVED
+REJECTED
+
+E separadamente:
+
+operational_status
+
+como:
+
+AVAILABLE
+LIMITED
+UNAVAILABLE
+SUSPENDED
+INACTIVE
+
+Essa separação é muito importante.
+
+10. Falta Availability
+
+Para o Smart Scheduling, isso é fundamental.
+
+Precisamos de:
+
+talent_availability
+
+com:
+
+talent_id
+date
+start_time
+end_time
+availability_type
+
+E futuramente:
+
+recurrence
+blackout
+max_travel_miles
+
+Sem isso, o Matching Engine não consegue realmente responder:
+
+Quem está disponível para esse evento?
+
+11. Falta experiência operacional
+
+O documento tem:
+
+experience_years
+
+Isso é bom, mas insuficiente.
+
+Precisamos eventualmente saber:
+
+events_completed
+large_event_experience
+pitmaster_experience
+catering_experience
+customer_rating
+manager_rating
+reliability_score
+
+Isso entra no ranking.
+
+12. A parte geográfica precisa de uma correção importante
+
+O documento diz:
+
+"Triângulo Logístico"
+
+mas a Fase 1 só cria:
+
+CANDIDATE
+
+O locations.location_type já prevê:
+
+CANDIDATE
+HUB
+EVENT
+
+Isso é bom.
+
+Mas não precisamos criar HUB e EVENT na Fase 1 ainda.
+
+Eu faria:
+
+location_type
+CANDIDATE
+HUB
+EVENT
+
+desde o schema, mas implementaria apenas:
+
+CANDIDATE
+
+agora.
+
+Isso mantém o domínio preparado sem antecipar complexidade.
+
+13. Haversine: manter, mas corrigir o nome
+
+A ideia de:
+
+Haversine
+
+é correta.
+
+Mas esta parte:
+
+estimatedTravelMinutes = (miles / 35) * 60
+
+não deve ser chamada de Travel Time.
+
+Eu chamaria:
+
+estimatedTravelMinutes
+
+de:
+
+heuristicTravelMinutes
+
+ou:
+
+estimatedRoadTimeMinutes
+
+com uma flag:
+
+calculation_method = HEURISTIC
+
+Porque Haversine calcula distância geodésica, não tempo de viagem.
+
+14. E existe uma lacuna ainda maior: geocoding
+
+O documento diz:
+
+"geocodificação offline"
+
+Mas não define como isso será feito.
+
+Esse é um ponto que precisamos resolver.
+
+Temos:
+
+ZIP
+ ↓
+latitude / longitude
+
+Mas quem transforma ZIP em coordenadas?
+
+Não devemos fingir que Haversine resolve isso.
+
+Precisamos de uma estratégia:
+
+MVP
+
+Uma tabela interna de ZIP → centroid:
+
+zip_geocodes
+
+ou outra fonte de dados adequada.
+
+Depois:
+
+ZIP
+ ↓
+coordinates
+ ↓
+Haversine
+
+Isso mantém o MVP sem API paga.
+
+15. Turnstile está correto
+
+Essa parte está boa.
+
+O fluxo:
+
+Browser
+ ↓
+Turnstile
+ ↓
+token
+ ↓
+Worker
+ ↓
+Cloudflare siteverify
+ ↓
+D1
+
+é exatamente o que queremos.
+
+Mas eu acrescentaria:
+
+Rate Limiting
+
+Porque Turnstile sozinho não deve ser nossa única defesa contra abuso.
+
+16. A API está muito permissiva em caso de erro
+
+O código faz:
+
+catch (error) {
+  return new Response(
+    JSON.stringify({ error: "Invalid data or Server Error" }),
+    { status: 400 }
+  );
+}
+
+Isso mistura:
+
+400 Bad Request
+
+com:
+
+500 Internal Server Error
+
+Eu separaria:
+
+Zod validation
+→ 400
+
+
+Turnstile failed
+→ 403
+
+
+Duplicate application
+→ 409
+
+
+Unexpected DB/server failure
+→ 500
+
+E nunca devolveria error.message diretamente em produção.
+
+17. O retorno de talentId merece reconsideração
+
+O sistema retorna:
+
+{
+  "success": true,
+  "talentId": "..."
+}
+
+Eu não vejo necessidade de entregar o ID interno do talento ao candidato.
+
+Melhor:
+
+{
+  "success": true,
+  "applicationId": "public-safe-id"
+}
+
+ou até:
+
+{
+  "success": true
+}
+
+Isso reduz exposição desnecessária de identificadores internos.
+
+18. Falta idempotência
+
+Imagine o candidato clicar duas vezes:
+
+POST
+POST
+
+Podemos criar dois candidatos.
+
+Precisamos de uma estratégia:
+
+idempotency_key
+
+ou um mecanismo baseado em:
+
+email + application fingerprint + time window
+
+Idealmente uma chave gerada no frontend e validada no backend.
+
+Isso também será fundamental no futuro para:
+
+pagamentos;
+webhooks Stripe;
+assignments;
+notificações.
+19. O frontend React tem uma inconsistência
+
+O documento fala:
+
+React 19 + Vite SPA
+
+mas usa:
+
+useActionState()
+useFormStatus()
+
+Isso não significa automaticamente que teremos Server Actions.
+
+Num SPA Vite, a arquitetura continua sendo:
+
+React
+ ↓
+fetch
+ ↓
+Worker API
+
+Então eu não usaria o conceito de "Action" como se fosse uma Server Action.
+
+Pode ser simplesmente:
+
+submitApplication()
+
+que chama a API.
+
+O useFormStatus pode ser usado dentro do ecossistema apropriado, mas não devemos misturar mentalmente Next.js Server Actions com uma SPA Vite + Worker API.
+
+Essa parte merece revisão.
+
+20. Turnstile no frontend ainda está incompleto
+
+O documento coloca:
+
+<input type="hidden" name="turnstileToken" />
+
+e comenta:
+
+Turnstile injetado aqui...
+
+Isso não é implementação.
+
+Precisamos definir efetivamente:
+
+Turnstile widget
+ ↓
+callback
+ ↓
+token
+ ↓
+submit
+
+Ou usar uma integração React apropriada.
+
+Não devemos considerar a Fase 1 pronta enquanto isso estiver apenas como placeholder.
+
+21. Falta consentimento/privacy no formulário
+
+Esse é um ponto importante considerando tudo que discutimos sobre U.S. privacy.
+
+O formulário deveria ter pelo menos uma camada de:
+
+Privacy Notice
+
+e, quando juridicamente/operacionalmente necessário:
+
+consent / acknowledgement
+
+Também precisamos registrar:
+
+privacy_policy_version
+privacy_notice_version
+accepted_at
+
+Não necessariamente transformar tudo em checkbox.
+
+Mas precisamos saber qual versão da política estava vigente quando o candidato enviou os dados.
+
+22. Falta audit_log
+
+Eu colocaria desde a primeira versão do banco:
+
+audit_logs
+
+Mesmo que inicialmente apenas o SuperAdmin use.
+
+23. Falta o verdadeiro coração que ainda está fora da Fase 1
+
+O documento atual termina praticamente em:
+
+CAREERS
+   ↓
+TALENT
+
+Mas nosso sistema final será:
+
+CUSTOMER
+   ↓
+SERVICE REQUEST
+   ↓
+PRICING
+   ↓
+QUOTE
+   ↓
+REGIONAL MANAGER
+   ↓
+STRIPE
+   ↓
+EVENT
+   ↓
+SMART MATCHING
+   ↓
+SCHEDULING
+   ↓
+CROSS-DOCK
+   ↓
+STAFF ASSIGNMENT
+   ↓
+EVENT COMPLETED
+   ↓
+CUSTOMER FEEDBACK
+   ↓
+STAFF FEEDBACK
+   ↓
+REPUTATION
+
+Então eu faria uma distinção explícita:
+
+Este documento é Fase 1 — Careers Foundation.
+
+Não:
+
+Implementation Plan do sistema inteiro.
+
+Isso evita que daqui a dois meses alguém diga:
+
+"Mas onde está Stripe? Onde está Service Request?"
+
+A resposta será:
+
+Está na Fase 2/3, e o domínio foi preparado para recebê-los.
+
+24. Eu faria uma pequena mudança na taxonomia
+
+Em vez de:
+
+talents
+
+como entidade principal desde o primeiro formulário, eu prefiro:
+
+people
+
+e depois:
+
+talent_profiles
+
+Porque futuramente teremos:
+
+Person
+ ├── Candidate
+ ├── Staff
+ ├── Provider
+ └── Customer
+
+Mas isso talvez seja uma mudança arquitetural um pouco maior para o MVP.
+
+Se quisermos manter simples:
+
+talents
+
+pode ficar na Fase 1.
+
+Só precisamos documentar que Talent não representa necessariamente um empregado.
+
+25. Minha recomendação: não codificar ainda
+
+Eu faria agora uma pequena etapa de consolidação.
+
+Temos hoje:
+
+ADR-0005
+
+→ arquitetura e decisões.
+
+Implementation Plan
+
+→ implementação da Fase 1.
+
+O que falta é um documento intermediário:
+
+DOMAIN-0001 — BBQ Talent & Field-Service Domain Model
+
+Ele definiria somente:
+
+Person
+Talent
+Customer
+Service
+ServiceRequest
+Quote
+Order
+Event
+Location
+Hub
+CrossDock
+Availability
+Skill
+Assignment
+Payment
+Feedback
+Review
+Notification
+AuditLog
+
+E os relacionamentos.
+
+Depois:
+
+DOMAIN
+   ↓
+ADR
+   ↓
+Implementation Plan
+   ↓
+schema.sql
+   ↓
+API
+   ↓
+UI
+
+Essa sequência vai impedir que o código vire o "documento de verdade".
+
+Veredito sobre o segundo arquivo
+
+Eu aprovaria como "Implementation Plan — Fase 1 Draft", mas não como final.
+
+As correções prioritárias são:
+
+Corrigir bbqcarioca → bbqdocarioca.
+Separar Candidate Status / Operational Status.
+Criar Availability.
+Normalizar Languages.
+Normalizar Skills.
+Corrigir Work Authorization.
+Resolver ZIP → coordenadas.
+Adicionar Rate Limiting.
+Adicionar Idempotency.
+Corrigir tratamento 400/403/409/500.
+Implementar realmente o Turnstile no React.
+Não confundir Vite SPA com Server Actions.
+Adicionar privacy-policy version/acknowledgement.
+Adicionar Audit Log.
+Preparar o domínio para Customer → Service Request → Quote → Payment → Event.
+Reservar Stripe para a próxima fase, mas já prever payments e financial_transactions.
+Reservar Feedback/Reviews para a fase de pós-evento.
+Transformar o Haversine em distance calculation, não em verdadeiro driving-time engine.
+
+A base está boa. Eu não reescreveria tudo. Eu corrigiria o modelo de domínio e o contrato da API antes de gerar schema.sql definitivo. Isso nos dá uma fundação muito mais segura para depois colocar o Smart Scheduling, Cross-Dock, Stripe e reputação sem refatoração estrutural. 
