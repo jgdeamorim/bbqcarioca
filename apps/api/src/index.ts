@@ -12,7 +12,7 @@ import dashboardRoute from './routes/admin/dashboard';
 const app = new Hono<{ Bindings: Env }>();
 
 app.use('*', cors({
-  origin: ['https://admin.bbqdocarioca.work', 'http://localhost:5173'],
+  origin: ['https://admin.bbqcarioca.work', 'http://localhost:5173'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization', 'x-idempotency-key']
 }));
