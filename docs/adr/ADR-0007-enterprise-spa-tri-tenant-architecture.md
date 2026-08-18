@@ -70,6 +70,25 @@ A arquitetura Tri-Tenant usa o subdomínio (`window.location.hostname`) apenas c
     *   **JWT Role Exigida:** `role: 'customer'` (gerado após criar o Lead ou via Magic Link).
     *   **Permissões:** Visualização e aprovação exclusiva de seus próprios orçamentos (Quotes com `lead_id` = JWT `sub`). Nenhuma visualização de custos internos ou de outros clientes.
 
+### 4. Padrões de Qualidade Enterprise 2026+ (A11y WCAG AA, i18n, shadcn/ui)
+
+Para garantir que a UI atenda aos padrões corporativos globais de 2026 (referência: Context7 / shadcn/ui patterns), adotamos as seguintes métricas de desenvolvimento para os três tenants:
+
+#### Acessibilidade (WCAG 2.1 AA) e Semântica
+*   **Formulários com Contexto:** Proibido uso isolado de `div` + `Label`. Usar arquitetura composicional `<FieldGroup>`, `<Field>`, `<FieldLabel>` com `htmlFor` amarrado ao `id` do input.
+*   **Erros de Validação Acessíveis:** Atributos ARIA são obrigatórios em componentes controlados. Usar `data-invalid` no wrapper e `aria-invalid="true"` no input/control, acompanhado de `<FieldDescription>` para Leitores de Tela.
+*   **Screen Readers (`sr-only`):** Qualquer botão contendo apenas um ícone (ex: Menu Hamburger, Close, Collapse Sidebar) **deve obrigatoriamente** possuir uma tag `<span className="sr-only">Toggle Menu</span>` embutida para suporte a leitores de tela.
+*   **Composição Avançada (`asChild`):** Componentes encapsulados como Botões de Sidebar ou Breadcrumbs devem passar a propriedade `asChild` para mesclar as tags HTML (Slot) ao invés de renderizar DOM excessivo (ex: `<TooltipTrigger asChild>`).
+
+#### Design Engineering & Layout Constraints
+*   **Espaçamento Inteligente:** Padronização absoluta de Flex/Grid gaps (`gap-4`, `gap-6`). Fica estritamente **proibido** o uso de `space-y-*` ou `space-x-*` do Tailwind, pois quebram o fluxo bidirecional e o layout do DOM profundo.
+*   **Dimensionamento de Ícones/Avatares:** Usar utilitários atômicos modernos `size-*` (ex: `size-10`) em vez da repetição `w-10 h-10` para garantir proporção perfeita (`aspect-square` inerente). Embutir ícones em botões usando data-attributes (ex: `<SearchIcon data-icon="inline-start" />`).
+*   **Cores de Status Semânticos:** Hardcodar cores de sistema (ex: `text-emerald-600`) é proibido. O padrão corporativo é usar variantes semânticas encapsuladas como `<Badge variant="success">` ou `<Badge variant="destructive">`, garantindo coesão em *Light* e *Dark mode*.
+
+#### Internacionalização Pronta (i18n)
+*   Embora operando primariamente em pt-BR e en-US, todo componente de texto deve suportar injeção via dicionário. Textos sensíveis da UI não podem estar *hardcoded* nas Views.
+*   Leitores de tela mudam a pronúncia baseados no atributo HTML `<html lang="X">`. A SPA mudará ativamente o `document.documentElement.lang` ao trocar o idioma via hook global para manter a conformidade WCAG AA.
+
 ## Consequências
-*   **Positivas:** Código perfeitamente organizado para o crescimento, seguindo o padrão de projetos de larga escala (Adsentice), reduzindo refatorações futuras. Reutilização máxima de `@components` em todos os três subdomínios.
-*   **Negativas/Trade-offs:** Adoção de arquitetura complexa (`@core`, `@layouts`, `modules`) exige que todos os novos componentes sigam as diretrizes rígidas, aumentando ligeiramente a curva de aprendizado inicial da engenharia front-end do projeto.
+*   **Positivas:** Código perfeitamente organizado para o crescimento, seguindo o padrão de projetos de larga escala (Adsentice), reduzindo refatorações futuras. Reutilização máxima de `@components` em todos os três subdomínios, mantendo grau máximo de acessibilidade e design de vanguarda 2026+.
+*   **Negativas/Trade-offs:** Adoção de arquitetura complexa (`@core`, `@layouts`, `modules`) e rigor com atributos ARIA exige que todos os novos componentes sigam as diretrizes rígidas de semântica, aumentando a curva de aprendizado inicial da engenharia front-end do projeto.
