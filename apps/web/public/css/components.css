@@ -493,14 +493,14 @@ textarea.form-control { resize: vertical; min-height: 90px; }
 /* ── WHATSAPP WIDGET ── */
 .wa-widget { position: fixed; bottom: 24px; right: 24px; z-index: 90; display: flex; align-items: center; justify-content: flex-end; }
 .wa-btn {
-  width: 39px; height: 39px; border-radius: 50%;
+  width: 52px; height: 52px; border-radius: 50%;
   background: #25D366; color: #fff;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 15px rgba(37,211,102,.45);
+  box-shadow: 0 6px 20px rgba(37,211,102,.45);
   transition: transform .25s, box-shadow .25s;
   position: relative; text-decoration: none; flex-shrink: 0;
 }
-.wa-btn:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(37,211,102,.55); }
+.wa-btn:hover { transform: scale(1.08); box-shadow: 0 8px 28px rgba(37,211,102,.55); }
 @keyframes pulse-ring {
   0% { transform: scale(.9); opacity: .6; }
   100% { transform: scale(1.45); opacity: 0; }
@@ -510,28 +510,31 @@ textarea.form-control { resize: vertical; min-height: 90px; }
   border: 2px solid #25D366; animation: pulse-ring 2.2s ease-out infinite;
 }
 .wa-bubble {
-  position: absolute; right: calc(100% + 15px); top: 50%;
+  position: absolute; right: calc(100% + 16px); top: 50%;
   transform: translateY(-50%) scale(.95);
-  background: #fff; color: #1a1a1a;
-  padding: 10px 16px; border-radius: 14px;
-  font-size: .82rem; font-weight: 600; white-space: nowrap;
-  box-shadow: 0 8px 24px rgba(0,0,0,.25);
-  opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none;
+  background: #FFFFFF; color: #111827;
+  padding: 12px 20px; border-radius: 999px; /* Pill shape as requested */
+  font-family: 'Manrope', sans-serif; font-size: .85rem; font-weight: 700; white-space: nowrap;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.15);
+  opacity: 0; transition: opacity .3s ease, transform .3s ease; pointer-events: none;
+  display: inline-flex; align-items: center; justify-content: center;
 }
 .wa-bubble.show { opacity: 1; transform: translateY(-50%) scale(1); pointer-events: auto; }
 .wa-bubble::after {
   content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%);
-  border: 6px solid transparent; border-left-color: #fff;
+  border: 6px solid transparent; border-left-color: #FFFFFF;
 }
 .wa-close {
-  position: absolute; top: -8px; right: -8px;
+  position: absolute; top: -6px; right: 0;
   width: 20px; height: 20px; border-radius: 50%;
-  background: #333; color: #fff; font-size: .7rem;
+  background: #374151; color: #FFFFFF; font-size: .7rem;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; border: none;
+  cursor: pointer; border: none; line-height: 1;
+  transition: background .2s;
 }
+.wa-close:hover { background: #111827; }
 @media (max-width: 480px) {
-  .wa-bubble { font-size: .75rem; padding: 8px 12px; max-width: 210px; white-space: normal; }
+  .wa-bubble { font-size: .78rem; padding: 10px 16px; max-width: 220px; white-space: normal; border-radius: 24px; }
 }
 
 /* ── LEGAL COMPLIANCE MODAL (HTML5 <dialog> GLASSMORPHISM 2026+) ── */
