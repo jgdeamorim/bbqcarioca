@@ -4,6 +4,8 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
   // For development, we might mock it or expect the proxy to handle it.
   
   const token = localStorage.getItem('cf_access_token') || 'dev_token';
+  const baseUrl = import.meta.env.VITE_API_URL || 'https://api.bbqcarioca.work';
+  const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
 
   const headers = {
     'Content-Type': 'application/json',
@@ -11,7 +13,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     ...options.headers,
   };
 
-  const response = await fetch(url, {
+  const response = await fetch(fullUrl, {
     ...options,
     headers,
   });
