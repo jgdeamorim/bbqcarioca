@@ -259,6 +259,71 @@
       }
     }
 
+    /* ── MOBILE MENU TOGGLE & OVERLAY ── */
+    .mob-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: rgba(22, 17, 15, 0.8);
+      border: 1px solid rgba(255, 107, 53, 0.3);
+      border-radius: 10px;
+      color: var(--cream-50);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .mob-toggle:hover {
+      background: var(--charcoal-800);
+      border-color: var(--ember-500);
+    }
+
+    @media (min-width: 900px) {
+      .mob-toggle {
+        display: none;
+      }
+    }
+
+    .mob-menu {
+      position: fixed;
+      inset: 0;
+      top: 64px;
+      background: rgba(11, 9, 8, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      padding: 32px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-16px);
+      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+    }
+
+    .mob-menu.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .mob-link {
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--cream-50);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .mob-link:hover {
+      color: var(--ember-500);
+    }
+
     a:focus-visible,
     button:focus-visible,
     input:focus-visible,
@@ -4775,8 +4840,10 @@
       if (mobToggle) mobToggle.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = '';
     }
+    window.closeMob = closeMob;
     if (mobToggle && mobMenu) {
-      mobToggle.addEventListener('click', () => {
+      mobToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
         const open = mobMenu.classList.toggle('open');
         mobToggle.setAttribute('aria-expanded', String(open));
         document.body.style.overflow = open ? 'hidden' : '';
