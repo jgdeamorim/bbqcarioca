@@ -1,19 +1,63 @@
-# ADR-0005: Deep Technical Architecture Specification for BBQ Sovereign Platform (Cloudflare Serverless Ecosystem)
+# ADR-0005: Sovereign BBQ Talent & Service Platform Architecture ($0/month Free Tier to Paid Upgrade Roadmap)
 
 * **Status:** Aceito (Accepted)
 * **Data:** 2026-08-18
 * **Autor:** Jeferson Amorim (Founder) & Antigravity (Pair AI)
 * **Domínio:** BBQ do Carioca (`jgdeamorim/bbqcarioca`)
-* **Subdomínios:** `bbqcarioca.com` (Comercial/Marketing), `bbqcarioca.work` (Candidatos/Careers), `admin.bbqcarioca.work` (SuperAdmin Zero Trust)
-* **Impacto:** Especificação Técnica de Baixo Nível — Cloudflare Workers, D1 SQLite Bindings, R2 Presigned S3 Signer, Cloudflare Access JWT Validation, Turnstile Siteverify, Email Routing e Wrangler Config
+* **Domínios/Subdomínios:** `bbqcarioca.com` (Comercial/Marketing), `bbqcarioca.work` (Candidatos/Careers), `admin.bbqcarioca.work` (SuperAdmin Zero Trust)
+* **Impacto:** Location Intelligence, Cross-Docking Hubs, Smart Matching Engine, Field-Service Management, DB D1 Relacional, Especificação Técnica de Baixo Nível (Workers, JWT, Turnstile) e Estratégia de TLDs (`.com` vs `.work`)
 
 ---
 
-## 1. Contexto e Topologia de Rede da Cloudflare
+## Parte I: Contexto de Negócio e Princípios Arquiteturais (Spec-Driven)
+
+O projeto BBQ do Carioca necessita de um **Talent & Field-Service Operations OS** para a operação de catering na Flórida. Na logística de eventos, a distância simples em linha reta entre o candidato e o local do evento é insuficiente. A operação de catering exige a avaliação de **Hubs / Cross-Docks de Logística** (pontos de encontro de equipe, insumos e equipamentos de churrasco), além da estimativa realista de **Distância e Tempo de Deslocamento (Travel Time)** nas rodovias da Flórida.
+
+Ratificou-se que:
+1. **`db.json` é expressamente proibido para produção**, sendo reservado apenas para mocks locais.
+2. **E-mail é o canal oficial obrigatório**, mantendo **WhatsApp e SMS como canais operacionais opcionais**.
+3. A localização do candidato baseia-se no **ZIP Code / Cidade** informados (respeitando a privacidade PII), e **não** na geolocalização do IP do navegador.
+4. O cálculo de distância inicial no MVP usa a fórmula matemática de **Haversine no D1/Worker ($0 de APIs de mapas)**.
+
+---
+
+### 📍 1. O Triângulo Logístico de Operações (3 Nós Geográficos)
+
+```text
+               [ CANDIDATO ]
+            Residência / ZIP Code
+                      │
+                      │ (Distância 1: Candidato ➔ Hub)
+                      ▼
+            [ CROSS-DOCK / HUB ]
+          Equipamentos, Veículos e Staff
+                      │
+                      │ (Distância 2: Hub ➔ Evento)
+                      ▼
+                 [ EVENTO ]
+         Local de Catering na Flórida
+```
+
+### 🧮 2. Smart Matching Engine com Rating Logístico
+
+$$\text{Distance Score} = f(\text{Distância Candidato} \rightarrow \text{Hub}) + f(\text{Distância Hub} \rightarrow \text{Evento}) + \text{Tempo Estimado (Travel Time)}$$
+
+```text
+EVENTO: BBQ Wedding (Fort Lauderdale, FL)
+HUB PRÓXIMO: Fort Lauderdale Cross-Dock #01 (4.2 miles do evento)
+-----------------------------------------------------------------------
+CANDIDATO 1: João Santos (Fort Lauderdale) ➔ Evento direto: 5.1 mi (97% Match)
+CANDIDATO 2: Carlos Silva (Boca Raton) ➔ Hub: 8 mi ➔ Evento: 12 mi = Total 20 mi (94% Match)
+CANDIDATO 3: Marcos Oliveira (Miami) ➔ Hub: 24 mi ➔ Evento: 12 mi = Total 36 mi (89% Match)
+```
+
+---
+
+## Parte II: Implementação de Baixo Nível (Cloudflare Serverless Ecosystem)
 
 O ecossistema BBQ do Carioca é implantado 100% sobre a infraestrutura global da Cloudflare (Fase 0: Free Tier $0/mês, com roadmap transparente para Workers Paid US$ 5/mês na Fase 1).
 
-### 🌐 Topologia de Domínios e Roteamento Edge
+### 🌐 1. Topologia de Domínios e Roteamento Edge
 
 ```text
                                 Cloudflare DNS & Edge
@@ -40,9 +84,7 @@ bbqcarioca.com                 bbqcarioca.work                 admin.bbqcarioca.
              (Binding: `env.DB`)                (Binding: `env.BUCKET`)
 ```
 
----
-
-## 2. Configuração Canônica do `wrangler.jsonc`
+### ⚙️ 2. Configuração Canônica do `wrangler.jsonc`
 
 ```jsonc
 {
@@ -79,9 +121,7 @@ bbqcarioca.com                 bbqcarioca.work                 admin.bbqcarioca.
 }
 ```
 
----
-
-## 3. Especificação do Worker (`src/index.ts`) e Bindings TypeScript
+### 💻 3. Especificação do Worker (`src/index.ts`) e Bindings TypeScript
 
 ```typescript
 export interface Env {
@@ -144,12 +184,9 @@ export default {
 };
 ```
 
----
+### 🛡️ 4. Implementação Técnica dos Módulos Críticos
 
-## 4. Implementação Técnica dos Módulos Críticos
-
-### A. Validação de Bot com Cloudflare Turnstile Server-Side
-
+#### A. Validação de Bot com Cloudflare Turnstile Server-Side
 ```typescript
 async function verifyTurnstileToken(token: string, ip: string, secretKey: string): Promise<boolean> {
   const formData = new FormData();
@@ -168,8 +205,7 @@ async function verifyTurnstileToken(token: string, ip: string, secretKey: string
 }
 ```
 
-### B. Cálculo Geográfico Haversine no Edge (Worker / SQLite D1 - $0 Cost)
-
+#### B. Cálculo Geográfico Haversine no Edge (Worker / SQLite D1 - $0 Cost)
 ```typescript
 export function calculateHaversineDistance(
   lat1: number, lon1: number,
@@ -199,77 +235,35 @@ export function calculateHaversineDistance(
 }
 ```
 
-### C. Autenticação Administrativa Zero Trust (JWT Validator)
-
+#### C. Transações Atômicas Batch no D1
+O Worker executa múltiplas transações simultâneas de forma segura (exemplo: Criar Person, Location e Worker em uma única transação no D1):
 ```typescript
-async function verifyZeroTrustJWT(request: Request, env: Env): Promise<Response | null> {
-  const jwt = request.headers.get("Cf-Access-Jwt-Assertion");
-  if (!jwt) {
-    return new Response(JSON.stringify({ error: "Missing Access JWT Token" }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" }
-    });
-  }
-
-  // Validação do token de acesso emitido pelo Cloudflare Access (AUD)
-  // Em produção, a chave pública do Access da equipe (`https://<team>.cloudflareaccess.com/cdn-cgi/access/certs`)
-  // é verificada via Web Crypto API.
-  return null; // Token Válido
-}
-```
-
----
-
-## 5. D1 Query Execution & Transações SQL Canônicas
-
-### A. Inserção de Novo Candidato com Transação Batch D1
-
-```typescript
-async function handleCareerApplication(request: Request, env: Env): Promise<Response> {
-  const body = await request.json() as any;
-
-  // 1. Validar Turnstile Token
-  const clientIp = request.headers.get("CF-Connecting-IP") || "";
-  const isHuman = await verifyTurnstileToken(body.turnstileToken, clientIp, env.TURNSTILE_SECRET_KEY);
-  if (!isHuman) {
-    return new Response(JSON.stringify({ error: "Turnstile verification failed" }), { status: 400 });
-  }
-
-  const personId = crypto.randomUUID();
-  const locationId = crypto.randomUUID();
-  const workerId = crypto.randomUUID();
-
-  // Execução de batch de Queries Relacionais Atômicas no D1
   const batchResults = await env.DB.batch([
-    // Query 1: Location
-    env.DB.prepare(`
-      INSERT INTO locations (id, location_type, name, city, state, zip_code, latitude, longitude)
-      VALUES (?, 'CANDIDATE', ?, ?, 'FL', ?, ?, ?)
-    `).bind(locationId, `${body.fullName} Home`, body.city, body.zipCode, body.lat || 0, body.lng || 0),
-
-    // Query 2: Person
-    env.DB.prepare(`
-      INSERT INTO persons (id, full_name, email, phone, whatsapp_phone, has_whatsapp, preferred_contact_method)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).bind(personId, body.fullName, body.email, body.phone, body.whatsappPhone, body.hasWhatsapp ? 1 : 0, body.preferredContact),
-
-    // Query 3: Worker Profile
-    env.DB.prepare(`
-      INSERT INTO workers (id, person_id, primary_location_id, primary_role, experience_years, languages, max_travel_miles)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).bind(workerId, personId, locationId, body.primaryRole, body.experienceYears, JSON.stringify(body.languages), body.maxTravelMiles || 35)
+    env.DB.prepare(`INSERT INTO locations ...`).bind(...),
+    env.DB.prepare(`INSERT INTO persons ...`).bind(...),
+    env.DB.prepare(`INSERT INTO workers ...`).bind(...)
   ]);
-
-  return new Response(JSON.stringify({ success: true, workerId }), {
-    status: 201,
-    headers: { "Content-Type": "application/json" }
-  });
-}
 ```
 
 ---
 
-## 6. Configuração de DNS & Segurança de PII (Cloudflare Privacy Act)
+## Parte III: Roadmap e Compliance de Privacidade (Florida Privacy Act)
 
 1. **R2 Signed Presigned Uploads:** O upload de currículos em PDF vai direto do navegador para o R2 Bucket via URL assinada temporária (expiração em 15 minutos), evitando o estouro dos 128MB de memória do Worker.
 2. **Cron Trigger de Expurgo PII:** Worker configurado com Cron Trigger mensal (`0 0 1 * *`) para deletar permanentemente os arquivos R2 e registros de candidatos inativos ou rejeitados há mais de 180 dias.
+
+```text
+MVP v1 (Base Soberana + Geocodificação Inicial)
+- /careers em bbqcarioca.work (Formulário + Turnstile + Worker + D1)
+- Cadastro com ZIP Code/Cidade ➔ Cálculo Haversine ($0 API Maps)
+- Tabela `talents` + `locations` + SuperAdmin em admin.bbqcarioca.work (Zero Trust)
+
+Fase 2 (Cross-Dock Hubs & Smart Match Engine)
+- Cadastro de Hubs/Bases Operacionais na Flórida
+- Cálculo do Triângulo Logístico (Candidato ➔ Hub ➔ Evento)
+- Detecção visual de conflitos de horário no Calendário do SuperAdmin
+
+Fase 3 (Multi-Canal & Convocação Rápida)
+- Botão WhatsApp Dispatch (wa.me) no SuperAdmin
+- Ativação do Cloudflare Email Sending (US$ 5/mês Workers Paid)
+```
