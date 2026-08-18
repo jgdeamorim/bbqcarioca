@@ -35,7 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   (function buildMarquee() {
-    const items = ['PICANHA', 'COSTELA', 'LINGUIÇA', 'PÃO DE ALHO', 'FRANGO', 'MAMINHA', 'ALCATRA', 'VINAGRETE'];
+    const items = [
+      'CHURRASCO AUTÊNTICO',
+      'SABOR BRASILEIRO',
+      'PROFISSIONALISMO E QUALIDADE',
+      'COMPROMISSO E PONTUALIDADE',
+      'CARNES SELECIONADAS E PREMIUM',
+      'ATENDIMENTO EM TODA A FLÓRIDA'
+    ];
     const marqueeEl = document.getElementById('marquee');
     if (!marqueeEl) return;
     let html = '';
