@@ -374,7 +374,7 @@
     .hero-bg {
       position: absolute;
       inset: 0;
-      background-image: url('img/bg-slider-01.png');
+      background-image: url('img/bg-slider-01.webp');
       background-size: cover;
       background-position: center 30%;
       filter: brightness(.92) saturate(1.1);
@@ -384,7 +384,7 @@
 
     @media (max-width: 768px) {
       .hero-bg {
-        background-image: url('img/bg-slider-01_mobile.png');
+        background-image: url('img/bg-slider-01_mobile.webp');
         background-position: center center;
       }
     }
@@ -2039,8 +2039,11 @@
         </div>
         <div class="exp-grid">
           <article class="exp-card reveal">
-            <img src="img/exp-live-fire.png" alt="Skewers over glowing charcoal — live fire Brazilian churrasco style"
-              class="exp-card-img" loading="lazy" />
+            <picture>
+              <source srcset="img/exp-live-fire.webp" type="image/webp" />
+              <img src="img/exp-live-fire.png" alt="Skewers over glowing charcoal — live fire Brazilian churrasco catering style in Florida"
+                class="exp-card-img" width="1024" height="1024" loading="lazy" decoding="async" />
+            </picture>
             <div class="exp-card-body">
               <div class="exp-card-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="#FF6B35">
@@ -2056,8 +2059,11 @@
             </div>
           </article>
           <article class="exp-card reveal reveal-d1">
-            <img src="img/exp-picanha-cut.png" alt="Premium Brazilian cuts — picanha and hand-selected meats"
-              class="exp-card-img" loading="lazy" />
+            <picture>
+              <source srcset="img/exp-picanha-cut.webp" type="image/webp" />
+              <img src="img/exp-picanha-cut.png" alt="Premium Brazilian cuts — Picanha, flank steak and artisan sausages grilled live"
+                class="exp-card-img" width="1024" height="1024" loading="lazy" decoding="async" />
+            </picture>
             <div class="exp-card-body">
               <div class="exp-card-icon">
                 <svg width="22" height="22" fill="none" stroke="#FF6B35" stroke-width="1.5" viewBox="0 0 24 24">
@@ -2073,8 +2079,11 @@
             </div>
           </article>
           <article class="exp-card reveal reveal-d2">
-            <img src="img/exp-full-service.png" alt="Full service setup — BBQ do Carioca brings the grill and the team"
-              class="exp-card-img" loading="lazy" />
+            <picture>
+              <source srcset="img/exp-full-service.webp" type="image/webp" />
+              <img src="img/exp-full-service.png" alt="Full service setup — BBQ do Carioca brings the grill and complete catering team"
+                class="exp-card-img" width="1024" height="1024" loading="lazy" decoding="async" />
+            </picture>
             <div class="exp-card-body">
               <div class="exp-card-icon">
                 <svg width="22" height="22" fill="none" stroke="#FF6B35" stroke-width="1.5" viewBox="0 0 24 24">
@@ -2099,9 +2108,12 @@
         <div class="meet-grid">
           <div class="reveal">
             <div class="meet-img-wrap">
-              <img src="img/Bruno-Carioca.png"
-                alt="Bruno Carioca — professional churrasqueiro founder of BBQ do Carioca" class="meet-img"
-                loading="lazy" />
+              <picture>
+                <source srcset="img/Bruno-Carioca.webp" type="image/webp" />
+                <img src="img/Bruno-Carioca.png"
+                  alt="Bruno Carioca — Native Brazilian Churrasqueiro & Grill Master founder of BBQ do Carioca in Florida" class="meet-img"
+                  width="1536" height="2752" loading="lazy" decoding="async" />
+              </picture>
               <div class="meet-img-overlay"></div>
               <div class="meet-img-footer">
                 <div class="meet-name">Bruno Carioca</div>
@@ -2293,9 +2305,12 @@
           <!-- Review 1 -->
           <article class="review-card reveal">
             <div class="review-img-wrap">
-              <img src="img/testimonial-1.png"
-                alt="Marcus A. hosting a live fire churrasco birthday party in Boca Raton" class="review-img"
-                loading="lazy" aria-hidden="true" />
+              <picture>
+                <source srcset="img/testimonial-1.webp" type="image/webp" />
+                <img src="img/testimonial-1.png"
+                  alt="Marcus A. hosting a live fire churrasco birthday party in Boca Raton, FL" class="review-img"
+                  width="1024" height="1024" loading="lazy" decoding="async" aria-hidden="true" />
+              </picture>
               <div class="review-img-fade"></div>
             </div>
             <div class="review-body">
@@ -2319,8 +2334,11 @@
           <!-- Review 2 -->
           <article class="review-card reveal reveal-d1">
             <div class="review-img-wrap">
-              <img src="img/testimonial-2.png" alt="Jennifer L. hosting corporate BBQ catering event in West Palm Beach"
-                class="review-img" loading="lazy" aria-hidden="true" />
+              <picture>
+                <source srcset="img/testimonial-2.webp" type="image/webp" />
+                <img src="img/testimonial-2.png" alt="Jennifer L. hosting corporate BBQ catering event in West Palm Beach, FL"
+                  class="review-img" width="1024" height="1024" loading="lazy" decoding="async" aria-hidden="true" />
+              </picture>
               <div class="review-img-fade"></div>
             </div>
             <div class="review-body">
@@ -2344,8 +2362,11 @@
           <!-- Review 3 -->
           <article class="review-card reveal reveal-d2">
             <div class="review-img-wrap">
-              <img src="img/testimonial-3.png" alt="Rafael M. enjoying authentic family churrasco in Miami"
-                class="review-img" loading="lazy" aria-hidden="true" />
+              <picture>
+                <source srcset="img/testimonial-3.webp" type="image/webp" />
+                <img src="img/testimonial-3.png" alt="Rafael M. enjoying authentic family churrasco in Miami, FL"
+                  class="review-img" width="1024" height="1024" loading="lazy" decoding="async" aria-hidden="true" />
+              </picture>
               <div class="review-img-fade"></div>
             </div>
             <div class="review-body">
@@ -2370,10 +2391,10 @@
         <!-- Social proof bar -->
         <div class="reviews-social reveal">
           <div class="social-avatars">
-            <img src="img/testimonial-1.png" alt="" class="social-avatar" loading="lazy" aria-hidden="true" />
-            <img src="img/testimonial-2.png" alt="" class="social-avatar" loading="lazy" aria-hidden="true" />
-            <img src="img/testimonial-3.png" alt="" class="social-avatar" loading="lazy" aria-hidden="true" />
-            <img src="img/testimonial-1.png" alt="" class="social-avatar" loading="lazy" aria-hidden="true" />
+            <img src="img/testimonial-1-thumb.webp" alt="Client avatar Marcus A." class="social-avatar" width="40" height="40" loading="lazy" decoding="async" aria-hidden="true" />
+            <img src="img/testimonial-2-thumb.webp" alt="Client avatar Jennifer L." class="social-avatar" width="40" height="40" loading="lazy" decoding="async" aria-hidden="true" />
+            <img src="img/testimonial-3-thumb.webp" alt="Client avatar Rafael M." class="social-avatar" width="40" height="40" loading="lazy" decoding="async" aria-hidden="true" />
+            <img src="img/testimonial-1-thumb.webp" alt="Client avatar Marcus A." class="social-avatar" width="40" height="40" loading="lazy" decoding="async" aria-hidden="true" />
           </div>
           <p class="social-text">
             <span data-lang="en"><strong>★ 5.0</strong> — Trusted by families, companies & couples across Florida</span>
