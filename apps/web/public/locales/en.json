@@ -1,0 +1,131 @@
+{
+  "nav": {
+    "experience": "Experience",
+    "about": "About Carioca",
+    "packages": "Packages",
+    "quote": "Get Quote",
+    "cta": "Get Quote",
+    "whatsapp": "Chat on WhatsApp"
+  },
+  "hero": {
+    "eyebrow": "AUTHENTIC BRAZILIAN CHURRASCO • SERVING ALL FLORIDA",
+    "headline": "THE REAL BRAZILIAN<br>CHURRASCO<br>in Florida!",
+    "sub": "We bring flavor, quality and tradition to your event! A professional churrasqueiro handles the fire, premium selected meats and full service so you can enjoy your guests.",
+    "cta_primary": "Request a Quote!",
+    "cta_secondary": "See Packages",
+    "tag_1": "🥩 Selected Premium Meats",
+    "tag_2": "🔪 Professional & Custom Prep",
+    "tag_3": "👥 Events of All Sizes",
+    "tag_4": "📅 Birthdays & Corporate Events"
+  },
+  "relief": {
+    "text": "⭐ THE FULL BRAZILIAN CHURRASCO EXPERIENCE FOR YOU!"
+  },
+  "experience": {
+    "label": "THE EXPERIENCE",
+    "title": "Why clients choose us",
+    "card1_title": "Authentic Brazilian BBQ",
+    "card1_text": "Skewers over glowing charcoal, cooked to perfection the way it's done in Brazil. The live fire is the center of your party.",
+    "card2_title": "Selected Premium Meats",
+    "card2_text": "Juicy Picanha, flank steak, artisan sausages, and prime cuts seasoned with Brazilian tradition to amaze your guests.",
+    "card3_title": "Professionalism & Punctuality",
+    "card3_text": "We bring the structure, arrive early, and deliver attentive, customized service from start to finish."
+  },
+  "meet": {
+    "label": "FROM RIO WITH FIRE",
+    "title": "The specialist behind the fire.",
+    "badge": "RIO DE JANEIRO — TRADITION & FIRE",
+    "title_tag": "CHURRASQUEIRO PROFESSIONAL",
+    "copy": "Straight from Rio de Janeiro to Florida, Carioca brings a passion for authentic Brazilian churrasco. A master of live-fire barbecue, Bruno brings true Carioca warmth and craftsmanship to your event.",
+    "note": "🗣️ Note: Bruno is a native Brazilian churrasqueiro (speaks Portuguese). Full bilingual customer support is available for scheduling and event planning!",
+    "slogan": "\"More than a barbecue, an unforgettable experience!\""
+  },
+  "packages": {
+    "label": "PACKAGES & SERVICES",
+    "title": "Choose your ideal experience",
+    "badge_signature": "PREMIUM SIGNATURE",
+    "title_signature": "Full Brazilian Experience",
+    "price_signature": "Custom Quote",
+    "sig_item_1": "Hand-selected premium meats (Picanha, Flank, Sausages, Chicken)",
+    "sig_item_2": "Traditional sides (Farofa, Vinagrete, Garlic Bread)",
+    "sig_item_3": "Full professional churrasqueiro service throughout the event",
+    "sig_item_4": "Ideal for events of all sizes",
+    "badge_popular": "MOST POPULAR",
+    "title_full": "Full Churrasco",
+    "price_full": "Custom Quote",
+    "full_item_1": "Specialist on site + full structure & grill",
+    "full_item_2": "Meats & sides tailored to your event",
+    "full_item_3": "Ideal for birthdays, parties & gatherings",
+    "title_chef": "Churrasqueiro Service",
+    "price_chef": "Hourly Rate",
+    "chef_item_1": "Professional grill master at your location",
+    "chef_item_2": "Prep, live grilling and carving",
+    "chef_item_3": "You provide the meats, we guarantee perfection",
+    "cta_request": "Request Quote",
+    "note": "📍 Florida-Wide Service! Custom quotes tailored to guest count and location."
+  },
+  "how": {
+    "label": "HOW IT WORKS",
+    "title": "How catering works",
+    "step1_title": "Tell us about your event",
+    "step1_desc": "Date, Florida city, and estimated guest count.",
+    "step2_title": "We customize the menu",
+    "step2_desc": "Choose your favorite cuts and traditional sides.",
+    "step3_title": "We bring the fire",
+    "step3_desc": "We arrive early with full setup and prep everything on site.",
+    "step4_title": "You enjoy the party",
+    "step4_desc": "Freshly grilled meats served continuously to your guests."
+  },
+  "ideal": {
+    "label": "EVENTS",
+    "title": "Events of all sizes",
+    "item1": "Backyard Gatherings",
+    "item2": "Birthdays & Celebrations",
+    "item3": "Corporate Events",
+    "item4": "Family Parties"
+  },
+  "reviews": {
+    "label": "TESTIMONIALS",
+    "title": "What our Florida clients say",
+    "review1_quote": "\"Bruno brought the full Brazilian churrasco experience right to our backyard in Boca. Perfect Picanha and 10/10 service!\"",
+    "review1_meta": "BOCA RATON, FL · BIRTHDAY",
+    "review2_quote": "\"We hired him for our company event in West Palm. Flawless organization, punctual, and top-tier meats!\"",
+    "review2_meta": "WEST PALM BEACH, FL · CORPORATE",
+    "review3_quote": "\"Authentic churrasco just like back home in Brazil! So great to find this quality here in Miami. Highly recommend!\"",
+    "review3_meta": "MIAMI, FL · FAMILY GATHERING",
+    "social": "★ 5.0 — Authentic Brazilian BBQ approved by families & companies across Florida!"
+  },
+  "area": {
+    "label": "SERVICE AREA",
+    "title": "Serving all of Florida",
+    "sub": "Based in Palm Beach County (+1 561 403-4603). Available statewide for events."
+  },
+  "quote": {
+    "label": "FREE QUOTE",
+    "title": "Request your Quote!",
+    "sub": "Fast & personalized service. Fill in the details and we'll reply immediately on WhatsApp.",
+    "field_date": "Event Date",
+    "field_city": "Florida City / Area",
+    "select_city": "Select Florida City / Region…",
+    "group_south": "South Florida (Palm Beach / Broward / Miami)",
+    "group_central": "Central Florida (Orlando Area)",
+    "group_west": "West Coast (Tampa / Naples)",
+    "group_north": "North & Other Regions",
+    "city_other": "Other Florida City / Region",
+    "field_guests": "Guest Count",
+    "select_guests": "Select guest count…",
+    "field_grill": "Grill on site?",
+    "grill_yes": "Yes, grill available",
+    "grill_no": "No — please bring setup",
+    "field_notes": "Meats & notes (optional)",
+    "submit": "Request Quote on WhatsApp"
+  },
+  "footer": {
+    "sub": "Authentic Brazilian churrasco with flavor, quality and service across Florida.",
+    "slogan": "\"More than a barbecue, an unforgettable experience!\"",
+    "rights": "© 2026 BBQ do Carioca. All rights reserved. Fast & Personalized Service."
+  },
+  "wa": {
+    "bubble": "Request a quote on WhatsApp!"
+  }
+}

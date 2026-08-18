@@ -1,0 +1,38 @@
+:root {
+  --charcoal-950: #0B0908;
+  --charcoal-900: #141110;
+  --charcoal-800: #1E1917;
+  --ember-500: #FF6B35;
+  --ember-700: #C2410C;
+  --gold-400: #D9A441;
+  --cream-50: #FAF6EE;
+  --smoke-400: #A69D93;
+  --line: rgba(217,164,65,.16);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  background: var(--charcoal-950);
+  color: var(--cream-50);
+  font-family: 'Manrope', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── TYPOGRAPHY ── */
+.font-display { font-family: 'Fraunces', serif; }
+.font-mono    { font-family: 'IBM Plex Mono', monospace; }
+
+/* ── LANG TOGGLE ── */
+[data-lang="pt"] { display: none !important; }
+html[lang="pt"] [data-lang="en"] { display: none !important; }
+html[lang="pt"] [data-lang="pt"] { display: contents !important; }
+html[lang="en"] [data-lang="en"] { display: contents !important; }
+
+a:focus-visible, button:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--ember-500); outline-offset: 3px;
+}

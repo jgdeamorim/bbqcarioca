@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #f59e0b; /* Amber 500 for BBQ feel */
+}
+
+body {
+  @apply bg-zinc-950 text-zinc-100 antialiased selection:bg-primary selection:text-zinc-950;
+}
+
+/* Glassmorphism utility */
+.glass {
+  @apply bg-zinc-900/40 backdrop-blur-md border border-zinc-800/50;
+}
+
+/* Bento Grid */
+.tech-bento-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4;
+}
+
+/* Thumb zone padding */
+.thumb-zone {
+  @apply pb-24 md:pb-6;
+}
