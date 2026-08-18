@@ -9,13 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mobToggle) mobToggle.setAttribute('aria-expanded','false');
     document.body.style.overflow = '';
   }
-  if (mobToggle && mobMenu) {
-    mobToggle.addEventListener('click', () => {
-      const open = mobMenu.classList.toggle('open');
-      mobToggle.setAttribute('aria-expanded', String(open));
-      document.body.style.overflow = open ? 'hidden' : '';
-    });
-  }
+  /* Note: mobToggle event handling is canonical in window.toggleMob */
+
 
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }});

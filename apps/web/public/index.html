@@ -12,8 +12,12 @@
   <meta property="og:title" content="BBQ do Carioca | Authentic Brazilian Churrasco in Florida" />
   <meta property="og:description"
     content="Premium Brazilian cuts, live fire, professional service. You host. We master the fire." />
+  <link rel="canonical" href="https://bbqdocarioca.com/" />
+  <link rel="alternate" hreflang="en" href="https://bbqdocarioca.com/" />
+  <link rel="alternate" hreflang="pt" href="https://bbqdocarioca.com/?lang=pt" />
+  <link rel="alternate" hreflang="x-default" href="https://bbqdocarioca.com/" />
   <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>" />
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23FF6B35' d='M12 23c-3.5 0-6-2.5-6-6 0-2.5 1.5-4.5 3-6.5.5 2 1.5 3 3 3 0-3 2-6.5 5-9-1 4 1 6 1 9 2 0 3-1.5 3-4 1.5 2 3 4 3 7 0 3.5-2.5 6-6 6.5z'/></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="css/tokens.css" />
@@ -5004,28 +5008,8 @@
       });
     }
 
-    /* ── QUOTE FORM ── */
-    function handleQuote(e) {
-      e.preventDefault();
-      const f = e.target;
-      const lang = document.documentElement.lang;
-      const date = f.date.value || '—';
-      const city = f.city.value || '—';
-      const guests = f.guests.value || '—';
-      const grill = f.grill.value;
-      const notes = f.notes.value || '—';
+    /* ── QUOTE FORM (canonical in js/quote-form.js) ── */
 
-      const grillLabel = lang === 'pt'
-        ? (grill === 'yes' ? 'Sim' : 'Não — levar churrasqueira')
-        : (grill === 'yes' ? 'Yes' : 'No — bring one');
-
-      const msgText = lang === 'pt'
-        ? `Olá BBQ do Carioca! Gostaria de um orçamento.\n\n📅 Data: ${date}\n📍 Cidade: ${city}\n👥 Convidados: ${guests}\n🔥 Churrasqueira: ${grillLabel}\n🥩 Observações: ${notes}`
-        : `Hi BBQ do Carioca! I'd like a free quote.\n\n📅 Date: ${date}\n📍 City: ${city}\n👥 Guests: ${guests}\n🔥 Grill: ${grillLabel}\n🥩 Notes: ${notes}`;
-
-      const encodedMsg = encodeURIComponent(msgText);
-      window.open(`https://wa.me/15614034603?text=${encodedMsg}`, '_blank', 'noopener,noreferrer');
-    }
 
     /* ── LEGAL MODAL CONTROLLER (0ms INSTANT DIRECT DOM) ── */
     function openLegalModal(type) {
