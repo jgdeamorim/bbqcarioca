@@ -24,9 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const heroBg = document.getElementById('hero-bg');
   if (heroBg) {
+    const isMobile = window.innerWidth <= 768;
+    const heroImgUrl = isMobile ? 'img/bg-slider-01_mobile.png' : 'img/bg-slider-01.png';
     const img = new Image();
     img.onload = () => heroBg.classList.add('loaded');
-    img.src = 'img/bg-slider-01.png';
+    img.src = heroImgUrl;
   }
 
   (function buildMarquee() {

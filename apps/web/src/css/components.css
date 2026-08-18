@@ -12,6 +12,12 @@
   transform: scale(1.03);
   transition: transform 8s ease;
 }
+@media (max-width: 768px) {
+  .hero-bg {
+    background-image: url('../img/bg-slider-01_mobile.png');
+    background-position: center center;
+  }
+}
 .hero-bg.loaded { transform: scale(1); }
 .hero-overlay {
   position: absolute; inset: 0;
