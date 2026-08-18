@@ -39,6 +39,10 @@ Decidimos adotar a **Refatoração Declarativa com React 19 + Vite + Static Comp
    - O produto final gerado para a pasta `dist/` e `public/` é o **`index.html` estático perfeito**.
    - O cliente final no **Cloudflare Pages ($0/mês)** recebe um arquivo estático puro, com TTFB < 20ms e velocidade máxima de carregamento.
 
+3. **Sobriedade Visual & Micro-interações Leves (Sem Partículas 3D / Canvas Physics):**
+   - Isenção de scripts pesados de física 3D ou loops de partículas em canvas.
+   - Foco em micro-interações CSS nativas, transições suaves de hover e revelação via `IntersectionObserver` leve, mantendo o consumo de CPU/GPU em praticamente 0%.
+
 ---
 
 ## 3. ESQUEMA DO PIPELINE DE COMPILAÇÃO
