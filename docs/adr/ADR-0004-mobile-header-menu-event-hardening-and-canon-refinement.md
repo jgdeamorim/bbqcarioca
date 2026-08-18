@@ -1,6 +1,7 @@
 # ADR-0004: Hardening de Eventos do Menu Mobile Header e Refinamento Canônico de UI/SEO
 
-- **Status:** Aceito (Accepted)
+- **Status:** Concluído & Em Produção (Completed / Implemented in Commit beeb3c8)
+
 - **Data:** 18 de Agosto de 2026
 - **Autores:** Antigravity AI, Jeferson Amorim (Founder)
 - **Domínio:** BBQ Carioca (`jgdeamorim/bbqcarioca`) & Adsentice OS
