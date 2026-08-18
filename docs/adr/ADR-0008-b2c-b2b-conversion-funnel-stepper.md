@@ -25,7 +25,7 @@ A jornada do contratante de serviços não deve cair imediatamente em um painel 
 A captação de novos Pitmasters e Staffs (Assistentes) necessita de uma triagem rigorosa.
 
 *   **Ponto de Ignição:** O candidato acessa `bbqcarioca.work/careers` buscando oportunidades.
-*   **Onboarding Stepper (SPA Unauth):** Redirecionado para `portal.bbqcarioca.work/careers`, ele enfrenta um processo de "RH Online".
+*   **Onboarding Stepper (SPA Unauth):** Redirecionado para `portal.bbqcarioca.work/careers`, ele enfrenta um processo de "RH Online" e mathing sobre zona zip code, raio de distância sobre os agendamentos de seriços dos clientes entre outros fatores de mathing.
 *   **Mapeamento Dinâmico de Skills:** Os passos do formulário não são estáticos. Eles puxam via API a lista de "Pacotes de Serviços/Habilidades" ativamente registrados pelo Superadmin no D1. O candidato seleciona as habilidades nas quais possui expertise.
 *   **Estado de Quarentena (Sandbox):** Ao finalizar o formulário, o candidato ganha acesso restrito ao painel. O status inicial de sua conta é obrigatoriamente **"Candidatura em Análise"**. Neste estado, o sistema bloqueia sua participação em missões.
 *   **Autoridade do Superadmin:** O administrador avalia o perfil no seu Dashboard. Uma vez que o "Opt-in Operacional" é concedido, o algoritmo de *Matching* começa a direcionar esse talento para os agendamentos dos clientes, com total governança sobre repasses financeiros e custos.
