@@ -9,11 +9,11 @@
   },
   "routes": [
     {
-      "pattern": "bbqcarioca.work/*",
+      "pattern": "bbqcarioca.work",
       "custom_domain": true
     },
     {
-      "pattern": "www.bbqcarioca.work/*",
+      "pattern": "www.bbqcarioca.work",
       "custom_domain": true
     }
   ]
