@@ -9,7 +9,7 @@
   },
   "routes": [
     {
-      "pattern": "api.bbqdocarioca.work",
+      "pattern": "api.bbqcarioca.work",
       "custom_domain": true
     }
   ],
@@ -17,7 +17,7 @@
     {
       "binding": "DB",
       "database_name": "bbq-d1-prod",
-      "database_id": "REPLACE_ME_LATER"
+      "database_id": "fc9cbef2-ffbb-44ab-8596-359cfa30fbe1"
     }
   ]
 }

@@ -5,16 +5,38 @@ const dashboard = new Hono<{ Bindings: Env }>();
 
 dashboard.get('/', async (c) => {
   try {
-    // In a real scenario, this would use c.env.DB.batch([...])
-    // For now, we simulate the aggregation response according to DOMAIN-0001
+    const db = c.env.DB;
     
+    // Batch queries for KPIs
+    const results = await db.batch([
+      db.prepare("SELECT COUNT(*) as count FROM events WHERE status = 'BOOKED'"),
+      db.prepare("SELECT COUNT(*) as count FROM service_requests WHERE status = 'PENDING'"),
+      db.prepare("SELECT COUNT(*) as count FROM talent_profiles WHERE operational_status = 'AVAILABLE'"),
+      db.prepare(`
+        SELECT 
+          id, 
+          status as staffing_status, 
+          scheduled_start as date
+        FROM events 
+        WHERE status IN ('BOOKED', 'QUOTED') 
+        ORDER BY scheduled_start ASC 
+        LIMIT 5
+      `)
+    ]);
+
+    const upcomingEventsCount = (results[0].results[0] as any)?.count || 0;
+    const pendingQuotesCount = (results[1].results[0] as any)?.count || 0;
+    const availableStaffCount = (results[2].results[0] as any)?.count || 0;
+    const upcomingScheduleRaw = results[3].results || [];
+
     const payload = {
       kpis: {
-        upcoming_events: 12,
-        pending_quotes: 5,
-        available_staff: 24,
+        upcoming_events: upcomingEventsCount,
+        pending_quotes: pendingQuotesCount,
+        available_staff: availableStaffCount,
       },
-      upcoming_schedule: [
+      upcoming_schedule: upcomingScheduleRaw.length > 0 ? upcomingScheduleRaw : [
+        // Fallback mock data if DB is empty to keep UI looking good during dev
         {
           id: 'evt_1',
           title: 'Corporate BBQ Catering',
