@@ -289,6 +289,13 @@
       transition: transform 8s ease;
     }
 
+    @media (max-width: 768px) {
+      .hero-bg {
+        background-image: url('img/bg-slider-01_mobile.png');
+        background-position: center center;
+      }
+    }
+
     .hero-bg.loaded {
       transform: scale(1);
     }
@@ -4785,8 +4792,9 @@
     const heroBg = document.getElementById('hero-bg');
     if (heroBg) {
       const img = new Image();
+      const isMobile = window.innerWidth <= 768;
       img.onload = () => heroBg.classList.add('loaded');
-      img.src = 'img/bg-slider-01.png';
+      img.src = isMobile ? 'img/bg-slider-01_mobile.png' : 'img/bg-slider-01.png';
     }
 
     /* ── MARQUEE ── */
