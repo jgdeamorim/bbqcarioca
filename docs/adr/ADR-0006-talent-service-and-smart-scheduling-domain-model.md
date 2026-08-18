@@ -4,7 +4,7 @@
 * **Data:** 2026-08-18
 * **Autor:** Jeferson Amorim (Founder) & Antigravity (Pair AI)
 * **Domínio:** BBQ do Carioca (`jgdeamorim/bbqcarioca`)
-* **Impacto:** Arquitetura do Modelo de Domínio, Motores Cognitivos, Módulo Comercial & Financeiro (Stripe Webhooks), Módulo de Reputação/Google Reviews, Compliance Legal/EEOC e Schema D1 Relacional Completo (14 Tabelas)
+* **Impacto:** Arquitetura do Modelo de Domínio, UI/UX Layout Archetypes (`adsentice-materio`), Motores Cognitivos, Módulo Comercial & Financeiro (Stripe Webhooks), Módulo de Reputação/Google Reviews, Compliance Legal/EEOC e Schema D1 Relacional Completo (14 Tabelas)
 
 ---
 
@@ -41,6 +41,32 @@ $$\text{Solicitação} \rightarrow \text{Orçamento (Pricing)} \rightarrow \text
 
 ### 5. Ética Algorítmica & EEOC Compliance (Human-in-the-Loop)
 * Zero atributos protegidos (raça, idade, gênero). Justificativa algorítmica auditada com confirmação final humana do **Gerente da Flórida**.
+
+---
+
+## 🎨 Arquitetura de UI/UX & Padrões Visuais (Referência `adsentice-materio`)
+
+O painel administrativo em `admin.bbqdocarioca.work` adota o padrão de design canônico mapeado no Knowledge Graph (`tag=materio`):
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│  BBQ CARIOCA WORKFORCE OS — EXECUTIVE BENTO UI GRID (4 COLUNAS)        │
+├───────────────────┬───────────────────┬───────────────────┬────────────┤
+│  CARD 1: HERO KPI │  CARD 2: FINANÇAS │  CARD 3: ALERTAS  │ CARD 4:    │
+│  6/7 Staff        │  Revenue: $3,200  │  ⚠ Pitmaster      │ REPUTAÇÃO  │
+│  Confirmed        │  Margin:  $2,230  │  Replacement Req. │ 4.9 ⭐     │
+├───────────────────┴───────────────────┴───────────────────┴────────────┤
+│  LOGISTICS & SMART MATCHING MATRIX (dashboard/logistics)               │
+│  Candidate ➔ Hub Boca Raton ➔ Event Fort Lauderdale (Haversine 8.2 mi) │
+├────────────────────────────────────────────────────────────────────────┤
+│  MOBILE THUMB-ZONE NAVIGATION (Ergonomia em Campo com 1 Mão)            │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **Stack Visual:** React 19 + Tailwind CSS v4 + `shadcn/ui` + Lucide Icons + Recharts.
+2. **Layout Archetype:** Executive Bento UI Grid 4 Colunas (`21st-bento-grid-card-4col`).
+3. **Módulo de Logística:** Baseado no template `src/app/(main)/dashboard/logistics/page.tsx` para exibição do Triângulo Logístico e status dos Hubs.
+4. **Ergonomia Mobile em Campo:** Ações principais acionáveis via navegação por polegar (*Thumb Zone*), facilitando o manuseio pelo gerente regional no celular durante os eventos.
 
 ---
 
@@ -304,7 +330,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 1. **Fase 0 (MVP Soberano $0/mês):**
    - D1: Tabelas `persons`, `locations`, `workers`, `worker_skills`, `talent_documents` e `audit_logs`.
    - Portal `/careers` em `bbqdocarioca.work` (Formulário + Turnstile + Workers).
-   - SuperAdmin em `admin.bbqdocarioca.work` (Zero Trust).
+   - SuperAdmin UI (`admin.bbqdocarioca.work`) em React 19 + Tailwind v4 baseada nos componentes Materio / Bento UI Grid.
 
 2. **Fase 1 (Commercial & Smart Operations):**
    - Tabelas `events`, `service_requests`, `hubs`, `event_staff_requirements`, `staff_assignments`.
