@@ -3,6 +3,7 @@ import { CalendarCheck2, ArrowRight, ArrowLeft, CheckCircle2 } from 'lucide-reac
 import { motion, AnimatePresence } from 'framer-motion';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { decodeIntentPayload } from '../../../lib/utils';
+import { useAuthStore } from '../../../lib/authStore';
 
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'; // Dummy key for dev
 
@@ -37,6 +38,7 @@ export function ClientStepper() {
 
   const handleNext = () => setStep(s => Math.min(4, s + 1));
   const handleBack = () => setStep(s => Math.max(1, s - 1));
+  const setAuth = useAuthStore(state => state.setAuth);
 
   const handleSubmit = async () => {
     if (!formData.turnstileToken) {
@@ -46,15 +48,26 @@ export function ClientStepper() {
     
     setIsSubmitting(true);
     try {
-      // Fake API Call for now, to be replaced in Phase 2
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log("Submitting B2C Quote:", { ...formData, correlationId });
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+      const response = await fetch(`${apiUrl}/v1/client/requests`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, correlationId })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Falha ao processar solicitação');
+      }
+
+      const result = await response.json();
       
-      // Simulate JWT Handshake Success & redirect
-      alert("Orçamento enviado com sucesso!");
-      // window.location.href = '/client/dashboard'
-    } catch (e) {
+      // JWT Handshake Success -> AuthGuard bypass
+      setAuth(result.token, 'customer');
+      // The router in index.tsx will automatically navigate seamlessly
+    } catch (e: any) {
       console.error(e);
+      alert(`Erro: ${e.message}`);
     } finally {
       setIsSubmitting(false);
     }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { UserPlus, ArrowRight, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Turnstile } from '@marsidev/react-turnstile';
+import { useAuthStore } from '../../../lib/authStore';
 
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 
@@ -31,6 +32,8 @@ export function TalentStepper() {
     });
   };
 
+  const setAuth = useAuthStore(state => state.setAuth);
+
   const handleSubmit = async () => {
     if (!formData.turnstileToken || !formData.legal_accepted) {
       alert("Por favor, aceite os termos e verifique que você é humano.");
@@ -39,12 +42,26 @@ export function TalentStepper() {
     
     setIsSubmitting(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log("Submitting B2B Application:", { ...formData, correlationId });
-      alert("Candidatura enviada com sucesso! Em análise.");
-      // window.location.href = '/careers/missions'
-    } catch (e) {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+      const response = await fetch(`${apiUrl}/v1/careers/apply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, correlationId })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Falha ao processar candidatura');
+      }
+
+      const result = await response.json();
+      
+      // JWT Handshake Success -> AuthGuard bypass
+      setAuth(result.token, 'talent');
+      // The router in index.tsx will automatically navigate seamlessly
+    } catch (e: any) {
       console.error(e);
+      alert(`Erro: ${e.message}`);
     } finally {
       setIsSubmitting(false);
     }
