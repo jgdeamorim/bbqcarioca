@@ -15,7 +15,7 @@ A arquitetura proposta foi submetida aos testes canônicos das regras de engenha
 * **Tratamento de Erros:**
   O Worker usará rigidamente a sintaxe mandatória para blocos vazios: `catch (e: unknown) { void e; }`, superando a limitação do Rust SWC Linter detectada na Base Adsentice.
 * **Prevenção de OOM (Out of Memory) - ADR-0109:**
-  O repositório evitará processos de `npx tsc --noEmit` globais que extenuam a RAM durante a construção ativa. Faremos validações isoladas, mantendo o ambiente Vite cirúrgico e em alta performance.
+  O repositório evitará processos de `npx tsc --noEmit` globais que extenuam a RAM da máquina durante a construção ativa. Em vez disso, assim como na regra consolidada, **utilizaremos o ESLint nativamente** para fazer validações cirúrgicas arquivo por arquivo. Isso previne o esgotamento de memória e mantém o ambiente Vite incrivelmente rápido.
 
 ## 2. Auditoria Context7 (Stack React 19 + Tailwind v4 + Vite)
 
