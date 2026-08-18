@@ -4,14 +4,6 @@
   "compatibility_date": "2026-08-18",
   "routes": [
     {
-      "pattern": "admin.bbqcarioca.work",
-      "custom_domain": true
-    },
-    {
-      "pattern": "careers.bbqcarioca.work",
-      "custom_domain": true
-    },
-    {
       "pattern": "portal.bbqcarioca.work",
       "custom_domain": true
     }

@@ -4,12 +4,14 @@
 Aceito
 
 ## Contexto
-O ecossistema "Control Plane 360" do BBQ Carioca evoluiu para uma SPA Multi-Tenant servida pela Cloudflare Workers Assets. O mesmo bundle React (`apps/dashboard`) agora intercepta 3 subdomínios:
-- `admin.bbqcarioca.work` (Para Regional Managers)
-- `careers.bbqcarioca.work` (Para Pitmasters e Staff)
-- `portal.bbqcarioca.work` (Para Clientes)
+O ecossistema "Control Plane 360" do BBQ Carioca evoluiu para uma SPA Multi-Tenant servida pela Cloudflare Workers Assets. Após análise arquitetural (v7.31), substituímos o isolamento via Múltiplos Subdomínios (Horizontal) por um isolamento baseado em **Paths (Vertical) sob um único Domínio de Aplicação**:
+- `portal.bbqcarioca.work/admin` (Para Regional Managers)
+- `portal.bbqcarioca.work/careers` (Para Pitmasters e Staff)
+- `portal.bbqcarioca.work/client` (Para Clientes)
 
-Para suportar o crescimento do projeto mantendo a robustez de um sistema de classe corporativa, precisamos de uma padronização organizacional rigorosa inspirada no modelo corporativo Adsentice (Materio), mas adaptada para o runtime Vite + React 19 Client-Side e desenhada estritamente como **Mobile-First**.
+*Nota:* O domínio raiz `bbqcarioca.work` operará *Vanity URLs* (ex: `bbqcarioca.work/careers`), redirecionando automaticamente os usuários para o Portal via regras da Cloudflare Edge.
+
+Para suportar o crescimento do projeto mantendo a robustez de um sistema de classe corporativa, precisamos de uma padronização organizacional rigorosa inspirada no modelo corporativo Adsentice (Materio), adaptada para o runtime Vite + React Router (Client-Side) e desenhada estritamente como **Mobile-First**.
 
 ## Decisão
 
@@ -49,24 +51,24 @@ apps/dashboard/src/
 
 ### 3. Governança RBAC (Role-Based Access Control) por Profile-Rules
 
-A arquitetura Tri-Tenant usa o subdomínio (`window.location.hostname`) apenas como o **Portão Físico**. A **Autoridade Lógica** é validada pelo JWT (`cf_access_token` ou Supabase Session) usando *Route Guards* (Hooks de proteção).
+A arquitetura Tri-Tenant usa o roteamento **React Router (`/path`)** dentro do domínio unificado `portal.bbqcarioca.work` como o **Portão Físico**. A **Autoridade Lógica** é validada pelo JWT (`cf_access_token` ou Supabase Session) usando *Route Guards* (Hooks de proteção). O estado global do usuário (CORS/Cookies) é perfeitamente compartilhado entre as rotas sem recarregamento.
 
 #### As 3 Entidades (User-IDs) e suas Regras de Acesso:
 
 *   **`admin` (Regional Manager / Operator)**
-    *   **Portão:** `admin.bbqcarioca.work`
+    *   **Rota Base:** `/admin`
     *   **JWT Role Exigida:** `role: 'admin' | 'manager'`
     *   **Permissões:** Leitura e Escrita global sobre as coleções (Quotes, Events, Staff, CRM). Acesso irrestrito a configurações.
-    *   **Fallback:** Se um não-admin tentar entrar no domínio admin, o Hook `useAuth` força redirect para página de "Acesso Negado 403".
+    *   **Fallback:** Se um não-admin tentar entrar na rota `/admin`, o Hook `useAuth` intercepta e força redirect para a página "Acesso Negado 403".
 
 *   **`careers` (Staff / Talent)**
-    *   **Portão:** `careers.bbqcarioca.work`
+    *   **Rota Base:** `/careers`
     *   **JWT Role Exigida:** `role: 'talent' | 'staff'`
     *   **Permissões:** Acesso Mutacional Restrito (Apenas altera sua própria linha em `talent_profiles`), leitura dos eventos aos quais foi alocado (status `STAFFING_PENDING` ou `FULLY_STAFFED`).
-    *   **Interface Privada:** Diferente do admin, o layout remove o menu vertical e exibe um feed de missões/eventos.
+    *   **Interface Privada:** Diferente do admin, o layout remove o menu vertical e exibe um feed de missões/eventos otimizado para mobile.
 
 *   **`client` (Customer / Lead)**
-    *   **Portão:** `portal.bbqcarioca.work`
+    *   **Rota Base:** `/client`
     *   **JWT Role Exigida:** `role: 'customer'` (gerado após criar o Lead ou via Magic Link).
     *   **Permissões:** Visualização e aprovação exclusiva de seus próprios orçamentos (Quotes com `lead_id` = JWT `sub`). Nenhuma visualização de custos internos ou de outros clientes.
 
