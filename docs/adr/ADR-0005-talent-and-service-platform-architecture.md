@@ -4,101 +4,127 @@
 * **Data:** 2026-08-18
 * **Autor:** Jeferson Amorim (Founder) & Antigravity (Pair AI)
 * **Domínio:** BBQ do Carioca (`jgdeamorim/bbqcarioca`)
-* **Impacto:** Arquitetura Backend/DB, Infraestrutura Cloudflare, Segurança PII, Custos de Operação e Gestão de Talentos/Prestadores
+* **Impacto:** Arquitetura CRM Multi-Canal, Backend/DB Serverless, Segurança PII, Custos de Operação ($0) e Rede de Talentos/Prestadores
 
 ---
 
 ## Contexto e Problema
 
-O projeto BBQ do Carioca necessita de uma solução escalável, soberana e segura para captar e gerenciar candidatos e prestadores de serviço de catering na Flórida (Grill Masters/Churrasqueiros, Auxiliares de Fogo, Garçons, Barmans, Coordenadores e Pitmasters).
+O projeto BBQ do Carioca necessita de um sistema soberano de recrutamento e gestão de prestadores de serviço de catering na Flórida (Grill Masters, Auxiliares de Fogo, Garçons, Barmans, Coordenadores e Pitmasters).
 
-Decidiu-se **eliminar e proibir o uso de `db.json` para o ambiente de produção**, reservando arquivos JSON estáticos exclusivamente para mocks e testes unitários locais de desenvolvimento. O motivo central é que dados pessoais sensíveis (PII: e-mails, telefones, histórico profissional, currículos e documentos de residentes nos EUA) não devem nascer em arquivos de texto plano sem controle estrito de acesso, transacionalidade e auditoria.
+Ratificou-se que **o `db.json` é expressamente proibido para o ambiente de produção**, sendo reservado exclusivamente para mocks e testes unitários locais. 
 
-Deseja-se construir e operar o **MVP inteiro dentro do plano Free da Cloudflare ($0/mês)**, alocando recursos de ponta sem gerar custos fixos de servidor neste estágio do negócio.
+Além disso, definiu-se que a plataforma não deve ser um simples "sistema de WhatsApp" nem depender de APIs pagas de terceiros (Twilio/Z-API). Ela deve ser um **Talent & Service CRM proprietário do BBQ do Carioca**, onde **E-mail é o canal oficial obrigatório do MVP** e canais adicionais (WhatsApp, SMS, Ligação) são **opcionais e intercambiáveis**.
 
 ---
 
 ## Decisão de Arquitetura
 
-Decidiu-se adotar a **BBQ Talent & Service Platform** rodando 100% sobre a infraestrutura serverless gratuita da Cloudflare, conectando a stack **TypeScript ➔ Cloudflare Worker ➔ D1 (SQL) ➔ R2 (Blobs) ➔ Zero Trust Access**.
+Decidiu-se adotar a **BBQ Talent & Service Platform** rodando 100% no plano Free da Cloudflare ($0/mês), conectando a stack **TypeScript ➔ Cloudflare Worker ➔ D1 (SQL) ➔ R2 (Blobs) ➔ Zero Trust Access**.
 
-### 📊 Validação das Cotas do Plano Free da Cloudflare ($0/mês)
+### 📊 Validação de Cotas e Custo Inicial ($0/mês)
 
-| Componente | Franquia Grátis Cloudflare | Consumo Estimado no MVP BBQ | Status |
-| :--- | :--- | :--- | :---: |
-| **Cloudflare Workers** | 100.000 requests/dia | ~500 a 2.000 requests/dia | ✅ 100% Confortável |
-| **Cloudflare D1 (Rows Read)** | 5.000.000 linhas lidas/dia | ~10.000 a 50.000 lidas/dia | ✅ 100% Confortável |
-| **Cloudflare D1 (Rows Written)**| 100.000 linhas escritas/dia | ~100 a 1.000 escritas/dia | ✅ 100% Confortável |
-| **Cloudflare D1 Storage** | 5 GB de banco de dados | ~10 MB inicial | ✅ 100% Confortável |
-| **Cloudflare R2 Storage** | 10 GB de armazenamento | ~500 MB (currículos/fotos) | ✅ 100% Confortável |
-| **Cloudflare R2 Operações** | 1M Class A + 10M Class B /mês | ~5.000 ops/mês | ✅ 100% Confortável |
-| **Cloudflare R2 Egress** | **Grátis / Ilimitado** | 0% custo de tráfego de saída | ✅ 100% Confortável |
-| **Workers Builds** | 3.000 minutos/mês | ~50 minutos/mês | ✅ 100% Confortável |
-| **Zero Trust / Access** | Grátis até 50 usuários | 1 a 3 administradores (Bruno/RH) | ✅ 100% Confortável |
+```text
+                 BBQ TALENT & SERVICE PLATFORM
+                               │
+               ┌───────────────┴───────────────┐
+               │                               │
+            WEBSITE                          ADMIN
+     bbqdocarioca.com/careers        admin.bbqdocarioca.com
+               │                               │
+           Turnstile                       Zero Trust
+               │                               │
+               └───────────────┬───────────────┘
+                               ▼
+                          Worker API
+                         (TypeScript)
+                               │
+             ┌─────────────────┴─────────────────┐
+             ▼                                   ▼
+        D1 (SQLite)                          R2 Storage
+    candidatos / prestadores              resumes (PDF) / fotos
+```
 
-> **Nota de Comportamento de Erro (Fail-Safe):** A documentação oficial da Cloudflare confirma que se uma conta no plano Free ultrapassar os limites diários do D1, as chamadas retornam erro e são pausadas até o reset diário automático, **sem nenhuma cobrança surpresa no cartão de crédito**. A migração para o Workers Paid (US$ 5/mês) será avaliada somente no futuro caso haja explosão de volume de candidatos/uploads.
+* **Cloudflare Workers:** 100.000 requests/dia grátis.
+* **Cloudflare D1:** 5.000.000 lidas/dia + 100.000 escritas/dia + 5 GB de banco SQL grátis.
+* **Cloudflare R2:** 10 GB de armazenamento + Operações Class A/B + **Zero Egress Fees** ($0 taxa de saída).
+* **Cloudflare Access (Zero Trust):** Proteção administrativa gratuita até 50 usuários.
+* **Fail-Safe:** Documentado que exceder a cota diária causa pausa temporária nas chamadas até o reset automático, **sem nenhuma cobrança de surpresa**.
 
 ---
 
-## Desenho do Fluxo de Dados & Segurança PII
+## Arquitetura de Canais de Contato & Segurança PII (Privacy-by-Design)
+
+### 1. E-mail como Canal Oficial & WhatsApp Opcional
+Para evitar a exclusão de candidatos americanos (onde cerca de 1/3 usa WhatsApp, enquanto entre hispânicos e brasileiros na Flórida o uso é de 56%+), o formulário divide os campos em:
+
+* **Obrigatórios:** Nome Completo, E-mail (Canal Oficial), Cidade, Estado, Área de Interesse, Anos de Experiência, Disponibilidade, Idiomas, Autorização Legal de Trabalho nos EUA e Consentimento.
+* **Opcionais:** Telefone, WhatsApp (`has_whatsapp`), LinkedIn, Instagram e Upload de Currículo.
+
+### 2. Isenção Total de Dados Sensíveis Desnecessários (Sem SSN no Início)
+* **NÃO se solicita SSN (Social Security Number)** nem documentos sensíveis no formulário inicial.
+* Solicita-se apenas a autorização legal padrão nos EUA: `is_legally_authorized_us` (*"Are you legally authorized to work in the United States?"* — YES / NO / REQUIRE_SPONSORSHIP).
+* Documentações contratuais formais serão solicitadas apenas em etapa posterior e apropriada de contratação.
+
+### 3. Contact Channels Dinâmicos no SuperAdmin
+No painel do administrador (`admin.bbqdocarioca.com`), cada perfil renderiza os botões de contato dinamicamente conforme os canais informados:
 
 ```text
-                 BBQ DO CARIOCA PLATFORM
-                       │
-          ┌────────────┴────────────┐
-          │                         │
-       WEBSITE                  ADMIN
-  bbqdocarioca.com/careers  admin.bbqdocarioca.com
-          │                         │
-      Turnstile                 Zero Trust
-          │                         │
-          └────────────┬────────────┘
-                       ▼
-                  Worker API
-                 (TypeScript)
-                       │
-             ┌─────────┴─────────┐
-             ▼                   ▼
-        D1 (SQLite)          R2 Storage
-    dados estruturados        arquivos/CVs
+┌─────────────────────────────────────────────────────────┐
+│ JOHN SMITH — BBQ CHEF (Orlando, FL)                    │
+├─────────────────────────────────────────────────────────┤
+│ Email: john@email.com · Phone: +1 561... (WhatsApp: ✓)  │
+│ Languages: English / Portuguese · Experience: 6 years   │
+│ US Work Authorized: YES · Status: APPROVED              │
+├─────────────────────────────────────────────────────────┤
+│  [ ✉ EMAIL ]   [ 💬 WHATSAPP (wa.me) ]   [ 📱 SMS ]    │
+└─────────────────────────────────────────────────────────┘
 ```
+* **WhatsApp Dispatch (Fase 2 - $0 API Cost):** Usa o protocolo nativo `https://wa.me/phone?text=...` abrindo a conversa no navegador sem pagar Twilio/Z-API.
 
-### 🔒 Diretrizes Obrigatórias de Segurança & PII (Privacy-by-Design):
-1. **Minimização de Dados:** Coletar apenas campos estritamente necessários para o recrutamento de catering.
-2. **Isolamento Total:** O front-end público não possui acesso direto ao banco D1. O formulário conversa exclusivamente com a rota sanitizada `POST /api/applications`.
-3. **Proteção Anti-Bot:** Validação server-side via **Cloudflare Turnstile** e **Rate Limiting** por IP no Worker.
-4. **Proteção do SuperAdmin:** A rota `admin.bbqdocarioca.com` é blindada por **Cloudflare Access (Zero Trust)**, exigindo OTP/SSO antes de autorizar o tráfego para a API.
+### 4. Upload Direto via Presigned URLs no R2
+* O navegador solicita uma Presigned PUT URL ao Worker e faz o upload do PDF/foto **diretamente para o R2 da Cloudflare**, desacoplando o I/O pesado de mídias da CPU do Worker.
+
+### 5. Política de Retenção Configurável (`retention_until`)
+* A tabela `talents` armazena uma coluna de controle `retention_until`. A rotina mensal de Cron Trigger avalia a política de retenção antes de arquivar ou remover registros.
 
 ---
 
 ## Schema do Banco de Dados D1 (SQLite)
 
 ```sql
--- Tabela de Candidatos e Prestadores
+-- Tabela Unificada de Talentos e Prestadores
 CREATE TABLE IF NOT EXISTS talents (
     id TEXT PRIMARY KEY,
     full_name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    phone TEXT NOT NULL,
+    phone TEXT,
+    whatsapp_phone TEXT,
+    has_whatsapp INTEGER DEFAULT 0,
+    preferred_contact_method TEXT NOT NULL DEFAULT 'EMAIL', -- EMAIL, WHATSAPP, SMS, PHONE
     city TEXT NOT NULL,
     state TEXT NOT NULL DEFAULT 'FL',
-    talent_type TEXT NOT NULL, -- Employee, Caterer, Pitmaster, Event Staff, etc.
-    opportunity_type TEXT NOT NULL, -- Full-time, Part-time, Contract, Event-based
+    talent_type TEXT NOT NULL, -- BBQ Chef, Pitmaster, Grill Cook, Event Staff, Server, Bartender, Caterer, etc.
+    opportunity_type TEXT NOT NULL, -- Full-time, Part-time, Contract, Event-based, Seasonal
     experience_years INTEGER NOT NULL,
-    specialties TEXT, -- JSON Array: ["Picanha", "Brisket", "Caipirinha Bar"]
-    availability TEXT, -- JSON Array: ["Weekend", "Evenings"]
-    languages TEXT, -- JSON Array: ["PT", "EN", "ES"]
+    specialties TEXT, -- JSON Array: ["Picanha", "Brisket", "Ribs"]
+    availability TEXT, -- JSON Array: ["Weekend", "Full-time"]
+    languages TEXT NOT NULL, -- JSON Array: ["English", "Portuguese"]
+    is_legally_authorized_us TEXT NOT NULL DEFAULT 'YES', -- YES, NO, REQUIRE_SPONSORSHIP
+    linkedin_url TEXT,
+    instagram_url TEXT,
     status TEXT NOT NULL DEFAULT 'NEW', -- NEW, REVIEWING, SHORTLISTED, INTERVIEW, APPROVED, ACTIVE, REJECTED
     notes TEXT,
+    retention_until DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabela de Documentos e Mídias no R2
+-- Tabela de Documentos no R2
 CREATE TABLE IF NOT EXISTS talent_documents (
     id TEXT PRIMARY KEY,
     talent_id TEXT NOT NULL,
-    document_type TEXT NOT NULL, -- RESUME, PROFILE_PHOTO, CERTIFICATE
+    document_type TEXT NOT NULL, -- RESUME, PROFILE_PHOTO, PORTFOLIO
     r2_key TEXT NOT NULL,
     file_name TEXT NOT NULL,
     content_type TEXT NOT NULL,
@@ -106,17 +132,18 @@ CREATE TABLE IF NOT EXISTS talent_documents (
     FOREIGN KEY (talent_id) REFERENCES talents(id) ON DELETE CASCADE
 );
 
--- Tabela de Serviços/Categorias
+-- Tabela de Categorias e Serviços Prestados
 CREATE TABLE IF NOT EXISTS services (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     slug TEXT UNIQUE NOT NULL,
+    category TEXT NOT NULL, -- BBQ Catering, Private Chef, Corporate Events, Backyard BBQ
     description TEXT,
     is_active INTEGER DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabela de Logs de Auditoria do Admin
+-- Tabela de Logs de Auditoria
 CREATE TABLE IF NOT EXISTS audit_logs (
     id TEXT PRIMARY KEY,
     actor_email TEXT NOT NULL,
@@ -129,47 +156,15 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 
 ---
 
-## Estrutura do Monorepo
+## Roadmap de Implementação Incremental
 
 ```text
-bbqcarioca/
-├── apps/
-│   ├── web/                     # Landing Page Principal (Vite/HTML/JS) + /careers
-│   └── admin/                   # Dashboard SuperAdmin (React 19 + Vite + Tailwind CSS v4)
-├── worker/
-│   ├── src/
-│   │   ├── index.ts             # Entrypoint da API Cloudflare Worker
-│   │   ├── routes/
-│   │   │   ├── applications.ts  # Route handler público de candidaturas
-│   │   │   ├── candidates.ts    # Route handler administrativo de talentos
-│   │   │   └── services.ts      # Route handler de prestadores e serviços
-│   │   ├── db/
-│   │   │   ├── schema.sql       # Script de migração D1
-│   │   │   └── queries.ts      # Consultas SQL preparadas
-│   │   ├── middleware/
-│   │   │   ├── auth.ts          # Middleware validado pelo Cloudflare Access
-│   │   │   └── rateLimit.ts     # Proteção contra requisições abusivas
-│   │   └── types/
-│   │       └── index.ts
-│   └── wrangler.jsonc           # Configuração de Bindings (D1, R2, Turnstile)
-└── docs/
-    └── adr/
-        └── ADR-0005-talent-and-service-platform-architecture.md
+MVP v1 (Escopo Enxuto)
+/careers ➔ Form ➔ POST /api/applications ➔ Cloudflare D1 ➔ SuperAdmin (Zero Trust + Email Contact)
+
+Fase 2 (Canais Multi-Opcionais)
+SuperAdmin Dispatch WhatsApp (wa.me) + Upload Direto no R2 via Presigned URLs
+
+Fase 3 (Expansão de Prestadores)
+Dashboard de Prestadores de Serviço (Caterers/Private Chefs) + SMS Dispatch
 ```
-
----
-
-## Roadmap de Execução Incremental (Lean MVP v1)
-
-Para evitar hiper-engenharia precoce, o sistema nascerá enxuto e evoluirá por fases:
-
-### 🚀 MVP v1 (Escopo Mínimo Viável):
-1. **`/careers` (Front-end):** Form simples de candidaturas integrado com Cloudflare Turnstile.
-2. **`POST /api/applications` (Worker):** Endpoint sanitizado salvando o candidato no banco D1.
-3. **`D1` (Database):** Tabela `talents` armazenando o cadastro básico e status `NEW`.
-4. **`/admin` (SuperAdmin):** Visualização de lista de candidatos protegida por Cloudflare Access com botões para **Aprovar / Rejeitar**.
-
-### 🌟 Fase 2 (Evolução Incremental):
-- Integração do bucket R2 para upload e download seguro de currículos em PDF.
-- Categorização completa de Prestadores de Serviço terceirizados (*Caterers, Private Chefs, Pitmasters*).
-- Notificações e atalho de convocação direta via WhatsApp para eventos.
