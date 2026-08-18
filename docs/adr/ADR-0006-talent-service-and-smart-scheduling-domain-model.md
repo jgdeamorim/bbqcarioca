@@ -10,7 +10,7 @@
 
 ## Contexto e Problema
 
-O projeto BBQ do Carioca consolidou-se como um **Workforce & Event Operations Platform** soberano em `bbqdocarioca.work`. 
+O projeto BBQ do Carioca consolidou-se como um **Workforce & Event Operations Platform** soberano em `bbqcarioca.work`. 
 
 A entidade central do negócio **não é o candidato nem o pagamento**, mas sim a **Solicitação de Serviço (Service Order / Event)**. O ciclo de vida do negócio inicia-se no orçamento comercial, passa pela aprovação da gerência regional da Flórida, liquidação de depósitos pelo cliente, escalação logística da equipe, execução do evento e encerra-se no **Feedback Bilateral** e acúmulo de **Reputação Pública no Google Business**.
 
@@ -37,7 +37,7 @@ $$\text{Solicitação} \rightarrow \text{Orçamento (Pricing)} \rightarrow \text
   - **Cliente ➔ BBQ:** Avalia Comida, Serviço, Equipe e Comunicação.
   - **BBQ ➔ Equipe:** Avalia Pontualidade, Profissionalismo e Habilidade. Realimenta o **Reliability Score** do profissional.
 * **Google Business Review:** Convite neutro e autêntico após a conclusão do evento com link direto para a página oficial do Google Business Profile.
-* **Social Proof Verificado:** Exibição de avaliações verificadas vinculadas a IDs reais de eventos concluídos em `bbqdocarioca.com/reviews`.
+* **Social Proof Verificado:** Exibição de avaliações verificadas vinculadas a IDs reais de eventos concluídos em `bbqcarioca.com/reviews`.
 
 ### 5. Ética Algorítmica & EEOC Compliance (Human-in-the-Loop)
 * Zero atributos protegidos (raça, idade, gênero). Justificativa algorítmica auditada com confirmação final humana do **Gerente da Flórida**.
@@ -46,7 +46,7 @@ $$\text{Solicitação} \rightarrow \text{Orçamento (Pricing)} \rightarrow \text
 
 ## 🎨 Arquitetura de UI/UX & Padrões Visuais (Referência Primária: `Adsentice Next.js Server` & `adsentice-materio`)
 
-O painel administrativo em `admin.bbqdocarioca.work` adota como **Referência Canônica de Excelência o Dashboard do Servidor Next.js Adsentice** (`apps/web` com MUI Materio / Tailwind CSS v4 / `shadcn/ui`), combinado com o mapa visual do Knowledge Graph (`tag=materio`):
+O painel administrativo em `admin.bbqcarioca.work` adota como **Referência Canônica de Excelência o Dashboard do Servidor Next.js Adsentice** (`apps/web` com MUI Materio / Tailwind CSS v4 / `shadcn/ui`), combinado com o mapa visual do Knowledge Graph (`tag=materio`):
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -332,8 +332,8 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 
 1. **Fase 0 (MVP Soberano $0/mês):**
    - D1: Tabelas `persons`, `locations`, `workers`, `worker_skills`, `talent_documents` e `audit_logs`.
-   - Portal `/careers` em `bbqdocarioca.work` (Formulário + Turnstile + Workers).
-   - SuperAdmin UI (`admin.bbqdocarioca.work`) em React 19 + Tailwind v4 baseada na estética do servidor Adsentice Next.js / Materio Bento UI Grid.
+   - Portal `/careers` em `bbqcarioca.work` (Formulário + Turnstile + Workers).
+   - SuperAdmin UI (`admin.bbqcarioca.work`) em React 19 + Tailwind v4 baseada na estética do servidor Adsentice Next.js / Materio Bento UI Grid.
 
 2. **Fase 1 (Commercial & Smart Operations):**
    - Tabelas `events`, `service_requests`, `hubs`, `event_staff_requirements`, `staff_assignments`.

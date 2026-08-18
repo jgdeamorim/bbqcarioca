@@ -4,7 +4,7 @@
 * **Data:** 2026-08-18
 * **Autor:** Jeferson Amorim (Founder) & Antigravity (Pair AI)
 * **Domínio:** BBQ do Carioca (`jgdeamorim/bbqcarioca`)
-* **Subdomínios:** `bbqdocarioca.com` (Comercial/Marketing), `bbqdocarioca.work` (Candidatos/Careers), `admin.bbqdocarioca.work` (SuperAdmin Zero Trust)
+* **Subdomínios:** `bbqcarioca.com` (Comercial/Marketing), `bbqcarioca.work` (Candidatos/Careers), `admin.bbqcarioca.work` (SuperAdmin Zero Trust)
 * **Impacto:** Especificação Técnica de Baixo Nível — Cloudflare Workers, D1 SQLite Bindings, R2 Presigned S3 Signer, Cloudflare Access JWT Validation, Turnstile Siteverify, Email Routing e Wrangler Config
 
 ---
@@ -20,7 +20,7 @@ O ecossistema BBQ do Carioca é implantado 100% sobre a infraestrutura global da
                                          │
         ┌────────────────────────────────┼────────────────────────────────┐
         ▼                                ▼                                ▼
-bbqdocarioca.com               bbqdocarioca.work               admin.bbqdocarioca.work
+bbqcarioca.com                 bbqcarioca.work                 admin.bbqcarioca.work
 (Landing Comercial /           (Portal /careers &              (Dashboard Operacional &
  React 19 + Vite Static)        Worker API Públicos)            SuperAdmin Zero Trust)
         │                                │                                │
@@ -72,8 +72,8 @@ bbqdocarioca.com               bbqdocarioca.work               admin.bbqdocarioc
   // Variáveis de Ambiente e Segredos
   "vars": {
     "ENVIRONMENT": "production",
-    "ALLOWED_ORIGIN_WORK": "https://bbqdocarioca.work",
-    "ALLOWED_ORIGIN_ADMIN": "https://admin.bbqdocarioca.work",
+    "ALLOWED_ORIGIN_WORK": "https://bbqcarioca.work",
+    "ALLOWED_ORIGIN_ADMIN": "https://admin.bbqcarioca.work",
     "TURNSTILE_SITEKEY": "0x4AAAAAAABbbbbCccccDddd"
   }
 }
