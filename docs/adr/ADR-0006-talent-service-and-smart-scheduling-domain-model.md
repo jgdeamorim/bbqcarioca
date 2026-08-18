@@ -1,67 +1,65 @@
-# ADR-0006: Talent, Service & Smart Scheduling Domain Model ($0/month Sovereign Architecture)
+# ADR-0006: Talent, Service, Commercial & Experience Domain Model ($0/month Sovereign Architecture)
 
 * **Status:** Aceito (Accepted)
 * **Data:** 2026-08-18
 * **Autor:** Jeferson Amorim (Founder) & Antigravity (Pair AI)
 * **Domínio:** BBQ do Carioca (`jgdeamorim/bbqcarioca`)
-* **Impacto:** Arquitetura do Modelo de Domínio, Motores Cognitivos, Compliance Legal/EEOC, Auditabilidade e Schema Relacional D1 Completo
+* **Impacto:** Arquitetura do Modelo de Domínio, Motores Cognitivos, Módulo Comercial & Financeiro (Stripe Webhooks), Módulo de Reputação/Google Reviews, Compliance Legal/EEOC e Schema D1 Relacional Completo (14 Tabelas)
 
 ---
 
 ## Contexto e Problema
 
-O projeto BBQ do Carioca evoluiu da simples captação de currículos (ATS) para uma **Plataforma Soberana de Gestão de Operações de Eventos e Força de Trabalho (Workforce & Event Operations Platform)** em `bbqdocarioca.work`. 
+O projeto BBQ do Carioca consolidou-se como um **Workforce & Event Operations Platform** soberano em `bbqdocarioca.work`. 
 
-Antes de iniciar a programação, é necessário congelar o **Modelo de Domínio Soberano (ADR-0006)** para evitar refatorações estruturais quando o sistema integrar logística, disponibilidade, matching algorítmico, substituições de emergência e auditoria legal.
+A entidade central do negócio **não é o candidato nem o pagamento**, mas sim a **Solicitação de Serviço (Service Order / Event)**. O ciclo de vida do negócio inicia-se no orçamento comercial, passa pela aprovação da gerência regional da Flórida, liquidação de depósitos pelo cliente, escalação logística da equipe, execução do evento e encerra-se no **Feedback Bilateral** e acúmulo de **Reputação Pública no Google Business**.
 
 ---
 
 ## Princípios de Domínio & Diretrizes de Conformidade Legal
 
-### 1. Separação de Entidades: `Person` ➔ (`Candidate` | `Worker` | `Provider`)
-Uma pessoa física é representada pela entidade raiz `Person`. Uma única pessoa pode possuir múltiplos perfis operacionais sem duplicação de dados:
-* **Candidate Profile:** Fase de recrutamento e triagem.
-* **Worker Profile:** Integrante da equipe operacional de eventos (Grill Cook, Server, Bartender).
-* **Provider Profile:** Prestador de serviços parceiro (Private Chef, Caterer).
+### 1. Objeto Central do Negócio: `Service Order / Event`
+O fluxo do negócio segue a jornada unificada:
+$$\text{Solicitação} \rightarrow \text{Orçamento (Pricing)} \rightarrow \text{Aprovação Gerente} \rightarrow \text{Pagamento (Stripe)} \rightarrow \text{Equipe (Smart Match)} \rightarrow \text{Execução} \rightarrow \text{Feedback Bilateral} \rightarrow \text{Reputação Google}$$
 
-### 2. Modelo de Estados Duplo e Independente
-Separou-se o estado de recrutamento do estado operacional:
-* **Recruiting State:** `NEW` ➔ `SCREENING` ➔ `SHORTLISTED` ➔ `INTERVIEW` ➔ `APPROVED` ➔ `REJECTED`.
-* **Operational State:** `AVAILABLE`, `LIMITED`, `UNAVAILABLE`, `SUSPENDED`, `INACTIVE`.
-*(Exemplo: Um profissional pode estar `APPROVED` e `AVAILABLE`, ou `APPROVED` e `UNAVAILABLE`).*
+### 2. Separação entre Preço Comercial, Custo Operacional e Margem
+* **Preço Comercial:** Valor cobrado do cliente final (Alimentos, Chef, Equipe, Equipamentos, Deslocamento).
+* **Custo Operacional:** Soma dos pagamentos da equipe (*Staff Settlement*), transporte e insumos.
+* **Margem Bruta:** $\text{Preço Comercial} - \text{Custo Operacional}$.
 
-### 3. Ética Algorítmica, Não-Discriminação & Human-in-the-Loop (EEOC Compliance)
-* **Zero Atributos Protegidos:** O formulário proíbe perguntas sobre Raça, Religião, Idade ou Gênero. Idiomas são tratados exclusivamente como competência operacional (`English`, `Portuguese`, `Spanish`).
-* **Zero SSN no Cadastro Inicial:** Elimina-se a coleta de documentos ultrassensíveis no primeiro contato.
-* **Recomendação, Não Decisão Automática:** O algoritmo de *Smart Match* calcula uma pontuação e justifica os motivos da recomendação. A decisão de contratação/escalação é estritamente humana e auditada (`admin_decision`, `match_reasons`, `algorithm_version`).
+### 3. Pagamentos Seguros & Integração Gateway (Stripe) — Zero PII Cartão no D1
+* **Zero Dados Financeiros Sensíveis no D1:** O D1 nunca armazena números de cartão ou CVV.
+* **Stripe Payment Links & Webhooks:** O Worker gera um Stripe Payment Link para o cliente efetuar o depósito/saldo. O webhook do Stripe atualiza a ordem para `DEPOSIT_PAID` ou `FULLY_PAID`.
+* Suporte nativo a pagamentos parciais (*Deposit* ➔ *Balance*).
 
-### 4. Acessibilidade Universal (WCAG 2.1 AA)
-O formulário público `/careers` é construído com HTML5 semântico, suporte completo a navegação por teclado, leitores de tela e contraste adequado.
+### 4. Motor de Reputação & Feedback Bilateral (Google Business Priority)
+* **Feedback Bilateral:**
+  - **Cliente ➔ BBQ:** Avalia Comida, Serviço, Equipe e Comunicação.
+  - **BBQ ➔ Equipe:** Avalia Pontualidade, Profissionalismo e Habilidade. Realimenta o **Reliability Score** do profissional.
+* **Google Business Review:** Convite neutro e autêntico após a conclusão do evento com link direto para a página oficial do Google Business Profile.
+* **Social Proof Verificado:** Exibição de avaliações verificadas vinculadas a IDs reais de eventos concluídos em `bbqdocarioca.com/reviews`.
+
+### 5. Ética Algorítmica & EEOC Compliance (Human-in-the-Loop)
+* Zero atributos protegidos (raça, idade, gênero). Justificativa algorítmica auditada com confirmação final humana do **Gerente da Flórida**.
 
 ---
 
-## 🏛️ Os 5 Motores Arquiteturais do Sistema
+## 🏛️ Os 6 Motores Arquiteturais do Sistema
 
 ```text
-                        BBQ WORKFORCE OPERATIONS OS
-                                    │
-    ┌───────────────┬───────────────┼───────────────┬───────────────┐
-    ▼               ▼               ▼               ▼               ▼
-1. TALENT       2. LOCATION     3. SCHEDULING   4. MATCHING     5. OPERATIONS
- ENGINE          ENGINE          ENGINE          ENGINE          ENGINE
- (Pessoas &      (Logística &    (Datas &        (Score % &      (Escalas &
- Taxonomias)     Cross-Docks)    Janelas)        Algoritmo)      Emergências)
+                        BBQ WORKFORCE & EVENT OPERATIONS OS
+                                         │
+    ┌──────────┬──────────┬──────────────┼──────────────┬──────────┬──────────┐
+    ▼          ▼          ▼              ▼              ▼          ▼          ▼
+1. TALENT   2. LOCATION 3. SCHEDULING  4. MATCHING    5. COMMERCIAL 6. REPUTATION &
+ ENGINE      ENGINE     ENGINE         ENGINE          ENGINE      EXPERIENCE
+(Workers)   (Hubs &     (Datas &       (Score % &      (Quotes &   (Bilateral &
+            Haversine)  Janelas)       EEOC Audit)     Stripe)     Google)
 ```
-
-1. **Talent Engine:** Gestão de habilidades (`Brisket`, `Smoker`, `Open Fire`), certificações (`Food Handler`) e avaliações operacionais (`Reliability Score`).
-2. **Location Engine:** Geocodificação Haversine ($0), cálculo de distância, tempo de viagem (*Travel Time* em min) e integração com **Cross-Docking Hubs**.
-3. **Scheduling Engine:** Matriz de disponibilidade (`Date`, `Start/End Time`, `Blackout Dates`, `Recurring`).
-4. **Matching Engine:** Motor algorítmico ponderado que recomenda a equipe ideal para cada evento.
-5. **Operations Engine:** Gestão do ciclo de vida do evento, confirmações, substituição urgente (*Emergency Replacement*) e logs de auditoria.
 
 ---
 
-## Schema Relacional Completo do Cloudflare D1 (SQLite)
+## Schema Relacional Completo do Cloudflare D1 (SQLite - 14 Tabelas)
 
 ```sql
 -- 1. Entidade Raiz de Pessoa
@@ -72,9 +70,9 @@ CREATE TABLE IF NOT EXISTS persons (
     phone TEXT,
     whatsapp_phone TEXT,
     has_whatsapp INTEGER DEFAULT 0,
-    preferred_contact_method TEXT NOT NULL DEFAULT 'EMAIL', -- EMAIL, WHATSAPP, SMS, PHONE
-    is_legally_authorized_us TEXT NOT NULL DEFAULT 'YES', -- YES, NO, REQUIRE_SPONSORSHIP
-    engagement_type TEXT DEFAULT 'CONTRACTOR', -- CONTRACTOR, EMPLOYEE_PENDING
+    preferred_contact_method TEXT NOT NULL DEFAULT 'EMAIL',
+    is_legally_authorized_us TEXT NOT NULL DEFAULT 'YES',
+    engagement_type TEXT DEFAULT 'CONTRACTOR',
     deleted_at DATETIME,
     deleted_by TEXT,
     deletion_reason TEXT,
@@ -111,19 +109,18 @@ CREATE TABLE IF NOT EXISTS hubs (
     FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
 );
 
--- 4. Perfil de Candidato / Profissional Operacional
+-- 4. Perfil de Profissional Operacional
 CREATE TABLE IF NOT EXISTS workers (
     id TEXT PRIMARY KEY,
     person_id TEXT UNIQUE NOT NULL,
     primary_location_id TEXT,
-    recruiting_status TEXT NOT NULL DEFAULT 'NEW', -- NEW, SCREENING, SHORTLISTED, INTERVIEW, APPROVED, REJECTED
-    operational_status TEXT NOT NULL DEFAULT 'AVAILABLE', -- AVAILABLE, LIMITED, UNAVAILABLE, SUSPENDED, INACTIVE
-    primary_role TEXT NOT NULL, -- BBQ Chef, Pitmaster, Grill Assistant, Server, Bartender, Coordinator
-    secondary_roles TEXT, -- JSON Array
+    recruiting_status TEXT NOT NULL DEFAULT 'NEW',
+    operational_status TEXT NOT NULL DEFAULT 'AVAILABLE',
+    primary_role TEXT NOT NULL,
+    secondary_roles TEXT,
     experience_years INTEGER NOT NULL DEFAULT 0,
-    languages TEXT NOT NULL, -- JSON Array: ["English", "Portuguese"]
+    languages TEXT NOT NULL,
     max_travel_miles INTEGER DEFAULT 35,
-    -- Métricas de Confiabilidade (Reliability Score)
     events_completed INTEGER DEFAULT 0,
     attendance_rate_pct REAL DEFAULT 100.0,
     on_time_rate_pct REAL DEFAULT 100.0,
@@ -138,11 +135,11 @@ CREATE TABLE IF NOT EXISTS workers (
     FOREIGN KEY (primary_location_id) REFERENCES locations(id) ON DELETE SET NULL
 );
 
--- 5. Taxonomia de Habilidades e Certificações
+-- 5. Habilidades e Certificações
 CREATE TABLE IF NOT EXISTS worker_skills (
     id TEXT PRIMARY KEY,
     worker_id TEXT NOT NULL,
-    skill_name TEXT NOT NULL, -- Brisket, Ribs, Smoker, Open Fire, Argentine Grill, Event Service
+    skill_name TEXT NOT NULL,
     proficiency_level TEXT DEFAULT 'EXPERT',
     FOREIGN KEY (worker_id) REFERENCES workers(id) ON DELETE CASCADE
 );
@@ -150,7 +147,7 @@ CREATE TABLE IF NOT EXISTS worker_skills (
 CREATE TABLE IF NOT EXISTS worker_certifications (
     id TEXT PRIMARY KEY,
     worker_id TEXT NOT NULL,
-    certification_name TEXT NOT NULL, -- Food Handler, Food Safety, Alcohol Service
+    certification_name TEXT NOT NULL,
     issued_date DATE,
     expiration_date DATE,
     is_verified INTEGER DEFAULT 0,
@@ -161,7 +158,7 @@ CREATE TABLE IF NOT EXISTS worker_certifications (
 CREATE TABLE IF NOT EXISTS worker_availabilities (
     id TEXT PRIMARY KEY,
     worker_id TEXT NOT NULL,
-    day_of_week INTEGER, -- 0=Sunday, 6=Saturday
+    day_of_week INTEGER,
     specific_date DATE,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
@@ -169,24 +166,31 @@ CREATE TABLE IF NOT EXISTS worker_availabilities (
     FOREIGN KEY (worker_id) REFERENCES workers(id) ON DELETE CASCADE
 );
 
--- 7. Solicitações de Eventos de Catering (Com Controle Financeiro Inicial)
+-- 7. Eventos & Ordens de Serviço (Entidade Central)
 CREATE TABLE IF NOT EXISTS events (
     id TEXT PRIMARY KEY,
     event_location_id TEXT NOT NULL,
+    region_code TEXT NOT NULL DEFAULT 'FLORIDA',
     client_name TEXT NOT NULL,
     client_email TEXT NOT NULL,
     client_phone TEXT NOT NULL,
-    event_type TEXT NOT NULL, -- Wedding, Corporate BBQ, Birthday, Backyard Party
+    event_type TEXT NOT NULL,
     event_date DATE NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     guest_count INTEGER NOT NULL,
-    event_lifecycle_status TEXT NOT NULL DEFAULT 'REQUESTED', -- LEAD, QUOTE, REQUESTED, CONFIRMED, STAFFING, STAFF_CONFIRMED, IN_PROGRESS, COMPLETED, ARCHIVED
-    -- Financeiro Operacional (Métricas Estimadas)
-    revenue_usd REAL DEFAULT 0.0,
+    event_lifecycle_status TEXT NOT NULL DEFAULT 'LEAD', -- LEAD, QUOTE_DRAFT, MANAGER_APPROVED, QUOTE_SENT, DEPOSIT_PAID, STAFFING, STAFF_CONFIRMED, IN_PROGRESS, COMPLETED, ARCHIVED
+    -- Preço e Controle Financeiro Comercial
+    quoted_price_usd REAL DEFAULT 0.0,
+    deposit_required_usd REAL DEFAULT 0.0,
+    deposit_paid_usd REAL DEFAULT 0.0,
+    balance_due_usd REAL DEFAULT 0.0,
+    payment_status TEXT NOT NULL DEFAULT 'UNPAID', -- UNPAID, DEPOSIT_PAID, FULLY_PAID, REFUNDED
+    -- Custos e Margem Bruta
     estimated_staff_cost_usd REAL DEFAULT 0.0,
     estimated_travel_cost_usd REAL DEFAULT 0.0,
-    estimated_margin_usd REAL DEFAULT 0.0,
+    estimated_equipment_cost_usd REAL DEFAULT 0.0,
+    gross_margin_usd REAL DEFAULT 0.0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (event_location_id) REFERENCES locations(id) ON DELETE CASCADE
 );
@@ -201,7 +205,7 @@ CREATE TABLE IF NOT EXISTS event_staff_requirements (
     FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
 );
 
--- 9. Alocações de Equipe, Matching & Substituição de Emergência
+-- 9. Alocações de Equipe (Matching Engine)
 CREATE TABLE IF NOT EXISTS staff_assignments (
     id TEXT PRIMARY KEY,
     event_id TEXT NOT NULL,
@@ -210,7 +214,7 @@ CREATE TABLE IF NOT EXISTS staff_assignments (
     role_assigned TEXT NOT NULL,
     match_score_pct REAL NOT NULL,
     algorithm_version TEXT DEFAULT 'v1.0',
-    match_reasons TEXT, -- JSON explicativo para auditoria EEOC
+    match_reasons TEXT,
     distance_miles REAL,
     estimated_travel_minutes INTEGER,
     estimated_travel_cost_usd REAL,
@@ -223,11 +227,57 @@ CREATE TABLE IF NOT EXISTS staff_assignments (
     FOREIGN KEY (assigned_hub_id) REFERENCES hubs(id) ON DELETE SET NULL
 );
 
--- 10. Documentos no R2 e Logs de Auditoria do Sistema
+-- 10. Registros de Pagamentos (Stripe Webhooks)
+CREATE TABLE IF NOT EXISTS payments (
+    id TEXT PRIMARY KEY,
+    event_id TEXT NOT NULL,
+    stripe_payment_intent_id TEXT UNIQUE,
+    stripe_checkout_session_id TEXT,
+    amount_usd REAL NOT NULL,
+    payment_type TEXT NOT NULL, -- DEPOSIT, BALANCE_PAYMENT, REFUND
+    payment_status TEXT NOT NULL DEFAULT 'PENDING', -- PENDING, SUCCEEDED, FAILED
+    paid_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+);
+
+-- 11. Feedbacks e Avaliações de Clientes (Experience Engine)
+CREATE TABLE IF NOT EXISTS customer_feedbacks (
+    id TEXT PRIMARY KEY,
+    event_id TEXT UNIQUE NOT NULL,
+    food_rating INTEGER CHECK (food_rating BETWEEN 1 AND 5),
+    service_rating INTEGER CHECK (service_rating BETWEEN 1 AND 5),
+    staff_rating INTEGER CHECK (staff_rating BETWEEN 1 AND 5),
+    communication_rating INTEGER CHECK (communication_rating BETWEEN 1 AND 5),
+    overall_rating REAL NOT NULL,
+    comment TEXT,
+    google_review_invited INTEGER DEFAULT 0,
+    google_review_clicked INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
+);
+
+-- 12. Avaliações Operacionais da Equipe (Alimenta Reliability Score)
+CREATE TABLE IF NOT EXISTS worker_evaluations (
+    id TEXT PRIMARY KEY,
+    assignment_id TEXT UNIQUE NOT NULL,
+    worker_id TEXT NOT NULL,
+    punctuality_rating INTEGER CHECK (punctuality_rating BETWEEN 1 AND 5),
+    professionalism_rating INTEGER CHECK (professionalism_rating BETWEEN 1 AND 5),
+    skill_rating INTEGER CHECK (skill_rating BETWEEN 1 AND 5),
+    reliability_rating INTEGER CHECK (reliability_rating BETWEEN 1 AND 5),
+    evaluator_email TEXT NOT NULL,
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (assignment_id) REFERENCES staff_assignments(id) ON DELETE CASCADE,
+    FOREIGN KEY (worker_id) REFERENCES workers(id) ON DELETE CASCADE
+);
+
+-- 13. Documentos no R2 & 14. Logs de Auditoria do Sistema
 CREATE TABLE IF NOT EXISTS talent_documents (
     id TEXT PRIMARY KEY,
     worker_id TEXT NOT NULL,
-    document_type TEXT NOT NULL, -- RESUME, PROFILE_PHOTO, CERTIFICATE
+    document_type TEXT NOT NULL,
     r2_key TEXT NOT NULL,
     file_name TEXT NOT NULL,
     content_type TEXT NOT NULL,
@@ -252,15 +302,15 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 ## 🗺️ Roadmap Integrado de Execução
 
 1. **Fase 0 (MVP Soberano $0/mês):**
-   - Criação das tabelas `persons`, `locations`, `workers`, `worker_skills`, `talent_documents` e `audit_logs` no D1.
-   - Portal `/careers` em `bbqdocarioca.work` com acessibilidade WCAG 2.1 AA e Turnstile.
-   - SuperAdmin em `admin.bbqdocarioca.work` com Zero Trust e cadastro basilar.
+   - D1: Tabelas `persons`, `locations`, `workers`, `worker_skills`, `talent_documents` e `audit_logs`.
+   - Portal `/careers` em `bbqdocarioca.work` (Formulário + Turnstile + Workers).
+   - SuperAdmin em `admin.bbqdocarioca.work` (Zero Trust).
 
-2. **Fase 1 (Smart Operations & Emergency Replacement):**
-   - Tabelas `hubs`, `events`, `event_staff_requirements` e `staff_assignments`.
-   - Calculadora Haversine com Travel Time e motor de *Smart Match (v1.0)*.
-   - Botão de substituição urgente (*Emergency Replacement*).
+2. **Fase 1 (Commercial & Smart Operations):**
+   - Tabelas `events`, `service_requests`, `hubs`, `event_staff_requirements`, `staff_assignments`.
+   - Integração com Stripe Payment Links para aprovação de orçamentos e recebimento de depósitos.
+   - Smart Matching (v1.0) com Haversine e substituição de emergência.
 
-3. **Fase 2 (Multi-Canal & Financeiro Operacional):**
-   - Disparo WhatsApp (`wa.me`) + Ativação Cloudflare Email Sending (US$ 5/mês Workers Paid).
-   - Relatórios de margem estimada e custos de deslocamento por evento.
+3. **Fase 2 (Experience & Reputation Loop):**
+   - Tabelas `payments`, `customer_feedbacks` e `worker_evaluations`.
+   - Disparo de convites para Google Business Review e atualização do `Reliability Score`.
