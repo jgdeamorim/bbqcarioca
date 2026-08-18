@@ -87,6 +87,7 @@ def main():
     docs_dir = WORKSPACE / "docs"
     if docs_dir.exists():
         targets.extend(list(docs_dir.rglob("*.md")))
+        targets.extend(list(docs_dir.rglob("*.txt")))
 
     count = 0
     for target in targets:
