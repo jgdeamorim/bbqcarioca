@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BBQ do Carioca | Authentic Brazilian Churrasco, Fired Live at Your Event in Florida</title>
+  <meta name="description" content="Professional Brazilian churrasco catering in Florida. Premium cuts, live fire, full service. You host. We master the fire. Request your free quote." />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="BBQ do Carioca | Authentic Brazilian Churrasco in Florida" />
+  <meta property="og:description" content="Premium Brazilian cuts, live fire, professional service. You host. We master the fire." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            charcoal: { 950: '#0B0908', 900: '#141110', 800: '#1E1917' },
+            ember: { 500: '#FF6B35', 700: '#C2410C' },
+            gold: { 400: '#D9A441' },
+            cream: { 50: '#FAF6EE' },
+            smoke: { 400: '#A69D93' }
+          },
+          fontFamily: {
+            display: ['Fraunces', 'serif'],
+            body: ['Manrope', 'sans-serif'],
+            mono: ['IBM Plex Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --charcoal-950: #0B0908; --charcoal-900: #141110; --charcoal-800: #1E1917;
+      --ember-500: #FF6B35; --ember-700: #C2410C; --gold-400: #D9A441;
+      --cream-50: #FAF6EE; --smoke-400: #A69D93; --line: rgba(217,164,65,.16);
+    }
+    body { background: var(--charcoal-950); color: var(--cream-50); font-family: 'Manrope', sans-serif; }
+    .font-display { font-family: 'Fraunces', serif; }
+    .font-mono { font-family: 'IBM Plex Mono', monospace; }
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .stagger > *:nth-child(1) { transition-delay: .06s; }
+    .stagger > *:nth-child(2) { transition-delay: .14s; }
+    .stagger > *:nth-child(3) { transition-delay: .22s; }
+    .stagger > *:nth-child(4) { transition-delay: .30s; }
+    .ember-glow:hover { box-shadow: 0 0 28px rgba(255,107,53,.4); }
+    [data-lang="pt"] { display: none; }
+    html[lang="pt"] [data-lang="en"] { display: none; }
+    html[lang="pt"] [data-lang="pt"] { display: unset; }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--ember-500); outline-offset: 3px;
+    }
+    @keyframes flicker {
+      0%, 100% { transform: scaleY(1) translateY(0); opacity: 1; }
+      25% { transform: scaleY(1.08) translateY(-2px); opacity: .9; }
+      50% { transform: scaleY(.95) translateY(1px); opacity: 1; }
+      75% { transform: scaleY(1.05) translateY(-1px); opacity: .95; }
+    }
+    .flame { animation: flicker 1.8s ease-in-out infinite; transform-origin: bottom center; }
+    .flame-2 { animation-delay: .3s; }
+    .wa-widget { position: fixed; bottom: 24px; right: 24px; z-index: 90; }
+    .wa-btn {
+      width: 60px; height: 60px; border-radius: 50%; background: #25D366; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 20px rgba(37,211,102,.4);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .wa-btn:hover { transform: scale(1.08); box-shadow: 0 8px 28px rgba(37,211,102,.55); }
+    .wa-bubble {
+      position: absolute; bottom: 70px; right: 0; background: #fff; color: #1a1a1a;
+      padding: 12px 16px; border-radius: 16px 16px 4px 16px; font-size: 14px; font-weight: 500;
+      white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,.25);
+      opacity: 0; transform: translateY(8px) scale(.95);
+      transition: opacity .3s ease, transform .3s ease; pointer-events: none;
+    }
+    .wa-bubble.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .wa-bubble::after {
+      content: ''; position: absolute; bottom: -6px; right: 22px;
+      border: 6px solid transparent; border-top-color: #fff;
+    }
+    .wa-close {
+      position: absolute; top: -8px; right: -8px; width: 22px; height: 22px; border-radius: 50%;
+      background: #333; color: #fff; font-size: 12px; display: flex; align-items: center;
+      justify-content: center; cursor: pointer; border: none;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(.9); opacity: .6; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+    .wa-pulse::before {
+      content: ''; position: absolute; inset: -4px; border-radius: 50%;
+      border: 2px solid #25D366; animation: pulse-ring 2s ease-out infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .flame, .wa-pulse::before { animation: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Caterer","name":"BBQ do Carioca","telephone":"+1-561-403-4603","slogan":"Authentic Brazilian Churrasco, Fired Live at Your Event.","priceRange":"$$–$$$","servesCuisine":["Brazilian barbecue","Churrasco"],"areaServed":["Palm Beach County","Boca Raton","West Palm Beach","Miami","Fort Lauderdale","Orlando"]}
+  </script>
+</head>
+<body class="antialiased">
+
+<header class="fixed top-0 left-0 right-0 z-50 bg-charcoal-950/90 backdrop-blur-md border-b border-[var(--line)]">
+  <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+    <a href="#" class="flex items-center gap-2.5 group">
+      <svg class="w-7 h-7 text-ember-500" viewBox="0 0 24 24" fill="currentColor">
+        <path class="flame" d="M12 23c-3.5 0-6-2.5-6-6 0-2.5 1.5-4.5 3-6.5.5 2 1.5 3 3 3 0-3 2-6.5 5-9-1 4 1 6 1 9 2 0 3-1.5 3-4 1.5 2 3 4 3 7 0 3.5-2.5 6.5-6 6.5z"/>
+      </svg>
+      <span class="font-display text-lg font-bold tracking-tight text-cream-50 group-hover:text-ember-500 transition-colors">
+        BBQ <span class="text-ember-500">do</span> Carioca
+      </span>
+    </a>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1 text-sm font-mono">
+        <button id="lang-en" class="px-2.5 py-1 rounded text-cream-50 bg-charcoal-800" aria-label="English">EN</button>
+        <button id="lang-pt" class="px-2.5 py-1 rounded text-smoke-400 hover:text-cream-50 transition-colors" aria-label="Português">PT</button>
+      </div>
+      <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27d%20like%20a%20quote%20for%20my%20event." target="_blank" rel="noopener"
+         class="hidden sm:inline-flex items-center gap-2 bg-ember-500 hover:bg-ember-700 text-cream-50 font-semibold text-sm px-4 py-2 rounded-full transition-all ember-glow">
+        <span data-lang="en">Get Quote</span><span data-lang="pt">Orçamento</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="relative min-h-[100svh] flex items-center pt-16 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-charcoal-950 via-charcoal-900 to-charcoal-950"></div>
+    <div class="absolute inset-0 opacity-30" style="background: radial-gradient(ellipse 80% 60% at 70% 40%, rgba(255,107,53,0.18) 0%, transparent 70%);"></div>
+    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-32 opacity-25 pointer-events-none">
+      <svg viewBox="0 0 400 80" class="w-full h-full" preserveAspectRatio="none">
+        <path class="flame" fill="#FF6B35" d="M40 80 Q55 30 75 50 Q90 15 115 45 Q130 10 155 40 Q170 5 200 42 Q220 8 245 40 Q270 15 295 48 Q320 20 350 55 L380 80 Z"/>
+      </svg>
+    </div>
+    <div class="relative max-w-6xl mx-auto px-5 py-16 md:py-24 w-full">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 mb-6 reveal">
+          <span class="w-2 h-2 rounded-full bg-ember-500 animate-pulse"></span>
+          <p class="font-mono text-xs md:text-sm tracking-widest text-gold-400">
+            <span data-lang="en">LIVE-FIRE BRAZILIAN CHURRASCO • FLORIDA, USA</span>
+            <span data-lang="pt">CHURRASCO BRASILEIRO AO VIVO • FLÓRIDA, EUA</span>
+          </p>
+        </div>
+        <h1 class="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-bold leading-[1.08] text-cream-50 mb-6 reveal">
+          <span data-lang="en">Authentic Brazilian<br class="hidden sm:block"/> Churrasco,<br class="hidden sm:block"/> Fired Live at Your Event.</span>
+          <span data-lang="pt">Churrasco brasileiro<br class="hidden sm:block"/> autêntico,<br class="hidden sm:block"/> assado ao vivo no seu evento.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-smoke-400 max-w-xl mb-10 leading-relaxed reveal">
+          <span data-lang="en">A professional brings the fire, the premium cuts and the full service — so you can stay with your guests.</span>
+          <span data-lang="pt">Um profissional leva o fogo, os cortes premium e o serviço completo — você fica com seus convidados.</span>
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 mb-12 reveal">
+          <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27d%20like%20a%20quote%20for%20my%20event." target="_blank" rel="noopener"
+             class="inline-flex items-center justify-center gap-2.5 bg-ember-500 hover:bg-ember-700 text-cream-50 font-semibold px-8 py-4 rounded-full text-base transition-all ember-glow">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            <span data-lang="en">Get My Free Quote</span><span data-lang="pt">Pedir Meu Orçamento</span>
+          </a>
+          <a href="#packages" class="inline-flex items-center justify-center gap-2 border border-[var(--line)] hover:border-gold-400 text-cream-50 font-medium px-8 py-4 rounded-full text-base transition-colors">
+            <span data-lang="en">See Packages</span><span data-lang="pt">Ver Pacotes</span>
+          </a>
+        </div>
+        <div class="flex flex-wrap gap-3 reveal">
+          <span class="font-mono text-xs px-3 py-1.5 rounded-full border border-[var(--line)] text-smoke-400"><span data-lang="en">On-site live fire</span><span data-lang="pt">Fogo ao vivo no local</span></span>
+          <span class="font-mono text-xs px-3 py-1.5 rounded-full border border-[var(--line)] text-smoke-400"><span data-lang="en">Premium Brazilian cuts</span><span data-lang="pt">Cortes brasileiros premium</span></span>
+          <span class="font-mono text-xs px-3 py-1.5 rounded-full border border-[var(--line)] text-smoke-400"><span data-lang="en">Bilingual EN/PT</span><span data-lang="pt">Bilíngue EN/PT</span></span>
+          <span class="font-mono text-xs px-3 py-1.5 rounded-full border border-[var(--line)] text-smoke-400"><span data-lang="en">Florida-wide</span><span data-lang="pt">Toda a Flórida</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RELIEF -->
+  <section class="bg-charcoal-900 border-y border-[var(--line)]">
+    <div class="max-w-6xl mx-auto px-5 py-12 md:py-16 text-center">
+      <div class="flex items-center justify-center gap-3 mb-3 reveal">
+        <svg class="w-6 h-6 text-ember-500" viewBox="0 0 24 24" fill="currentColor">
+          <path class="flame" d="M12 23c-3.5 0-6-2.5-6-6 0-2.5 1.5-4.5 3-6.5.5 2 1.5 3 3 3 0-3 2-6.5 5-9-1 4 1 6 1 9 2 0 3-1.5 3-4 1.5 2 3 4 3 7 0 3.5-2.5 6.5-6 6.5z"/>
+        </svg>
+      </div>
+      <p class="font-display text-2xl md:text-3xl lg:text-4xl font-semibold text-cream-50 reveal">
+        <span data-lang="en">You host. We master the fire.</span>
+        <span data-lang="pt">Você cuida dos convidados. Nós cuidamos do fogo.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="py-20 md:py-28" id="experience">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="text-center mb-14 reveal">
+        <p class="font-mono text-xs tracking-widest text-gold-400 mb-3"><span data-lang="en">THE EXPERIENCE</span><span data-lang="pt">A EXPERIÊNCIA</span></p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-cream-50"><span data-lang="en">Why clients choose us</span><span data-lang="pt">Por que nos escolhem</span></h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6 stagger">
+        <article class="bg-charcoal-900 border border-[var(--line)] rounded-2xl p-8 reveal hover:border-ember-500/50 transition-all duration-300 hover:-translate-y-1">
+          <div class="w-12 h-12 rounded-full bg-ember-500/10 flex items-center justify-center mb-6">
+            <svg class="w-6 h-6 text-ember-500" viewBox="0 0 24 24" fill="currentColor"><path class="flame flame-2" d="M12 23c-3.5 0-6-2.5-6-6 0-2.5 1.5-4.5 3-6.5.5 2 1.5 3 3 3 0-3 2-6.5 5-9-1 4 1 6 1 9 2 0 3-1.5 3-4 1.5 2 3 4 3 7 0 3.5-2.5 6.5-6 6.5z"/></svg>
+          </div>
+          <h3 class="font-display text-xl font-semibold text-cream-50 mb-3"><span data-lang="en">Live Fire, Brazilian Style</span><span data-lang="pt">Fogo de chão, jeito brasileiro</span></h3>
+          <p class="text-smoke-400 leading-relaxed"><span data-lang="en">Skewers over glowing charcoal, the way it’s done in Brazil. No ovens, no shortcuts — the fire is the show.</span><span data-lang="pt">Espeto sobre a brasa, do jeito que se faz no Brasil. Sem forno, sem atalho — o fogo é o espetáculo.</span></p>
+        </article>
+        <article class="bg-charcoal-900 border border-[var(--line)] rounded-2xl p-8 reveal hover:border-ember-500/50 transition-all duration-300 hover:-translate-y-1">
+          <div class="w-12 h-12 rounded-full bg-ember-500/10 flex items-center justify-center mb-6">
+            <svg class="w-6 h-6 text-ember-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3 class="font-display text-xl font-semibold text-cream-50 mb-3"><span data-lang="en">Premium Cuts</span><span data-lang="pt">Cortes Premium</span></h3>
+          <p class="text-smoke-400 leading-relaxed"><span data-lang="en">Picanha and hand-selected cuts, seasoned simply, grilled to perfection in front of your guests.</span><span data-lang="pt">Picanha e cortes selecionados, temperados com simplicidade e grelhados na frente dos seus convidados.</span></p>
+        </article>
+        <article class="bg-charcoal-900 border border-[var(--line)] rounded-2xl p-8 reveal hover:border-ember-500/50 transition-all duration-300 hover:-translate-y-1">
+          <div class="w-12 h-12 rounded-full bg-ember-500/10 flex items-center justify-center mb-6">
+            <svg class="w-6 h-6 text-ember-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h3 class="font-display text-xl font-semibold text-cream-50 mb-3"><span data-lang="en">Full Service & Setup</span><span data-lang="pt">Serviço Completo</span></h3>
+          <p class="text-smoke-400 leading-relaxed"><span data-lang="en">We bring the grill, the structure and the service when you need them. You bring the guests.</span><span data-lang="pt">Levamos a churrasqueira, a estrutura e o serviço quando você precisar. Você só chama os convidados.</span></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEET -->
+  <section class="py-20 md:py-28 bg-charcoal-900" id="meet">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+        <div class="reveal">
+          <p class="font-mono text-xs tracking-widest text-gold-400 mb-3"><span data-lang="en">FROM RIO WITH FIRE</span><span data-lang="pt">DO RIO COM FOGO</span></p>
+          <h2 class="font-display text-3xl md:text-4xl font-bold text-cream-50 mb-6"><span data-lang="en">The man behind the fire.</span><span data-lang="pt">O homem por trás do fogo.</span></h2>
+          <p class="text-smoke-400 text-lg leading-relaxed mb-6">
+            <span data-lang="en">Long before Florida, he built his name the Brazilian way — skewer in one hand and hours of <em class="text-cream-50 not-italic">resenha</em> around the grill. The cold beer stayed in Rio. The fire came with him.</span>
+            <span data-lang="pt">Antes da Flórida, ele fez nome do jeito brasileiro — espeto numa mão e horas de resenha em volta da brasa. A gelada ficou no Rio. O fogo, ele trouxe.</span>
+          </p>
+          <p class="font-mono text-sm text-smoke-400 mb-8" data-lang="en"><em>resenha</em> (n.) — the untranslatable Brazilian art of good company around the fire.</p>
+          <p class="font-display text-xl text-ember-500">— O Carioca</p>
+        </div>
+        <div class="reveal">
+          <div class="aspect-[4/5] rounded-2xl bg-charcoal-800 border border-[var(--line)] overflow-hidden relative">
+            <div class="absolute inset-0 bg-gradient-to-t from-charcoal-950 via-charcoal-950/40 to-transparent z-10"></div>
+            <div class="absolute inset-0 flex items-end p-8 z-20">
+              <div>
+                <p class="font-display text-2xl text-cream-50">Bruno Carioca</p>
+                <p class="font-mono text-xs text-gold-400 mt-1 tracking-wider">FOUNDER · CHURRASCO SPECIALIST</p>
+              </div>
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-32 h-32 rounded-full bg-charcoal-900 border-2 border-ember-500/30 flex items-center justify-center">
+                <span class="font-display text-4xl text-ember-500">BC</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PACKAGES -->
+  <section class="py-20 md:py-28" id="packages">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="text-center mb-14 reveal">
+        <p class="font-mono text-xs tracking-widest text-gold-400 mb-3"><span data-lang="en">PACKAGES</span><span data-lang="pt">PACOTES</span></p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-cream-50"><span data-lang="en">Choose your experience</span><span data-lang="pt">Escolha sua experiência</span></h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6 stagger">
+        <article class="relative bg-charcoal-900 border-2 border-ember-500/50 rounded-2xl p-8 reveal flex flex-col hover:-translate-y-1 transition-transform duration-300">
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+            <span class="font-mono text-[10px] tracking-wider bg-ember-500 text-cream-50 px-3 py-1 rounded-full"><span data-lang="en">SIGNATURE</span><span data-lang="pt">ASSINATURA</span></span>
+          </div>
+          <h3 class="font-display text-xl font-semibold text-cream-50 mt-2 mb-1"><span data-lang="en">Premium Churrasco Experience</span><span data-lang="pt">Experiência Premium de Churrasco</span></h3>
+          <p class="font-mono text-2xl text-ember-500 mb-6">US$70–100<span class="text-sm text-smoke-400">+/guest</span></p>
+          <ul class="space-y-3 text-smoke-400 text-sm mb-8 flex-1">
+            <li class="flex gap-2"><span class="text-ember-500">✓</span> <span data-lang="en">Custom menu</span><span data-lang="pt">Cardápio personalizado</span></li>
+            <li class="flex gap-2"><span class="text-ember-500">✓</span> <span data-lang="en">Hand-selected premium cuts</span><span data-lang="pt">Cortes premium selecionados</span></li>
+            <li class="flex gap-2"><span class="text-ember-500">✓</span> <span data-lang="en">Full service & elevated presentation</span><span data-lang="pt">Serviço completo e apresentação elevada</span></li>
+          </ul>
+          <a href="https://wa.me/15614034603?text=Hi%2C%20I%27m%20interested%20in%20the%20Premium%20Churrasco%20Experience." target="_blank" rel="noopener"
+             class="block text-center bg-ember-500 hover:bg-ember-700 text-cream-50 font-semibold py-3.5 rounded-full transition-all ember-glow">
+            <span data-lang="en">Request This Package</span><span data-lang="pt">Solicitar este Pacote</span>
+          </a>
+        </article>
+        <article class="bg-charcoal-900 border border-[var(--line)] rounded-2xl p-8 reveal flex flex-col hover:-translate-y-1 transition-transform duration-300">
+          <div class="mb-1"><span class="font-mono text-[10px] tracking-wider text-gold-400"><span data-lang="en">MOST BOOKED</span><span data-lang="pt">MAIS PEDIDO</span></span></div>
+          <h3 class="font-display text-xl font-semibold text-cream-50 mb-1"><span data-lang="en">Full Churrasco</span><span data-lang="pt">Churrasco Completo</span></h3>
+          <p class="font-mono text-2xl text-cream-50 mb-6">from US$500</p>
+          <ul class="space-y-3 text-smoke-400 text-sm mb-8 flex-1">
+            <li class="flex gap-2"><span class="text-gold-400">✓</span> <span data-lang="en">Specialist + full structure</span><span data-lang="pt">Especialista + estrutura completa</span></li>
+            <li class="flex gap-2"><span class="text-gold-400">✓</span> <span data-lang="en">Menu-defined meats & sides</span><span data-lang="pt">Carnes e acompanhamentos definidos</span></li>
+            <li class="flex gap-2"><span class="text-gold-400">✓</span> <span data-lang="en">Small/medium events</span><span data-lang="pt">Eventos pequenos/médios</span></li>
+          </ul>
+          <a href="https://wa.me/15614034603?text=Hi%2C%20I%27m%20interested%20in%20the%20Full%20Churrasco%20package." target="_blank" rel="noopener"
+             class="block text-center border border-[var(--line)] hover:border-gold-400 text-cream-50 font-semibold py-3.5 rounded-full transition-colors">
+            <span data-lang="en">Request This Package</span><span data-lang="pt">Solicitar este Pacote</span>
+          </a>
+        </article>
+        <article class="bg-charcoal-900 border border-[var(--line)] rounded-2xl p-8 reveal flex flex-col hover:-translate-y-1 transition-transform duration-300">
+          <h3 class="font-display text-xl font-semibold text-cream-50 mb-1 mt-5"><span data-lang="en">Churrasco Pro</span><span data-lang="pt">Churrasco Pro</span></h3>
+          <p class="font-mono text-2xl text-cream-50 mb-6">US$50–75<span class="text-sm text-smoke-400">/hour</span></p>
+          <ul class="space-y-3 text-smoke-400 text-sm mb-8 flex-1">
+            <li class="flex gap-2"><span class="text-gold-400">✓</span> <span data-lang="en">Professional on-site specialist</span><span data-lang="pt">Especialista profissional no local</span></li>
+            <li class="flex gap-2"><span class="text-gold-400">✓</span> <span data-lang="en">Prep & service</span><span data-lang="pt">Preparo e serviço</span></li>
+            <li class="flex gap-2"><span class="text-gold-400">✓</span> <span data-lang="en">You provide meats & sides</span><span data-lang="pt">Você fornece carnes e acompanhamentos</span></li>
+          </ul>
+          <a href="https://wa.me/15614034603?text=Hi%2C%20I%27m%20interested%20in%20the%20Churrasco%20Pro%20service." target="_blank" rel="noopener"
+             class="block text-center border border-[var(--line)] hover:border-gold-400 text-cream-50 font-semibold py-3.5 rounded-full transition-colors">
+            <span data-lang="en">Request This Package</span><span data-lang="pt">Solicitar este Pacote</span>
+          </a>
+        </article>
+      </div>
+      <p class="text-center text-smoke-400 text-sm mt-10 reveal">
+        <span data-lang="en">Example: a full package for 10 guests starts around US$600, depending on menu and setup.</span>
+        <span data-lang="pt">Exemplo: um pacote completo para 10 convidados começa em torno de US$600, dependendo do cardápio e da estrutura.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section class="py-20 md:py-28 bg-charcoal-900" id="how">
+    <div class="max-w-6xl mx-auto px-5">
+      <div class="text-center mb-14 reveal">
+        <p class="font-mono text-xs tracking-widest text-gold-400 mb-3"><span data-lang="en">HOW IT WORKS</span><span data-lang="pt">COMO FUNCIONA</span></p>
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-cream-50"><span data-lang="en">Simple. Professional. Stress-free.</span><span data-lang="pt">Simples. Profissional. Sem estresse.</span></h2>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 stagger">
+        <div class="text-center reveal">
+          <div class="w-14 h-14 rounded-full border border-[var(--line)] flex items-center justify-center mx-auto mb-5 font-mono text-gold-400 text-lg">01</div>
+          <h3 class="font-display text-lg font-semibold text-cream-50"><span data-lang="en">Tell us about your event</span><span data-lang="pt">Conte sobre seu evento</span></h3>
+        </div>
+        <div class="text-center reveal">
+          <div class="w-14 h-14 rounded-full border border-[var(--line)] flex items-center justify-center mx-auto mb-5 font-mono text-gold-400 text-lg">02</div>
+          <h3 class="font-display text-lg font-semibold text-cream-50"><span data-lang="en">We design your menu</span><span data-lang="pt">Montamos seu cardápio</span></h3>
+        </div>
+        <div class="text-center reveal">
+          <div class="w-14 h-14 rounded-full border border-[var(--line)] flex items-center justify-center mx-auto mb-5 font-mono text-gold-400 text-lg">03</div>
+          <h3 class="font-display text-lg font-semibold text-cream-50"><span data-lang="en">We bring the fire</span><span data-lang="pt">Levamos o fogo</span></h3>
+        </div>
+        <div class="text-center reveal">
+          <div class="w-14 h-14 rounded-full border border-[var(--line)] flex items-center justify-center mx-auto mb-5 font-mono text-gold-400 text-lg">04</div>
+          <h3 class="font-display text-lg font-semibold text-cream-50"><span data-lang="en">You enjoy the party</span><span data-lang="pt">Você aproveita a festa</span></h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IDEAL -->
+  <section class="py-16 md:py-20">
+    <div class="max-w-6xl mx-auto px-5">
+      <p class="font-mono text-xs tracking-widest text-gold-400 text-center mb-8 reveal"><span data-lang="en">IDEAL FOR</span><span data-lang="pt">IDEAL PARA</span></p>
+      <div class="flex flex-wrap justify-center gap-4 reveal">
+        <span class="px-5 py-2.5 rounded-full border border-[var(--line)] text-cream-50 text-sm hover:border-ember-500/50 transition-colors"><span data-lang="en">Backyard gatherings</span><span data-lang="pt">Churrasco em família</span></span>
+        <span class="px-5 py-2.5 rounded-full border border-[var(--line)] text-cream-50 text-sm hover:border-ember-500/50 transition-colors"><span data-lang="en">Birthdays</span><span data-lang="pt">Aniversários</span></span>
+        <span class="px-5 py-2.5 rounded-full border border-[var(--line)] text-cream-50 text-sm hover:border-ember-500/50 transition-colors"><span data-lang="en">Weddings</span><span data-lang="pt">Casamentos</span></span>
+        <span class="px-5 py-2.5 rounded-full border border-[var(--line)] text-cream-50 text-sm hover:border-ember-500/50 transition-colors"><span data-lang="en">Corporate events</span><span data-lang="pt">Confraternizações</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- AREA -->
+  <section class="py-16 md:py-20 bg-charcoal-900" id="area">
+    <div class="max-w-6xl mx-auto px-5 text-center">
+      <p class="font-mono text-xs tracking-widest text-gold-400 mb-3 reveal"><span data-lang="en">PROUDLY SERVING FLORIDA</span><span data-lang="pt">ATENDENDO TODA A FLÓRIDA</span></p>
+      <h2 class="font-display text-2xl md:text-3xl font-bold text-cream-50 mb-8 reveal"><span data-lang="en">Declared service coverage across Florida</span><span data-lang="pt">Cobertura declarada em toda a Flórida</span></h2>
+      <div class="flex flex-wrap justify-center gap-3 mb-8 reveal">
+        <span class="font-mono text-sm px-4 py-2 rounded-full bg-charcoal-800 text-cream-50">Palm Beach County</span>
+        <span class="font-mono text-sm px-4 py-2 rounded-full bg-charcoal-800 text-cream-50">Boca Raton</span>
+        <span class="font-mono text-sm px-4 py-2 rounded-full bg-charcoal-800 text-cream-50">West Palm Beach</span>
+        <span class="font-mono text-sm px-4 py-2 rounded-full bg-charcoal-800 text-cream-50">Miami</span>
+        <span class="font-mono text-sm px-4 py-2 rounded-full bg-charcoal-800 text-cream-50">Fort Lauderdale</span>
+        <span class="font-mono text-sm px-4 py-2 rounded-full bg-charcoal-800 text-cream-50">Orlando</span>
+      </div>
+      <p class="text-smoke-400 text-sm reveal"><span data-lang="en">Don’t see your city? Ask — we travel for events.</span><span data-lang="pt">Não viu sua cidade? Pergunte — viajamos para eventos.</span></p>
+    </div>
+  </section>
+
+  <!-- FORM -->
+  <section class="py-20 md:py-28" id="quote">
+    <div class="max-w-2xl mx-auto px-5">
+      <div class="text-center mb-10 reveal">
+        <h2 class="font-display text-3xl md:text-4xl font-bold text-cream-50 mb-4"><span data-lang="en">Let’s build your churrasco.</span><span data-lang="pt">Vamos montar seu churrasco?</span></h2>
+        <p class="text-smoke-400"><span data-lang="en">Free quote · Reply within 24h · Bilingual EN/PT</span><span data-lang="pt">Orçamento grátis · Resposta em até 24h · Bilíngue EN/PT</span></p>
+      </div>
+      <form id="quote-form" class="space-y-5 reveal" onsubmit="return handleQuote(event)">
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block font-mono text-xs text-smoke-400 mb-2"><span data-lang="en">Event date</span><span data-lang="pt">Data do evento</span></label>
+            <input type="date" name="date" required class="w-full bg-charcoal-900 border border-[var(--line)] rounded-xl px-4 py-3 text-cream-50 focus:border-ember-500 transition-colors" />
+          </div>
+          <div>
+            <label class="block font-mono text-xs text-smoke-400 mb-2"><span data-lang="en">City</span><span data-lang="pt">Cidade</span></label>
+            <input type="text" name="city" required placeholder="West Palm Beach" class="w-full bg-charcoal-900 border border-[var(--line)] rounded-xl px-4 py-3 text-cream-50 placeholder:text-smoke-400/50 focus:border-ember-500 transition-colors" />
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block font-mono text-xs text-smoke-400 mb-2"><span data-lang="en">Number of guests</span><span data-lang="pt">Número de convidados</span></label>
+            <input type="number" name="guests" min="1" required placeholder="20" class="w-full bg-charcoal-900 border border-[var(--line)] rounded-xl px-4 py-3 text-cream-50 placeholder:text-smoke-400/50 focus:border-ember-500 transition-colors" />
+          </div>
+          <div>
+            <label class="block font-mono text-xs text-smoke-400 mb-2"><span data-lang="en">Do you have a grill?</span><span data-lang="pt">Possui churrasqueira?</span></label>
+            <select name="grill" class="w-full bg-charcoal-900 border border-[var(--line)] rounded-xl px-4 py-3 text-cream-50 focus:border-ember-500 transition-colors">
+              <option value="yes">Yes / Sim</option>
+              <option value="no">No — please bring one / Não</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block font-mono text-xs text-smoke-400 mb-2"><span data-lang="en">Meat preferences / notes</span><span data-lang="pt">Preferências de carne / observações</span></label>
+          <textarea name="notes" rows="3" placeholder="Picanha, sausage..." class="w-full bg-charcoal-900 border border-[var(--line)] rounded-xl px-4 py-3 text-cream-50 placeholder:text-smoke-400/50 focus:border-ember-500 transition-colors resize-none"></textarea>
+        </div>
+        <button type="submit" class="w-full bg-ember-500 hover:bg-ember-700 text-cream-50 font-semibold py-4 rounded-full text-base transition-all ember-glow flex items-center justify-center gap-2">
+          <span data-lang="en">Get My Free Quote on WhatsApp</span><span data-lang="pt">Pedir Orçamento no WhatsApp</span>
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-[var(--line)] bg-charcoal-950">
+  <div class="max-w-6xl mx-auto px-5 py-12">
+    <div class="flex flex-col md:flex-row justify-between items-start gap-8">
+      <div>
+        <p class="font-display text-xl font-bold text-cream-50 mb-2">BBQ do Carioca</p>
+        <p class="text-smoke-400 text-sm max-w-xs">
+          <span data-lang="en">Authentic Brazilian churrasco with flavor, quality and service in Florida.</span>
+          <span data-lang="pt">Churrasco brasileiro com sabor, qualidade e atendimento na Flórida.</span>
+        </p>
+      </div>
+      <div class="text-sm text-smoke-400 space-y-1">
+        <p class="font-mono text-cream-50">+1 (561) 403-4603</p>
+        <p>Florida – USA</p>
+        <p class="pt-2"><a href="https://wa.me/15614034603" target="_blank" rel="noopener" class="text-ember-500 hover:text-ember-700 transition-colors">WhatsApp</a></p>
+      </div>
+    </div>
+    <div class="mt-10 pt-6 border-t border-[var(--line)] flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-smoke-400">
+      <p>© 2026 BBQ do Carioca. All rights reserved.</p>
+      <div class="flex gap-4">
+        <button id="footer-lang-en" class="hover:text-cream-50 transition-colors">English</button>
+        <button id="footer-lang-pt" class="hover:text-cream-50 transition-colors">Português</button>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp Widget -->
+<div class="wa-widget">
+  <div id="wa-bubble" class="wa-bubble">
+    <button class="wa-close" id="wa-close" aria-label="Close">×</button>
+    <span data-lang="en">Let’s chat about your event!</span>
+    <span data-lang="pt">Vamos conversar sobre seu evento?</span>
+  </div>
+  <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27d%20like%20a%20quote%20for%20my%20event." target="_blank" rel="noopener" class="wa-btn wa-pulse" aria-label="WhatsApp">
+    <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+</div>
+
+<script>
+  function setLang(lang) {
+    document.documentElement.lang = lang;
+    localStorage.setItem('bbq-lang', lang);
+    const enBtn = document.getElementById('lang-en');
+    const ptBtn = document.getElementById('lang-pt');
+    if (lang === 'pt') {
+      enBtn.className = 'px-2.5 py-1 rounded text-smoke-400 hover:text-cream-50 transition-colors';
+      ptBtn.className = 'px-2.5 py-1 rounded text-cream-50 bg-charcoal-800';
+    } else {
+      ptBtn.className = 'px-2.5 py-1 rounded text-smoke-400 hover:text-cream-50 transition-colors';
+      enBtn.className = 'px-2.5 py-1 rounded text-cream-50 bg-charcoal-800';
+    }
+  }
+  document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
+  document.getElementById('lang-pt').addEventListener('click', () => setLang('pt'));
+  document.getElementById('footer-lang-en').addEventListener('click', () => setLang('en'));
+  document.getElementById('footer-lang-pt').addEventListener('click', () => setLang('pt'));
+  if (localStorage.getItem('bbq-lang') === 'pt') setLang('pt');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  const bubble = document.getElementById('wa-bubble');
+  setTimeout(() => bubble.classList.add('show'), 1800);
+  document.getElementById('wa-close').addEventListener('click', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    bubble.classList.remove('show');
+  });
+
+  function handleQuote(e) {
+    e.preventDefault();
+    const f = e.target;
+    const lang = document.documentElement.lang;
+    let msg = lang === 'pt'
+      ? `Olá BBQ do Carioca! Gostaria de um orçamento.%0A%0AData: ${f.date.value}%0ACidade: ${f.city.value}%0AConvidados: ${f.guests.value}%0AChurrasqueira: ${f.grill.value === 'yes' ? 'Sim' : 'Não'}%0AObservações: ${f.notes.value || '—'}`
+      : `Hi BBQ do Carioca! I'd like a quote.%0A%0ADate: ${f.date.value}%0ACity: ${f.city.value}%0AGuests: ${f.guests.value}%0AGrill: ${f.grill.value === 'yes' ? 'Yes' : 'No'}%0ANotes: ${f.notes.value || '—'}`;
+    window.open(`https://wa.me/15614034603?text=${msg}`, '_blank');
+    return false;
+  }
+</script>
+</body>
+</html>

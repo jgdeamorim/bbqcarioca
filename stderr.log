@@ -1,0 +1,3 @@
+Attempting to connect to Redis at redis://127.0.0.1:6396...
+Connected to Redis successfully at redis://127.0.0.1:6396
+Redis MCP Server running on stdio

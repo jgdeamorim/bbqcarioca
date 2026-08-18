@@ -1,0 +1,327 @@
+Como as skills do Grok são ativadas
+Ativação automática (padrão): o Grok lê o nome + a descrição de cada skill habilitada na aba Habilidades, e carrega o conteúdo completo quando o seu pedido casa com os gatilhos da descrição ("Use when…", "Triggers include…") 
+docs.x.ai
+. É o mesmo padrão de mercado: skills disparam sozinhas quando o agente reconhece a tarefa, ou via slash command (/nome-da-skill) em alguns clientes 
+www.thepromptindex.com
+. No grok.com web/iOS/Android, skills são "expertise persistente" que roda on demand, sem setup 
+x.ai
+chatlyai.app
+.
+Gatilhos literais ajudam de graça: várias skills da sua lista têm keywords explícitas na descrição. Ex.: design-brief dispara com "design brief" / "structured brief"; gsap-scrolltrigger dispara com "scroll animation"; frontend-a11y com "building any interactive UI component or form". Ou seja: escrever um brief natural que contenha essas frases já invoca meio time sem nenhum "prompt técnico".
+Então por que eu te dei um mega-prompt invocando tudo?
+Porque ativação automática tem três falhas que custam caro em entrega final:
+Conflito de skills: você tem frontend-design, frontend-skill, frontend-dev e artifacts-builder — quatro visões diferentes de frontend. Sozinho, o Grok escolhe uma por vibe; nomeando, você escolhe a estética (no seu caso, frontend-design + make-interfaces-feel-better).
+Ordem: QA (stitch-loop + design-review) precisa rodar depois do build. Auto-trigger não garante sequência.
+Taxa de ativação: na prática, skills às vezes simplesmente não disparam sem menção explícita — é um problema conhecido do ecossistema, com workarounds baseados em citar o gatilho no prompt 
+dev.to
+scottspence.com
+.
+A jogada pro (a que eu faria no seu lugar)
+O grok.com deixa você criar e compartilhar skills próprias 
+x.ai
+chatlyai.app
+. Em vez de colar o mega-prompt toda vez:
+Crie uma skill customizada bbq-carioca-landing com o Brand DNA (tokens Fire & Charcoal, tipografia, proibições), o copy deck EN/PT, a seção "Meet your churrasqueiro", o wiring do WhatsApp e o pipeline de QA embutidos.
+Daí em diante, o prompt vira uma frase: "Atualize a hero da landing do BBQ usando a skill bbq-carioca-landing."
+Resumo: dia a dia → prompt natural com as palavras-gatilho embutidas (ativa sozinho). Entrega final → cite as skills do pipeline explicitamente (garante ordem e QA). Recorrência → encapsule tudo numa skill própria e aposente o prompt técnico.
+
+a skill vira um "índice orquestrador" — o arquivo principal (SKILL.md, que é o nome que os agentes leem automaticamente; chame de INDEX.md mentalmente) carrega só as regras de decisão e aponta para sub-arquivos que o Grok carrega sob demanda (progressive disclosure). Assim você não estoura contexto e cada atualização vira versionamento (v0.1.0 → v1.0), igual aos seus blueprints.
+
+
+📁 Arquitetura da skill
+bbq-carioca-landing/
+├── SKILL.md          ← INDEX/orquestrador (abaixo)
+├── brand-dna.md      ← 5 gatilhos, voice, transcreation, do/don't
+├── tokens.md         ← cores, type, motion, radius, bordas
+├── sections.md       ← IA + copy deck EXATO EN/PT por seção
+├── keywords.md       ← Keyword DNA, negativas, /service-area/*, JSON-LD
+├── assets.md         ← hierarquia emblema / caricatura / logo-arquivo
+└── qa.md             ← checklist a11y + polish + SEO antes de entregar
+
+
+📄 SKILL.md (o INDEX.md) — pronto para colar no grok.com
+---
+name: bbq-carioca-landing
+description: Master index & orchestrator for the "BBQ do Carioca" landing page
+(Brazilian churrasco catering — Florida, USA). Use when building, editing,
+reviewing, translating or extending the BBQ landing page, its sections
+(hero, packages, meet the churrasqueiro, service area, quote form), the
+WhatsApp quote flow, or its SEO. Triggers: "BBQ landing", "BBQ do Carioca",
+"Carioca", "churrasco page", "landing do churrasco", "update the landing".
+---
+
+# BBQ DO CARIOCA — LANDING INDEX (v1.0.0)
+
+## 0. REGRAS DE USO DESTE ÍNDICE
+- Este arquivo decide; os sub-arquivos detalham. Carregue sob demanda:
+  tokens.md, sections.md, keywords.md, assets.md, brand-dna.md, qa.md.
+- NUNCA invente copy. String ausente em sections.md → rode `copywriting`
+  com as transcreation rules de brand-dna.md (EN-US first, PT-BR toggle).
+- NUNCA use: `frontend-skill`, `artifacts-builder` default, shadcn SaaS
+  genérico, 21st.dev. Esta é landing editorial premium, não dashboard.
+
+## 1. POSICIONAMENTO (resumo; fonte: brand-dna.md)
+- Vende experiência de fogo ao vivo, não comida: "Authentic Brazilian
+  Churrasco, Fired Live at Your Event."
+- 5 gatilhos: Desire · Trust · Authenticity · Status · Relief
+  (alívio = "You host. We master the fire.").
+- Dual-market: English-first + PT-BR; autenticidade brasileira sem clichê
+  de bandeira. Premium sempre — jamais "comida barata".
+
+## 2. PIPELINE — invoque nesta ordem, sem pular fases
+1. PARSE ....... `design-brief` (trate este índice + sections.md como brief)
+2. SYSTEM ...... `color-expert` (contraste AA sobre carvão) + tokens.md
+3. BUILD ....... `frontend-design` (HTML semântico, layout editorial)
+4. MOTION ...... `motion-patterns` + `gsap-scrolltrigger` + `gsap-performance`;
+                 respeitar prefers-reduced-motion
+5. A11Y ........ `frontend-a11y`
+6. COPY ........ `copywriting` (polish EN-US; transcreation, não tradução)
+7. ASSETS ...... `imagegen`/`imagen` (direção de foto em assets.md);
+                 `image-enhancer` em fotos reais
+8. QA .......... `make-interfaces-feel-better` → `design-review`
+                 (before/after) → `stitch-loop` até fidelidade ao brief
+9. SEO ......... aplicar keywords.md (title/meta/H2, JSON-LD Caterer,
+                 NAP, /service-area/* só cidades reais)
+
+## 3. TOKENS (resumo; fonte: tokens.md)
+--charcoal-950:#0B0908; --charcoal-900:#141110; --charcoal-800:#1E1917;
+--ember-500:#FF6B35; --ember-700:#C2410C; --gold-400:#D9A441;
+--cream-50:#FAF6EE; --smoke-400:#A69D93; --line:rgba(217,164,65,.16);
+TYPE: Fraunces 600–900 (display) · Manrope (body) · IBM Plex Mono
+(eyebrows/preços/labels). Bordas 1px; glow de brasa só em hover.
+PROIBIDO: gradiente indigo/violet, glassmorphism genérico, verde-amarelo
+bandeira, emoji de fogo, western kitsch.
+
+## 4. MAPA DE SEÇÕES (copy completa em sections.md)
+1 HERO (Desire) · 2 FAIXA ALÍVIO · 3 EXPERIÊNCIA 3 cards (Autenticidade) ·
+4 MEET YOUR CHURRASQUEIRO (Trust — caricatura reskin + logo-arquivo
+"RIO — WHERE IT STARTED") · 5 PACOTES (Status; ordem-âncora: Premium
+US$70–100+/guest [Signature] → Full BBQ from US$500 [Most booked] →
+Churrasqueiro US$50–75/h; nota 10 convidados ≈ US$600) ·
+6 COMO FUNCIONA 4 passos · 7 IDEAL PARA 4 tiles · 8 SERVICE AREA chips FL
+(Palm Beach/561 primeiro) · 9 QUOTE FORM → wa.me/15614034603 com mensagem
+pré-preenchida · 10 FOOTER NAP + toggle PT (hreflang).
+
+## 5. ASSETS (regras completas em assets.md)
+Emblema = institucional (header/footer/OG/GBP). Caricatura reskin =
+pessoa (favicon, avatar WhatsApp, seção 4, merch). Logo original
+Bar Resenha = peça de arquivo emoldurada, nunca solto na paleta carvão.
+
+## 6. VOZ
+Pilar *resenha*: caloroso, direto, zero corporativo. Manter "resenha" em
+itálico no EN, explicado uma única vez. Linha-mestra: "The cold beer
+stayed in Rio. The fire came with him." / "A gelada ficou no Rio. O
+fogo, ele trouxe."
+
+## 7. CONVERSÃO
+Objetivo único: orçamento via WhatsApp +1 (561) 403-4603.
+Form: data, cidade, convidados, horário/duração, carnes, acompanhamentos,
+possui churrasqueira? → submit monta mensagem wa.me.
+
+
+
+
+Como invoca depois de instalada
+Natural: "Atualize a hero da landing do BBQ" → o Grok casa com os triggers da description, carrega o INDEX e segue o pipeline sozinho.
+Explícito: /bbq-carioca-landing + a tarefa, quando quiser garantia total.
+Evolução: mudou preço ou cidade? Edita sections.md/keywords.md — o INDEX não muda. É assim que a skill vira o single source of truth do projeto, e o mega-prompt técnico some do seu dia a dia (ele vira conteúdo dos sub-arquivos, que é o lugar certo dele).
+
+
+três sub-arquivos de marketing que entram na skill, cada bloco já "falando" pela especialidade que o Grok deve invocar (copywriting, creative-director, ad-creative, competitive-ads-extractor, research-decision-room). Cole cada um como arquivo da pasta bbq-carioca-landing/ e adicione-os ao INDEX.
+
+# COPY DECK — BBQ DO CARIOCA (EN fonte / PT transcreation)
+
+## 1 · HERO — gatilho: Desejo
+eyebrow(mono) EN: LIVE-FIRE BRAZILIAN CHURRASCO • FLORIDA, USA
+H1 EN: Authentic Brazilian Churrasco, Fired Live at Your Event.
+SUB EN: A professional churrasqueiro brings the fire, the premium cuts and
+the full service — so you can stay with your guests.
+CTA1: Get My Free Quote → wa.me/15614034603 | CTA2: See Packages
+CHIPS: On-site live fire · Premium Brazilian cuts · Bilingual EN/PT · Florida-wide
+PT: H1 "Churrasco brasileiro autêntico, assado ao vivo no seu evento." /
+SUB "Um churrasqueiro profissional leva o fogo, os cortes premium e o serviço
+completo — você fica com seus convidados." / CTAs "Pedir Meu Orçamento" · "Ver Pacotes"
+
+## 2 · FAIXA ALÍVIO
+EN: You host. We master the fire.
+PT: Você cuida dos convidados. Nós cuidamos do fogo.
+
+## 3 · EXPERIÊNCIA — gatilho: Autenticidade (3 cards)
+A) Live Fire, Brazilian Style — "Skewers over glowing charcoal, the way it's
+done in Brazil. No ovens, no shortcuts — the fire is the show."
+B) Premium Cuts — "Picanha and hand-selected cuts, seasoned simply,
+grilled to perfection in front of your guests."
+C) Full Service & Setup — "We bring the grill, the structure and the
+service when you need them. You bring the guests."
+PT: A) "Fogo de chão e espeto, do jeito brasileiro — o fogo é o espetáculo."
+B) "Picanha e cortes selecionados, grelhados na frente dos seus convidados."
+C) "Levamos churrasqueira, estrutura e serviço. Você só chama os convidados."
+
+## 4 · MEET YOUR CHURRASQUEIRO — gatilho: Confiança
+eyebrow: FROM RIO WITH FIRE · H2: The man behind the fire.
+EN: "Long before Florida, he built his name the Brazilian way — skewer in
+one hand and hours of resenha around the grill. The cold beer stayed in
+Rio. The fire came with him."  (*resenha (n.) — the untranslatable
+Brazilian art of good company around the fire.*)
+Assinatura: — O Carioca
+PT: "Antes da Flórida, ele fez nome do jeito brasileiro — espeto numa mão e
+horas de resenha em volta da brasa. A gelada ficou no Rio. O fogo, ele trouxe."
+
+## 5 · PACOTES — gatilho: Status (ordem = âncora de preço)
+[Signature] PREMIUM EXPERIENCE — US$70–100+ /guest
+• Custom menu • Hand-selected premium cuts • Full service & elevated presentation
+[Most booked] FULL BBQ — from US$500
+• Churrasqueiro + full structure • Menu-defined meats & sides • Small/medium events
+THE CHURRASQUEIRO — US$50–75 /hour
+• Professional churrasqueiro • Prep & service • You provide meats & sides
+NOTA: "Example: a full package for 10 guests starts around US$600,
+depending on menu and setup."
+CTA por card: Request This Package (wa.me pré-preenchido)
+PT: Experiência Premium / BBQ Completo / O Churrasqueiro
+
+## 6 · COMO FUNCIONA — gatilho: Confiança (4 passos mono)
+1 Tell us about your event → 2 We design your menu → 3 We bring the fire →
+4 You enjoy the party
+PT: Conte sobre seu evento → Montamos seu cardápio → Levamos o fogo →
+Você aproveita a festa
+
+## 7 · IDEAL PARA
+Backyard gatherings · Birthdays · Weddings · Corporate events
+PT: Churrasco em família · Aniversários · Casamentos · Confraternizações
+
+## 8 · SERVICE AREA — SEO local
+eyebrow: PROUDLY SERVING FLORIDA
+chips: Palm Beach County · Boca Raton · West Palm Beach · Miami ·
+Fort Lauderdale · Orlando [CONFIRMAR SÓ CIDADES REAIS]
+linha: "Don't see your city? Ask — we travel for events."
+
+## 9 · QUOTE FORM — conversão
+H2: Let's build your churrasco.
+campos: date · city · guests · time/duration · meat preferences · sides ·
+do you have a grill?
+botão: Get My Free Quote on WhatsApp · microcopy: Free quote · Reply within
+24h · Bilingual EN/PT
+PT H2: Vamos montar seu churrasco? · botão: Pedir Orçamento no WhatsApp
+
+## 10 · FOOTER
+NAP + phone · tagline PT: "Churrasco brasileiro com sabor, qualidade e
+atendimento na Flórida." · toggle EN/PT (hreflang) · Florida – USA
+
+
+
+
+📄 keywords.md — KEYWORD DNA v1.0 · [SEO + i18n strategy]
+Score = CI + SR + LI + BD + CV (0–5 cada, máx 25), fórmula do blueprint.
+
+# KEYWORD DNA — BBQ DO CARIOCA
+
+## Positivas (score / uso)
+BBQ catering near me        EN  21  H1 + Ads Core
+BBQ chef for hire           EN  21  H2 pacotes + Ads Chef
+Brazilian BBQ catering      EN  21  H1 + Ads Brazilian
+Brazilian churrasco catering EN 20  H2 service area
+churrasqueiro brasileiro na Florida PT 23  landing PT + Ads PT
+churrasco brasileiro para festas    PT 22  Ads PT
+wedding BBQ catering        EN  19  tile + página futura /events/weddings
+backyard BBQ catering       EN  18  tile
+private BBQ chef            EN  18  H2 premium
+corporate BBQ catering      EN  17  tile + página futura
+live fire catering          EN  17  eyebrow/hero (diferenciação)
+
+## Negativas ABSOLUTAS
+jobs·careers·hiring·salary | grill for sale·smoker·parts·repair·cleaning |
+recipes·how to·DIY·tutorial·youtube | free·free catering | delivery·takeout·
+fast food | marcas concorrentes: "Fogo de Chão"·"Texas de Brazil" (intento restaurante)
+
+## Negativas CONTEXTUAIS (regra da pegadinha)
+NÃO negativar cegamente: "steakhouse", "BBQ restaurant", "menu".
+Manter se seguido de: catering·wedding·event·party
+("Brazilian steakhouse catering for wedding" = lead premium).
+
+## H-mapping (SEO on-page)
+H1: Brazilian Churrasco + Fired Live
+H2s: Brazilian BBQ Catering for Private Events · BBQ Catering Packages &
+Pricing in Florida · BBQ Chef for Hire — How It Works · Brazilian Churrasco
+Catering Near You — Florida Service Area
+
+## Local SEO
+/service-area/palm-beach (561 primeiro!) · /boca-raton · /miami ·
+/fort-lauderdale · /orlando — só cidades reais atendidas.
+GBP: categoria "Caterer"; posts semanais com foto de brasa.
+
+## JSON-LD
+{"@type":"Caterer","name":"BBQ do Carioca","telephone":"+1-561-403-4603",
+"slogan":"Authentic Brazilian Churrasco, Fired Live at Your Event.",
+"priceRange":"$$–$$$","servesCuisine":["Brazilian barbecue","Churrasco"],
+"areaServed":["Palm Beach County","Boca Raton","Miami","Fort Lauderdale","Orlando"]}
+
+
+
+
+📄 marketing.md — GROWTH v1.0 · [creative-director + ad-creative + competitive-ads-extractor + pricing psych + research-decision-room]
+
+# MARKETING SYSTEM — BBQ DO CARIOCA
+
+## 1 · BIG IDEA [creative-director]
+Plataforma: "THE FIRE CAME WITH HIM." (3 atos: Rio → travessia → seu evento)
+Taglines por gatilho:
+Desejo "Fired live at your event." · Alívio "You host. We master the fire." ·
+Status "Your guests will talk about this one." · Autenticidade "Not American
+BBQ with a flag on it. The real thing." · Confiança "One WhatsApp message.
+Zero grills to manage."
+
+## 2 · GOOGLE ADS [ad-creative] — orçamento 45/25/15/15
+C1 CORE FL (45%): AGs Core·Chef·Near me
+C2 BRAZILIAN DIFF (25%): AGs Brazilian·Churrasco·Live fire
+C3 PT COMMUNITY (15%): AGs PT (ads em português)
+C4 BRAND + REMKT (15%)
+
+RSA CORE (headlines ≤30): Brazilian BBQ Catering · Live-Fire Churrasco, FL ·
+BBQ Chef for Hire · We Bring the Fire to You · Free Quote in 24 Hours
+RSA CORE (desc ≤90): "Professional churrasqueiro cooks premium cuts live at
+your event. Free quote in 24h." / "We bring the grill, the fire and the
+service. You bring the guests."
+RSA PT: "Churrasqueiro Brasileiro" · "Churrasco na Flórida" ·
+desc: "Churrasco ao vivo no seu evento, com churrasqueiro profissional.
+Orçamento grátis no WhatsApp."
+
+## 3 · CONCORRÊNCIA [competitive-ads-extractor]
+Raspar mensalmente: caterers americanos de BBQ ("slow-smoked brisket"),
+steakhouses brasileiras c/ catering, plataformas de private chef.
+GAP que ninguém dona: "live-fire experience AT YOUR HOME" + bilingual +
+rosto/história. Nosso ângulo contra "slow-smoked": "the fire is the show".
+
+## 4 · PRICING PSYCHOLOGY
+Âncora: Premium primeiro (US$70–100+/guest) → "from US$500" parece acessível.
+Reframe do exemplo: "≈ US$60/guest — less than a steakhouse dinner, and
+nobody leaves your party."
+Tier hora = porta de entrada/trial. "From" + orçamento final sob medida =
+honestidade → Confiança (Brand DNA).
+
+## 5 · SOCIAL PROOF / REVIEWS
+Pós-evento (WhatsApp, voz resenha): "Se o fogo fez sua noite, um review no
+Google ajuda outras famílias a achar a gente."
+Pergunta-semente p/ review rico em keywords: "O que seus convidados falaram
+da picanha?" → reviews citam picanha/live fire/Brazilian BBQ = SEO de prova.
+Foto-proof: brasa + convidados (não só carne) → GBP + seção futura de provas.
+
+## 6 · FUNNEL WHATSAPP
+Reply <24h: saudação EN/PT + 3 perguntas (data? convidados? cidade?) +
+faixa de preço do pacote provável (âncora). Follow-up 48h e 7d.
+Calendário FL: Super Bowl · Memorial Day · formaturas (mai–jun) · July 4th ·
+Labor Day · temporada de casamentos (out–abr) · Friendsgiving.
+
+## 7 · RESEARCH LOOP [research-decision-room]
+Após 10 eventos: minerar reviews/conversas → vocabulário do cliente entra no
+copy deck (v1.1) e nos chips do hero. Decisões com evidência, não achismo.
+
+
+
+
+🔧 Delta no SKILL.md (INDEX)
+
+## 0. arquivos: + sections.md, keywords.md, marketing.md
+## 2. PIPELINE: adicionar
+10. ADS/SEO .... aplicar keywords.md + marketing.md §2–3 (`ad-creative`,
+                 `competitive-ads-extractor`)
+11. PROOF ...... marketing.md §5–7 (`research-decision-room` a cada 10 eventos)
