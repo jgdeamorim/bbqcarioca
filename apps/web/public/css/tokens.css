@@ -27,9 +27,10 @@ body {
 .font-mono    { font-family: 'IBM Plex Mono', monospace; }
 
 /* ── LANG TOGGLE ── */
-[data-lang="pt"] { display: none; }
-html[lang="pt"] [data-lang="en"] { display: none; }
-html[lang="pt"] [data-lang="pt"] { display: unset; }
+[data-lang="pt"] { display: none !important; }
+html[lang="pt"] [data-lang="en"] { display: none !important; }
+html[lang="pt"] [data-lang="pt"] { display: contents !important; }
+html[lang="en"] [data-lang="en"] { display: contents !important; }
 
 a:focus-visible, button:focus-visible, input:focus-visible,
 select:focus-visible, textarea:focus-visible {
