@@ -57,6 +57,12 @@ async function setLang(lang) {
       const val = getNestedValue(dict, key);
       if (val !== null) el.placeholder = val;
     });
+
+    document.querySelectorAll('[data-i18n-label]').forEach(el => {
+      const key = el.getAttribute('data-i18n-label');
+      const val = getNestedValue(dict, key);
+      if (val !== null) el.label = val;
+    });
   }
 }
 
