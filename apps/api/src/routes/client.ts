@@ -72,4 +72,32 @@ app.post('/requests', turnstileValidator, async (c) => {
   }
 });
 
+app.get('/me', async (c) => {
+  const authHeader = c.req.header('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+  
+  const token = authHeader.split(' ')[1];
+  // Simplistic token decode for Phase 5 (fake-jwt-token-customer-{id})
+  const personId = token.replace('fake-jwt-token-customer-', '');
+  
+  const { DB } = c.env;
+  
+  try {
+    const person = await DB.prepare(`SELECT * FROM persons WHERE id = ?`).bind(personId).first();
+    if (!person) return c.json({ error: 'Person not found' }, 404);
+    
+    // Fetch their requests
+    const { results: requests } = await DB.prepare(
+      `SELECT * FROM service_requests WHERE customer_id = ? ORDER BY created_at DESC LIMIT 5`
+    ).bind(personId).all();
+    
+    return c.json({ person, requests });
+  } catch (err: any) {
+    console.error(err);
+    return c.json({ error: 'Database error', details: err.message }, 500);
+  }
+});
+
 export default app;
