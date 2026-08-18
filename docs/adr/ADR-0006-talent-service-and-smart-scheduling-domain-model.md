@@ -1,6 +1,6 @@
 # ADR-0006: Talent, Service, Commercial & Experience Domain Model ($0/month Sovereign Architecture)
 
-* **Status:** Aceito (Accepted)
+* **Status:** Obsoleto (Substituído pela ADR-0005 v2)
 * **Data:** 2026-08-18
 * **Autor:** Jeferson Amorim (Founder) & Antigravity (Pair AI)
 * **Domínio:** BBQ do Carioca (`jgdeamorim/bbqcarioca`)

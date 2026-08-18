@@ -1,6 +1,6 @@
 # ADR-0005: Sovereign BBQ Talent & Service Platform Architecture ($0/month Free Tier to Paid Upgrade Roadmap)
 
-* **Status:** Aceito (Accepted)
+* **Status:** Obsoleto (Substituído pela ADR-0005 v2)
 * **Data:** 2026-08-18
 * **Autor:** Jeferson Amorim (Founder) & Antigravity (Pair AI)
 * **Domínio:** BBQ do Carioca (`jgdeamorim/bbqcarioca`)
