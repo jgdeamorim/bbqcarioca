@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Request your BBQ | BBQ do Carioca</title>
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/layout.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <style>
+    body {
+      background: var(--charcoal-950);
+      color: var(--cream-50);
+      font-family: 'Manrope', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .form-container {
+      max-width: 600px;
+      margin: 80px auto;
+      padding: 40px;
+      background: var(--charcoal-900);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+    }
+    .form-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .form-header h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      color: var(--ember-500);
+      margin-bottom: 8px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--smoke-400);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 14px;
+      background: var(--charcoal-950);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--cream-50);
+      font-size: 1rem;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--ember-500);
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: var(--ember-500);
+      color: var(--cream-50);
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover {
+      background: var(--ember-700);
+    }
+    .info-box {
+      background: rgba(217, 164, 65, 0.1);
+      border-left: 4px solid var(--gold-400);
+      padding: 16px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 32px;
+      font-size: 0.9rem;
+      color: var(--smoke-400);
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-header">
+      <h1>Let's Plan Your Event</h1>
+      <p>Complete the details below to generate your service request.</p>
+    </div>
+
+    <div class="info-box">
+      <strong>How it works:</strong> We'll review your event details and provide a customized quote. Once approved, your event is booked.
+    </div>
+
+    <form id="onboarding-form">
+      <div class="form-group">
+        <label for="intent">Service Package</label>
+        <input type="text" id="intent" name="intent" readonly />
+      </div>
+
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" name="fullName" required placeholder="John Doe" />
+      </div>
+
+      <div class="form-group">
+        <label for="phone">WhatsApp Phone</label>
+        <input type="tel" id="phone" name="phone" required placeholder="+1 (555) 000-0000" />
+      </div>
+
+      <div class="form-group">
+        <label for="eventDate">Event Date</label>
+        <input type="date" id="eventDate" name="eventDate" required />
+      </div>
+
+      <div class="form-group">
+        <label for="guests">Number of Guests</label>
+        <select id="guests" name="guests">
+          <option value="20-50">20 to 50 guests</option>
+          <option value="50-100">50 to 100 guests</option>
+          <option value="100+">100+ guests</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-submit">Request Quote & Access Portal</button>
+    </form>
+  </div>
+
+  <script>
+    // Extract intent from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const intent = urlParams.get('intent') || 'Standard BBQ';
+    document.getElementById('intent').value = intent;
+
+    document.getElementById('onboarding-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+      
+      // Call Hono API (Mocked for now, simulating success)
+      console.log('Sending data to API:', data);
+      
+      const btn = e.target.querySelector('button');
+      btn.textContent = 'Processing...';
+      btn.disabled = true;
+
+      // Simulate network request
+      await new Promise(r => setTimeout(r, 1000));
+      
+      // Store dummy token in localStorage for the SPA to read
+      localStorage.setItem('bbq_auth_token', 'temp_client_token');
+      localStorage.setItem('bbq_user_role', 'customer');
+      localStorage.setItem('bbq_user_name', data.fullName);
+
+      // Redirect to secure dashboard
+      window.location.href = "https://portal.bbqcarioca.work/client/dashboard";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Join the Fire | BBQ do Carioca Careers</title>
+  <link rel="stylesheet" href="../css/tokens.css" />
+  <link rel="stylesheet" href="../css/layout.css" />
+  <link rel="stylesheet" href="../css/components.css" />
+  <style>
+    body {
+      background: var(--charcoal-950);
+      color: var(--cream-50);
+      font-family: 'Manrope', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .form-container {
+      max-width: 600px;
+      margin: 80px auto;
+      padding: 40px;
+      background: var(--charcoal-900);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+    }
+    .form-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .form-header h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      color: var(--ember-500);
+      margin-bottom: 8px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--smoke-400);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 14px;
+      background: var(--charcoal-950);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--cream-50);
+      font-size: 1rem;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--ember-500);
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: var(--ember-500);
+      color: var(--cream-50);
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover {
+      background: var(--ember-700);
+    }
+    .info-box {
+      background: rgba(217, 164, 65, 0.1);
+      border-left: 4px solid var(--gold-400);
+      padding: 16px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 32px;
+      font-size: 0.9rem;
+      color: var(--smoke-400);
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-header">
+      <h1>Apply as Pitmaster</h1>
+      <p>Join the elite Brazilian BBQ team in Florida.</p>
+    </div>
+
+    <div class="info-box">
+      <strong>Process:</strong> Submit your details and skills. Your profile will be held in Quarantine for Superadmin review. Once authorized, our matching algorithm will connect you to local events based on your Zip Code.
+    </div>
+
+    <form id="talent-form">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" name="fullName" required placeholder="John Doe" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required placeholder="john@example.com" />
+      </div>
+
+      <div class="form-group">
+        <label for="phone">WhatsApp Phone</label>
+        <input type="tel" id="phone" name="phone" required placeholder="+1 (555) 000-0000" />
+      </div>
+
+      <div class="form-group">
+        <label for="zipCode">Zip Code (Florida)</label>
+        <input type="text" id="zipCode" name="zipCode" required placeholder="33101" />
+      </div>
+
+      <div class="form-group">
+        <label for="experience">Years of Experience</label>
+        <select id="experience" name="experience">
+          <option value="1-3">1 to 3 years</option>
+          <option value="3-5">3 to 5 years</option>
+          <option value="5+">5+ years</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn-submit">Submit Application & Enter Portal</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('talent-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+      
+      // Call Hono API (Mocked for now)
+      console.log('Sending talent data to API:', data);
+      
+      const btn = e.target.querySelector('button');
+      btn.textContent = 'Processing...';
+      btn.disabled = true;
+
+      await new Promise(r => setTimeout(r, 1000));
+      
+      // Store dummy token for the Talent Portal SPA
+      localStorage.setItem('bbq_auth_token', 'temp_talent_token');
+      localStorage.setItem('bbq_user_role', 'talent');
+      localStorage.setItem('bbq_user_name', data.fullName);
+
+      // Redirect to secure dashboard
+      window.location.href = "https://portal.bbqcarioca.work/careers/missions";
+    });
+  </script>
+</body>
+</html>
