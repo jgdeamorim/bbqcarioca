@@ -2546,8 +2546,58 @@
               <div class="form-field">
                 <label for="event-city"><span data-lang="en">City / Area</span><span data-lang="pt">Cidade /
                     Região</span></label>
-                <input type="text" id="event-city" name="city" class="form-control" placeholder="e.g. Boca Raton"
-                  required />
+                <select id="event-city" name="city" class="form-control" required>
+                  <option value="" disabled selected><span data-lang="en">Select Florida City…</span><span data-lang="pt">Selecione a Cidade…</span></option>
+                  <optgroup label="South Florida (Palm Beach / Broward / Miami)">
+                    <option value="Boca Raton">Boca Raton</option>
+                    <option value="Delray Beach">Delray Beach</option>
+                    <option value="Fort Lauderdale">Fort Lauderdale</option>
+                    <option value="Miami">Miami</option>
+                    <option value="Miami Beach">Miami Beach</option>
+                    <option value="West Palm Beach">West Palm Beach</option>
+                    <option value="Boynton Beach">Boynton Beach</option>
+                    <option value="Parkland">Parkland</option>
+                    <option value="Coral Springs">Coral Springs</option>
+                    <option value="Pompano Beach">Pompano Beach</option>
+                    <option value="Deerfield Beach">Deerfield Beach</option>
+                    <option value="Hollywood">Hollywood</option>
+                    <option value="Pembroke Pines">Pembroke Pines</option>
+                    <option value="Weston">Weston</option>
+                    <option value="Aventura">Aventura</option>
+                    <option value="Sunny Isles Beach">Sunny Isles Beach</option>
+                    <option value="Coral Gables">Coral Gables</option>
+                    <option value="Doral">Doral</option>
+                    <option value="Jupiter">Jupiter</option>
+                    <option value="Wellington">Wellington</option>
+                  </optgroup>
+                  <optgroup label="Central Florida (Orlando Area)">
+                    <option value="Orlando">Orlando</option>
+                    <option value="Kissimmee">Kissimmee</option>
+                    <option value="Winter Park">Winter Park</option>
+                    <option value="Windermere">Windermere</option>
+                    <option value="Clermont">Clermont</option>
+                    <option value="Lake Nona">Lake Nona</option>
+                    <option value="Sanford">Sanford</option>
+                  </optgroup>
+                  <optgroup label="West Coast (Tampa / Naples)">
+                    <option value="Tampa">Tampa</option>
+                    <option value="St. Petersburg">St. Petersburg</option>
+                    <option value="Clearwater">Clearwater</option>
+                    <option value="Sarasota">Sarasota</option>
+                    <option value="Bradenton">Bradenton</option>
+                    <option value="Naples">Naples</option>
+                    <option value="Fort Myers">Fort Myers</option>
+                    <option value="Cape Coral">Cape Coral</option>
+                  </optgroup>
+                  <optgroup label="North & Other Regions">
+                    <option value="Jacksonville">Jacksonville</option>
+                    <option value="St. Augustine">St. Augustine</option>
+                    <option value="Gainesville">Gainesville</option>
+                    <option value="Tallahassee">Tallahassee</option>
+                    <option value="Pensacola">Pensacola</option>
+                    <option value="Other Florida City">Outra Cidade da Flórida / Other City</option>
+                  </optgroup>
+                </select>
               </div>
               <div class="form-field">
                 <label for="event-guests"><span data-lang="en">Est. Guests</span><span data-lang="pt">Convidados
