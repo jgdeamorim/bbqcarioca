@@ -146,51 +146,43 @@
       position: relative;
       display: inline-flex;
       align-items: center;
-      height: 1.5rem;
-      overflow: hidden;
-      perspective: 600px;
-    }
-
-    .logo-text .logo-morph-box {
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: transform;
+      height: 2rem;
+      min-width: 155px;
+      vertical-align: middle;
     }
 
     .logo-text .logo-item {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      white-space: nowrap;
       display: inline-flex;
       align-items: center;
       gap: 0.28rem;
-      height: 1.5rem;
-      line-height: 1.5rem;
-      white-space: nowrap;
-      transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-      transform-origin: center center;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
     }
 
-    html[lang="pt"] .logo-text .logo-morph-box {
-      transform: translateY(0);
-    }
     html[lang="pt"] .logo-text .logo-item.pt-logo {
       opacity: 1;
-      transform: scale(1) translateZ(0);
+      transform: translateY(-50%) translateY(0);
+      pointer-events: auto;
     }
     html[lang="pt"] .logo-text .logo-item.en-logo {
       opacity: 0;
-      transform: scale(0.92) translateZ(-10px);
+      transform: translateY(-50%) translateY(14px);
+      pointer-events: none;
     }
 
-    html[lang="en"] .logo-text .logo-morph-box {
-      transform: translateY(-1.5rem);
-    }
     html[lang="en"] .logo-text .logo-item.pt-logo {
       opacity: 0;
-      transform: scale(0.92) translateZ(-10px);
+      transform: translateY(-50%) translateY(-14px);
+      pointer-events: none;
     }
     html[lang="en"] .logo-text .logo-item.en-logo {
       opacity: 1;
-      transform: scale(1) translateZ(0);
+      transform: translateY(-50%) translateY(0);
+      pointer-events: auto;
     }
 
     .logo-text em {
@@ -1806,10 +1798,8 @@
             d="M12 23c-3.5 0-6-2.5-6-6 0-2.5 1.5-4.5 3-6.5.5 2 1.5 3 3 3 0-3 2-6.5 5-9-1 4 1 6 1 9 2 0 3-1.5 3-4 1.5 2 3 4 3 7 0 3.5-2.5 6-6 6.5z" />
         </svg>
         <span class="logo-text">
-          <span class="logo-morph-box">
-            <span class="logo-item pt-logo">BBQ <em>do</em> Carioca</span>
-            <span class="logo-item en-logo">Carioca's <em>BBQ</em></span>
-          </span>
+          <span class="logo-item pt-logo">BBQ <em>do</em> Carioca</span>
+          <span class="logo-item en-logo">Carioca's <em>BBQ</em></span>
         </span>
       </a>
 
@@ -2534,10 +2524,8 @@
       <div class="footer-top">
         <div>
           <div class="logo-text" style="font-size:1.25rem;margin-bottom:8px">
-            <span class="logo-morph-box">
-              <span class="logo-item pt-logo">BBQ <em>do</em> Carioca</span>
-              <span class="logo-item en-logo">Carioca's <em>BBQ</em></span>
-            </span>
+            <span class="logo-item pt-logo">BBQ <em>do</em> Carioca</span>
+            <span class="logo-item en-logo">Carioca's <em>BBQ</em></span>
           </div>
           <p class="footer-brand-sub">
             <span data-lang="en">Authentic Brazilian churrasco with flavor, quality and service in Florida.</span>
