@@ -77,7 +77,10 @@
 
 <!-- ══════════════════════════════════════ HERO ══════════════════════════════════════ -->
 <section class="hero" aria-label="Hero">
-  <div class="hero-bg" id="hero-bg"></div>
+  <picture class="hero-bg" id="hero-bg">
+    <source media="(max-width: 768px)" srcset="img/bg-slider-01_mobile.png" />
+    <img src="img/bg-slider-01.png" alt="Brazilian Churrasco Live Fire Hero" fetchpriority="high" decoding="async" />
+  </picture>
   <div class="hero-overlay"></div>
   <div class="hero-overlay-side"></div>
   <canvas id="ember-canvas" aria-hidden="true"></canvas>
