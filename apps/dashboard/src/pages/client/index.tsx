@@ -8,7 +8,7 @@ export function ClientPortalPage() {
   const location = useLocation();
   
   // Mock Auth State (Replace with real JWT/Zustand logic later)
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, _setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     // If not authenticated and trying to access dashboard directly, redirect to onboarding

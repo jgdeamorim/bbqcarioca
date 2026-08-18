@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout } from './pages/admin/layout';
 import { DashboardPage } from './pages/admin/dashboard';
 import { CareersPortalPage } from './pages/careers/index';
-import { ClientPortalPage } from './pages/portal/index';
+import { ClientPortalPage } from './pages/client/index';
 
 function App() {
   return (
