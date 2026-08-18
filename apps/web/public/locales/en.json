@@ -107,6 +107,7 @@
     "field_date": "Event Date",
     "field_city": "Florida City / Area",
     "field_guests": "Guest Count",
+    "select_guests": "Select guest count…",
     "field_grill": "Grill on site?",
     "grill_yes": "Yes, grill available",
     "grill_no": "No — please bring setup",

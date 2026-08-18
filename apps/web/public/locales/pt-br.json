@@ -107,6 +107,7 @@
     "field_date": "Data do Evento",
     "field_city": "Cidade / Região na Flórida",
     "field_guests": "Número de Convidados",
+    "select_guests": "Escolha o número de convidados…",
     "field_grill": "Tem churrasqueira no local?",
     "grill_yes": "Sim, tenho churrasqueira",
     "grill_no": "Não — preciso que leve a estrutura",
