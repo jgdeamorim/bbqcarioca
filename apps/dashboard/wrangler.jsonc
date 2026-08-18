@@ -6,6 +6,10 @@
     {
       "pattern": "admin.bbqcarioca.work",
       "custom_domain": true
+    },
+    {
+      "pattern": "careers.bbqcarioca.work",
+      "custom_domain": true
     }
   ],
   "assets": {
