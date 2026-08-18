@@ -43,7 +43,9 @@ Aplicamos esse **mesmo padrão de design editorial de elite** para a seção **"
         <!-- Tile 1: Backyard -->
         <article class="ideal-card-pin group">
           <div class="ideal-card-inner">
-            <span class="ideal-icon-badge">🏡</span>
+            <div class="ideal-icon-badge">
+              <svg class="w-6 h-6 stroke-gold-400 fill-none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
             <div>
               <h3 class="ideal-title-lg"><span data-lang="en">Backyard Gatherings</span><span data-lang="pt">Reuniões em Casa</span></h3>
               <p class="ideal-desc"><span data-lang="en">Relax with family while Bruno handles the grill, charcoal, and service right in your backyard.</span><span data-lang="pt">Aproveite a família enquanto o Bruno cuida da grelha, brasa e serviço no seu quintal.</span></p>
@@ -54,7 +56,9 @@ Aplicamos esse **mesmo padrão de design editorial de elite** para a seção **"
         <!-- Tile 2: Birthdays -->
         <article class="ideal-card-pin group">
           <div class="ideal-card-inner">
-            <span class="ideal-icon-badge">🎂</span>
+            <div class="ideal-icon-badge">
+              <svg class="w-6 h-6 stroke-gold-400 fill-none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01"/><path d="M22 8h.01"/><path d="M15 2h.01"/><path d="M22 20h.01"/><path d="m22 2-2.24 7.17M11 13l3 3M17 12l2 2"/></svg>
+            </div>
             <div>
               <h3 class="ideal-title-lg"><span data-lang="en">Birthdays & Parties</span><span data-lang="pt">Aniversários e Festas</span></h3>
               <p class="ideal-desc"><span data-lang="en">Make your birthday unforgettable with live Brazilian barbecue and hot picanha served nonstop.</span><span data-lang="pt">Torne seu aniversário inesquecível com churrasco brasileiro ao vivo e picanha servida sem parar.</span></p>
@@ -65,7 +69,9 @@ Aplicamos esse **mesmo padrão de design editorial de elite** para a seção **"
         <!-- Tile 3: Corporate -->
         <article class="ideal-card-pin group">
           <div class="ideal-card-inner">
-            <span class="ideal-icon-badge">💼</span>
+            <div class="ideal-icon-badge">
+              <svg class="w-6 h-6 stroke-gold-400 fill-none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            </div>
             <div>
               <h3 class="ideal-title-lg"><span data-lang="en">Corporate Events</span><span data-lang="pt">Eventos Corporativos</span></h3>
               <p class="ideal-desc"><span data-lang="en">Impress clients and reward your team with a high-end Brazilian steakhouse experience at your office or venue.</span><span data-lang="pt">Impressione clientes e recompense sua equipe com uma experiência de churrascaria brasileira no seu escritório ou local.</span></p>
@@ -76,7 +82,9 @@ Aplicamos esse **mesmo padrão de design editorial de elite** para a seção **"
         <!-- Tile 4: Weddings -->
         <article class="ideal-card-pin group">
           <div class="ideal-card-inner">
-            <span class="ideal-icon-badge">💍</span>
+            <div class="ideal-icon-badge">
+              <svg class="w-6 h-6 stroke-gold-400 fill-none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            </div>
             <div>
               <h3 class="ideal-title-lg"><span data-lang="en">Weddings & Receptions</span><span data-lang="pt">Casamentos e Recepções</span></h3>
               <p class="ideal-desc"><span data-lang="en">Elegant, rustic, and unforgettable meat buffet service tailored for your special reception day.</span><span data-lang="pt">Serviço elegante, rústico e inesquecível de buffet de carnes preparado sob medida para o dia da sua recepção.</span></p>
