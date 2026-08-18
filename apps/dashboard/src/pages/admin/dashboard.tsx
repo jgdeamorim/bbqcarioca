@@ -26,7 +26,7 @@ export function DashboardPage() {
   useEffect(() => {
     async function loadData() {
       try {
-        const response = await fetchWithAuth('/');
+        const response = await fetchWithAuth('/v1/admin/dashboard');
         if (!response.ok) throw new Error('Failed to fetch metrics');
         const json = await response.json();
         setData(json);

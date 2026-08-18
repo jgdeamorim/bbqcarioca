@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, CalendarDays, DollarSign } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarDays, DollarSign, CheckSquare } from 'lucide-react';
 
 export function AdminLayout() {
   return (
@@ -13,6 +13,7 @@ export function AdminLayout() {
         
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           <NavItem to="/admin" icon={<LayoutDashboard size={20} />} label="Dashboard" />
+          <NavItem to="/admin/approvals" icon={<CheckSquare size={20} />} label="Approvals" />
           <NavItem to="/admin/customers" icon={<Users size={20} />} label="Customers" disabled />
           <NavItem to="/admin/events" icon={<CalendarDays size={20} />} label="Events" disabled />
           <NavItem to="/admin/financial" icon={<DollarSign size={20} />} label="Financial" disabled />

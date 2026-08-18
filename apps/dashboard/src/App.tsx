@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout } from './pages/admin/layout';
 import { DashboardPage } from './pages/admin/dashboard';
+import { ApprovalsPage } from './pages/admin/approvals';
 import { CareersPortalPage } from './pages/careers/index';
 import { ClientPortalPage } from './pages/client/index';
 
@@ -14,7 +15,7 @@ function App() {
         {/* Tenant 1: Admin Control Plane */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardPage />} />
-          {/* Futuras rotas aninhadas de Admin */}
+          <Route path="approvals" element={<ApprovalsPage />} />
         </Route>
 
         {/* Tenant 2: Staff / Careers Portal */}

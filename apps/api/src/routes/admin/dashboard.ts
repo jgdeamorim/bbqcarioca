@@ -10,8 +10,8 @@ dashboard.get('/', async (c) => {
     // Batch queries for KPIs
     const results = await db.batch([
       db.prepare("SELECT COUNT(*) as count FROM events WHERE status = 'BOOKED'"),
-      db.prepare("SELECT COUNT(*) as count FROM service_requests WHERE status = 'PENDING'"),
-      db.prepare("SELECT COUNT(*) as count FROM talent_profiles WHERE operational_status = 'AVAILABLE'"),
+      db.prepare("SELECT COUNT(*) as count FROM service_requests WHERE status = 'NEW'"),
+      db.prepare("SELECT COUNT(*) as count FROM talent_profiles WHERE status = 'NEW'"),
       db.prepare(`
         SELECT 
           id, 

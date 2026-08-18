@@ -12,6 +12,8 @@ import dashboardRoute from './routes/admin/dashboard';
 import clientRoute from './routes/client';
 import careersRoute from './routes/careers';
 
+import approvalsRoute from './routes/admin/approvals';
+
 const app = new Hono<{ Bindings: Env }>();
 
 app.use('*', cors({
@@ -28,7 +30,8 @@ app.route('/v1/client', clientRoute);
 app.route('/v1/careers', careersRoute);
 
 // Protected Admin Routes
-app.use('/admin/*', cloudflareAccessAuth);
-app.route('/admin/dashboard', dashboardRoute);
+app.use('/v1/admin/*', cloudflareAccessAuth);
+app.route('/v1/admin/dashboard', dashboardRoute);
+app.route('/v1/admin/approvals', approvalsRoute);
 
 export default app;
