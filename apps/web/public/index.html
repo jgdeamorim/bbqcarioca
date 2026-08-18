@@ -616,14 +616,14 @@
     /* ── WHATSAPP WIDGET ── */
     .wa-widget { position: fixed; bottom: 24px; right: 24px; z-index: 90; display: flex; align-items: center; justify-content: flex-end; }
     .wa-btn {
-      width: 39px; height: 39px; border-radius: 50%;
+      width: 52px; height: 52px; border-radius: 50%;
       background: #25D366; color: #fff;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 15px rgba(37,211,102,.45);
+      box-shadow: 0 6px 20px rgba(37,211,102,.45);
       transition: transform .25s, box-shadow .25s;
       position: relative; text-decoration: none; flex-shrink: 0;
     }
-    .wa-btn:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(37,211,102,.55); }
+    .wa-btn:hover { transform: scale(1.08); box-shadow: 0 8px 28px rgba(37,211,102,.55); }
     @keyframes pulse-ring {
       0% { transform: scale(.9); opacity: .6; }
       100% { transform: scale(1.45); opacity: 0; }
@@ -866,6 +866,14 @@
     </a>
 
     <nav aria-label="Primary navigation">
+      <div class="header-nav-links">
+        <a href="#experience" class="nav-link"><span data-lang="en">Experience</span><span data-lang="pt">Experiência</span></a>
+        <a href="#meet" class="nav-link"><span data-lang="en">About</span><span data-lang="pt">Sobre</span></a>
+        <a href="#packages" class="nav-link"><span data-lang="en">Packages</span><span data-lang="pt">Pacotes</span></a>
+        <a href="#faq" class="nav-link"><span data-lang="en">FAQ</span><span data-lang="pt">Perguntas</span></a>
+        <a href="#quote" class="nav-link"><span data-lang="en">Get Quote</span><span data-lang="pt">Orçamento</span></a>
+      </div>
+
       <div class="lang-toggle">
         <button id="lang-en" class="lang-btn active" aria-label="Switch to English">EN</button>
         <button id="lang-pt" class="lang-btn" aria-label="Mudar para Português">PT</button>
@@ -1611,6 +1619,149 @@
   </div>
 </dialog>
 
+<dialog id="legal-modal-terms" class="legal-modal" aria-labelledby="modal-terms-title">
+  <div class="legal-modal-header">
+    <h3 id="modal-terms-title" class="legal-modal-title"><span data-lang="en">Terms of Use</span><span data-lang="pt">Termos de Uso</span></h3>
+    <button type="button" class="legal-modal-close" onclick="closeLegalModal('terms')" aria-label="Close dialog">×</button>
+  </div>
+  <div class="legal-modal-body">
+    <span data-lang="en">
+    <div class="legal-content-block">
+      <h2>1. Agreement to Terms</h2>
+      <p>These Terms of Use ("Terms") constitute a legally binding agreement made between you ("Client", "User", or "you") and BBQ do Carioca ("Company", "we", "us", or "our"), governing your access to and use of our website, as well as any event catering agreements, quote requests, and on-site churrasco services.</p>
+
+      <h2>2. Catering Services & Booking Terms</h2>
+      <p>BBQ do Carioca provides on-site live-fire Brazilian churrasco catering across Florida. Specific booking policies include:</p>
+      <ul>
+        <li><strong>Date Reservations:</strong> Event dates are reserved only upon receipt of a 20% non-refundable deposit. Dates are held on a first-come, first-served basis.</li>
+        <li><strong>Final Guest Count:</strong> The final guaranteed guest count must be submitted at least 7 days prior to the scheduled event date. The final invoice will be calculated based on this count or actual attendance, whichever is higher.</li>
+        <li><strong>Payment Terms:</strong> Remaining balance is due on the day of the event prior to service commencement. We accept Zelle, Credit Cards, Venmo, and Cash.</li>
+      </ul>
+
+      <h2>3. Weather & Venue Policy</h2>
+      <p>Outdoor live-fire grilling is subject to environmental conditions. Client is responsible for ensuring adequate venue access, outdoor space, and permission from property owners/HOAs.</p>
+      <ul>
+        <li><strong>Rain or Weather Disruptions:</strong> BBQ do Carioca supplies professional weather canopy tents for the grill setup area. Service will proceed unless severe weather poses an immediate safety hazard.</li>
+        <li><strong>Venue Clearance:</strong> Client must ensure adequate clearance away from flammable structures, indoor spaces, or prohibited zones as required by local Florida fire codes.</li>
+      </ul>
+
+      <h2>4. Cancellations and Rescheduling</h2>
+      <p>Cancellations made 14 days or more prior to the event date may apply the initial deposit toward a rescheduled date within 6 months. Cancellations within 7 days of the event forfeit the deposit to cover meat procurement and staffing prep costs.</p>
+
+      <h2>5. Governing Law & Jurisdiction</h2>
+      <p>These Terms shall be governed by and construed in accordance with the laws of the State of Florida, United States, without regard to its conflict of law principles. Any dispute arising out of these Terms or catering services shall be resolved in the state or federal courts located in Palm Beach County, Florida.</p>
+    </div>
+  </span>
+    <span data-lang="pt">
+    <div class="legal-content-block">
+      <h2>1. Acordo de Termos</h2>
+      <p>Estes Termos de Uso ("Termos") constituem um contrato vinculativo entre você ("Cliente") e o BBQ do Carioca ("Empresa"), regendo o uso do site, orçamentos e contratação de serviços de churrasco na Flórida.</p>
+
+      <h2>2. Reserva de Datas e Pagamentos</h2>
+      <ul>
+        <li><strong>Reserva de Data:</strong> As datas dos eventos são garantidas mediante sinal de 20%. As reservas seguem ordem de confirmação.</li>
+        <li><strong>Número de Convidados:</strong> O número final confirmado de convidados deve ser enviado até 7 dias antes do evento.</li>
+        <li><strong>Formas de Pagamento:</strong> O valor restante é pago no dia do evento. Aceitamos Zelle, Cartões de Crédito, Venmo e Dinheiro.</li>
+      </ul>
+
+      <h2>3. Estrutura e Condições Climáticas</h2>
+      <p>Nossa equipe dispõe de tendas profissionais de proteção contra chuva e sol para a área da churrasqueira. O serviço acontece com perfeita qualidade independentemente do tempo.</p>
+
+      <h2>4. Legislação Aplicável</h2>
+      <p>Estes termos são regidos pelas leis do Estado da Flórida, Estados Unidos. Foro de Palm Beach County, FL.</p>
+    </div>
+  </span>
+  </div>
+</dialog>
+
+<dialog id="legal-modal-cookies" class="legal-modal" aria-labelledby="modal-cookies-title">
+  <div class="legal-modal-header">
+    <h3 id="modal-cookies-title" class="legal-modal-title"><span data-lang="en">Cookie Policy</span><span data-lang="pt">Política de Cookies</span></h3>
+    <button type="button" class="legal-modal-close" onclick="closeLegalModal('cookies')" aria-label="Close dialog">×</button>
+  </div>
+  <div class="legal-modal-body">
+    <span data-lang="en">
+    <div class="legal-content-block">
+      <h2>1. What Are Cookies & Local Storage?</h2>
+      <p>Cookies and HTML5 Local Storage are small text files or data entries placed on your browser when visiting websites. They help remember your preferences, keep your session active, and provide insights into site performance.</p>
+
+      <h2>2. How BBQ do Carioca Uses Cookies</h2>
+      <p>We keep tracking to an absolute minimum to respect user privacy. We utilize the following categories of storage:</p>
+      <ul>
+        <li><strong>Strictly Necessary Local Storage (<code>bbq-lang</code>):</strong> Stores your selected language preference (English or Portuguese) on your browser so you do not have to select it again on return visits.</li>
+        <li><strong>Performance & Analytics Cookies:</strong> Measures aggregate website traffic patterns, visitor counts across Florida cities, and device types to ensure site speed and usability.</li>
+      </ul>
+
+      <h2>3. Managing and Opting Out</h2>
+      <p>You can manage or disable cookies at any time through your web browser settings. Disabling cookies will not affect your ability to view our menu or submit quote requests via WhatsApp.</p>
+    </div>
+  </span>
+    <span data-lang="pt">
+    <div class="legal-content-block">
+      <h2>1. O que são Cookies e Armazenamento Local?</h2>
+      <p>Cookies e Armazenamento Local são arquivos de texto salvos no navegador para guardar preferências e otimizar o carregamento das páginas.</p>
+
+      <h2>2. Como Utilizamos</h2>
+      <ul>
+        <li><strong>Armazenamento Necessário (<code>bbq-lang</code>):</strong> Armazena sua escolha de idioma (Inglês ou Português) no seu próprio navegador.</li>
+        <li><strong>Métricas de Desempenho:</strong> Analisa visitas anônimas para manter o site rápido em celulares.</li>
+      </ul>
+
+      <h2>3. Gerenciamento</h2>
+      <p>Você pode desativar cookies nas configurações do navegador a qualquer momento sem afetar o envio de orçamentos pelo WhatsApp.</p>
+    </div>
+  </span>
+  </div>
+</dialog>
+
+<dialog id="legal-modal-accessibility" class="legal-modal" aria-labelledby="modal-accessibility-title">
+  <div class="legal-modal-header">
+    <h3 id="modal-accessibility-title" class="legal-modal-title"><span data-lang="en">Accessibility Statement</span><span data-lang="pt">Declaração de Acessibilidade</span></h3>
+    <button type="button" class="legal-modal-close" onclick="closeLegalModal('accessibility')" aria-label="Close dialog">×</button>
+  </div>
+  <div class="legal-modal-body">
+    <span data-lang="en">
+    <div class="legal-content-block">
+      <h2>1. Our Commitment to Accessibility</h2>
+      <p>BBQ do Carioca is committed to ensuring digital accessibility for individuals with disabilities. We continuously improve the user experience for everyone and apply the relevant accessibility standards under Title III of the Americans with Disabilities Act (ADA) and Web Content Accessibility Guidelines (WCAG 2.1 AA).</p>
+
+      <h2>2. Standards & Measures Applied</h2>
+      <p>We have implemented the following technical accessibility measures across our web pages:</p>
+      <ul>
+        <li><strong>Semantic Markup:</strong> Structured HTML5 tags (<code>&lt;main&gt;</code>, <code>&lt;header&gt;</code>, <code>&lt;footer&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;nav&gt;</code>) to support screen readers.</li>
+        <li><strong>Keyboard Navigation:</strong> All interactive buttons, form controls, and links are accessible via standard keyboard navigation.</li>
+        <li><strong>Contrast Ratios:</strong> High contrast color pairings exceeding 4.5:1 ratio for text legibility.</li>
+        <li><strong>Alternative Text:</strong> Descriptive <code>alt</code> attributes on all images and visual media.</li>
+        <li><strong>ARIA Attributes:</strong> Proper ARIA roles and state indicators (<code>aria-expanded</code>, <code>aria-label</code>) for interactive UI components.</li>
+      </ul>
+
+      <h2>3. Feedback & Assistance</h2>
+      <p>If you experience difficulty accessing any element of our website or require assistance with booking a catering quote, please contact our team:</p>
+      <ul>
+        <li><strong>Phone / WhatsApp:</strong> +1 (561) 403-4603</li>
+        <li><strong>Email:</strong> accessibility@bbqdocarioca.com</li>
+      </ul>
+    </div>
+  </span>
+    <span data-lang="pt">
+    <div class="legal-content-block">
+      <h2>1. Compromisso com a Acessibilidade</h2>
+      <p>O BBQ do Carioca tem o compromisso de garantir acessibilidade digital para todos os usuários, aplicando diretrizes WCAG 2.1 AA e ADA Title III.</p>
+
+      <h2>2. Recursos Implementados</h2>
+      <ul>
+        <li><strong>HTML5 Semântico:</strong> Estruturação com tags semânticas para leitores de tela.</li>
+        <li><strong>Navegação por Teclado:</strong> Todos os botões e links possuem foco navegável.</li>
+        <li><strong>Contraste Elevado:</strong> Paleta de cores com alto contraste para facilitar a leitura.</li>
+        <li><strong>Textos Alternativos:</strong> Descrição <code>alt</code> em todas as imagens.</li>
+      </ul>
+
+      <h2>3. Contato e Suporte</h2>
+      <p>Se você encontrar qualquer barreira de acessibilidade, entre em contato via WhatsApp <strong>+1 (561) 403-4603</strong> ou e-mail <strong>accessibility@bbqdocarioca.com</strong>.</p>
+    </div>
+  </span>
+  </div>
+</dialog>
 <dialog id="legal-modal-terms" class="legal-modal" aria-labelledby="modal-terms-title">
   <div class="legal-modal-header">
     <h3 id="modal-terms-title" class="legal-modal-title"><span data-lang="en">Terms of Use</span><span data-lang="pt">Termos de Uso</span></h3>
