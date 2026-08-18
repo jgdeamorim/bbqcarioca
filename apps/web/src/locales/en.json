@@ -8,68 +8,70 @@
     "whatsapp": "Chat on WhatsApp"
   },
   "hero": {
-    "eyebrow": "AUTHENTIC BRAZILIAN CHURRASCO • SERVING ALL FLORIDA",
-    "headline": "THE REAL BRAZILIAN<br>CHURRASCO<br>in Florida!",
-    "sub": "We bring flavor, quality and tradition to your event! A professional churrasqueiro handles the fire, premium selected meats and full service so you can enjoy your guests.",
-    "cta_primary": "Request a Quote!",
+    "eyebrow": "LIVE-FIRE BRAZILIAN CHURRASCO • FLORIDA, USA",
+    "headline": "Authentic Brazilian<br>Churrasco, Fired<br>Live at Your Event.",
+    "sub": "A professional churrasqueiro brings the fire, the premium cuts and the full service — so you can stay with your guests.",
+    "cta_primary": "Get My Free Quote",
     "cta_secondary": "See Packages",
-    "tag_1": "🥩 Selected Premium Meats",
-    "tag_2": "🔪 Professional & Custom Prep",
-    "tag_3": "👥 Events of All Sizes",
-    "tag_4": "📅 Birthdays & Corporate Events"
+    "tag_1": "On-site live fire",
+    "tag_2": "Premium Brazilian cuts",
+    "tag_3": "Bilingual EN/PT",
+    "tag_4": "Florida-wide service"
   },
   "relief": {
-    "text": "⭐ THE FULL BRAZILIAN CHURRASCO EXPERIENCE FOR YOU!"
+    "text": "You host. We master the fire."
   },
   "experience": {
     "label": "THE EXPERIENCE",
     "title": "Why clients choose us",
-    "card1_title": "Authentic Brazilian BBQ",
-    "card1_text": "Skewers over glowing charcoal, cooked to perfection the way it's done in Brazil. The live fire is the center of your party.",
-    "card2_title": "Selected Premium Meats",
-    "card2_text": "Juicy Picanha, flank steak, artisan sausages, and prime cuts seasoned with Brazilian tradition to amaze your guests.",
-    "card3_title": "Professionalism & Punctuality",
-    "card3_text": "We bring the structure, arrive early, and deliver attentive, customized service from start to finish."
+    "card1_title": "Live Fire, Brazilian Style",
+    "card1_text": "Skewers over glowing charcoal, the way it's done in Brazil. No ovens, no shortcuts — the fire is the show.",
+    "card2_title": "Premium Cuts",
+    "card2_text": "Picanha and hand-selected cuts, seasoned simply, grilled to perfection in front of your guests.",
+    "card3_title": "Full Service & Setup",
+    "card3_text": "We bring the grill, the structure and the service. You bring the guests."
   },
   "meet": {
     "label": "FROM RIO WITH FIRE",
-    "title": "The specialist behind the fire.",
-    "badge": "RIO DE JANEIRO — TRADITION & FIRE",
-    "title_tag": "CHURRASQUEIRO PROFESSIONAL",
+    "title": "The man behind the fire.",
+    "badge": "RIO DE JANEIRO — WHERE IT STARTED",
+    "title_tag": "FOUNDER · CHURRASCO SPECIALIST",
     "copy": "Straight from Rio de Janeiro to Florida, Carioca brings a passion for authentic Brazilian churrasco. A master of live-fire barbecue, Bruno brings true Carioca warmth and craftsmanship to your event.",
     "note": "🗣️ Note: Bruno is a native Brazilian churrasqueiro (speaks Portuguese). Full bilingual customer support is available for scheduling and event planning!",
-    "slogan": "\"More than a barbecue, an unforgettable experience!\""
+    "slogan": "\"More than a barbecue, an unforgettable experience!\"",
+    "resenha_copy": "Long before Florida, he built his name the Brazilian way — skewer in one hand and hours of <em>resenha</em> around the grill. The cold beer stayed in Rio. The fire came with him.",
+    "resenha_note": "<em>resenha</em> (n.) — the untranslatable Brazilian art of good company around the fire."
   },
   "packages": {
-    "label": "PACKAGES & SERVICES",
-    "title": "Choose your ideal experience",
-    "badge_signature": "PREMIUM SIGNATURE",
-    "title_signature": "Full Brazilian Experience",
-    "price_signature": "Custom Quote",
-    "sig_item_1": "Hand-selected premium meats (Picanha, Flank, Sausages, Chicken)",
-    "sig_item_2": "Traditional sides (Farofa, Vinagrete, Garlic Bread)",
-    "sig_item_3": "Full professional churrasqueiro service throughout the event",
-    "sig_item_4": "Ideal for events of all sizes",
-    "badge_popular": "MOST POPULAR",
+    "label": "PACKAGES",
+    "title": "Choose your experience",
+    "badge_signature": "SIGNATURE",
+    "title_signature": "Premium Churrasco Experience",
+    "price_signature": "US$70–100<span>+/guest</span>",
+    "sig_item_1": "Custom menu & hand-selected premium cuts",
+    "sig_item_2": "Full service & elevated presentation",
+    "sig_item_3": "Ideal for 20+ guests",
+    "badge_popular": "MOST BOOKED",
     "title_full": "Full Churrasco",
-    "price_full": "Custom Quote",
-    "full_item_1": "Specialist on site + full structure & grill",
-    "full_item_2": "Meats & sides tailored to your event",
-    "full_item_3": "Ideal for birthdays, parties & gatherings",
-    "title_chef": "Churrasqueiro Service",
-    "price_chef": "Hourly Rate",
-    "chef_item_1": "Professional grill master at your location",
-    "chef_item_2": "Prep, live grilling and carving",
-    "chef_item_3": "You provide the meats, we guarantee perfection",
-    "cta_request": "Request Quote",
-    "note": "📍 Florida-Wide Service! Custom quotes tailored to guest count and location."
+    "price_full": "from US$500",
+    "full_item_1": "Specialist + full structure & grill",
+    "full_item_2": "Menu-defined meats & sides",
+    "full_item_3": "Ideal for small & medium events",
+    "title_chef": "The Churrasqueiro",
+    "price_chef": "US$50–75<span>/hour</span>",
+    "chef_item_1": "Professional on-site specialist",
+    "chef_item_2": "Prep, fire & service",
+    "chef_item_3": "You provide meats & sides",
+    "cta_request": "Request This Package",
+    "note": "📍 Florida-Wide Service! Custom quotes tailored to guest count and location.",
+    "example_note": "Example: a full package for 10 guests starts around <strong style=\"color:var(--cream-50)\">US$600</strong>, depending on menu and setup."
   },
   "how": {
     "label": "HOW IT WORKS",
-    "title": "How catering works",
+    "title": "Simple. Professional. Stress-free.",
     "step1_title": "Tell us about your event",
     "step1_desc": "Date, Florida city, and estimated guest count.",
-    "step2_title": "We customize the menu",
+    "step2_title": "We design your menu",
     "step2_desc": "Choose your favorite cuts and traditional sides.",
     "step3_title": "We bring the fire",
     "step3_desc": "We arrive early with full setup and prep everything on site.",
@@ -86,40 +88,43 @@
   },
   "reviews": {
     "label": "TESTIMONIALS",
-    "title": "What our Florida clients say",
-    "review1_quote": "\"Bruno brought the full Brazilian churrasco experience right to our backyard in Boca. Perfect Picanha and 10/10 service!\"",
-    "review1_meta": "BOCA RATON, FL · BIRTHDAY",
-    "review2_quote": "\"We hired him for our company event in West Palm. Flawless organization, punctual, and top-tier meats!\"",
-    "review2_meta": "WEST PALM BEACH, FL · CORPORATE",
-    "review3_quote": "\"Authentic churrasco just like back home in Brazil! So great to find this quality here in Miami. Highly recommend!\"",
+    "title": "What clients say",
+    "review1_quote": "\"Bruno brought the whole experience to our backyard. The picanha was unbelievable — guests were literally lining up for seconds. Worth every cent.\"",
+    "review1_meta": "BOCA RATON, FL · BIRTHDAY PARTY",
+    "review2_quote": "\"We hired him for our company holiday party in West Palm. The setup was seamless, the food was incredible. Everyone kept asking where we found him.\"",
+    "review2_meta": "WEST PALM BEACH, FL · CORPORATE EVENT",
+    "review3_quote": "\"I'm Brazilian and I was skeptical — until I tasted it. This is the real thing. Authentic churrasco the way my family makes it. Highly recommended.\"",
     "review3_meta": "MIAMI, FL · FAMILY GATHERING",
-    "social": "★ 5.0 — Authentic Brazilian BBQ approved by families & companies across Florida!"
+    "social_html": "<strong>★ 5.0</strong> — Trusted by families, companies & couples across Florida"
   },
   "area": {
     "label": "SERVICE AREA",
-    "title": "Serving all of Florida",
-    "sub": "Based in Palm Beach County (+1 561 403-4603). Available statewide for events."
+    "title": "We serve all of Florida",
+    "sub": "Based in Palm Beach County (561). Available statewide for larger events."
   },
   "quote": {
     "label": "FREE QUOTE",
-    "title": "Request your Quote!",
-    "sub": "Fast & personalized service. Fill in the details and we'll reply immediately on WhatsApp.",
+    "title": "Let's plan your event",
+    "sub": "Fill in the details and we'll reply on WhatsApp, usually within a few hours.",
     "field_date": "Event Date",
-    "field_city": "Florida City / Area",
-    "field_guests": "Guest Count",
-    "field_grill": "Grill on site?",
+    "field_city": "City / Area",
+    "placeholder_city": "e.g. Boca Raton",
+    "field_guests": "Est. Guests",
+    "select_guests": "Select guest count…",
+    "field_grill": "Have a grill?",
     "grill_yes": "Yes, grill available",
     "grill_no": "No — please bring setup",
     "field_notes": "Meats & notes (optional)",
-    "submit": "Request Quote on WhatsApp"
+    "placeholder_notes": "Picanha, sausage, vegetarian sides…",
+    "submit": "Get My Free Quote on WhatsApp"
   },
   "footer": {
-    "sub": "Authentic Brazilian churrasco with flavor, quality and service across Florida.",
+    "sub": "Authentic Brazilian churrasco with flavor, quality and service in Florida.",
     "slogan": "\"More than a barbecue, an unforgettable experience!\"",
-    "rights": "© 2026 BBQ do Carioca. All rights reserved. Fast & Personalized Service."
+    "rights": "© 2026 BBQ do Carioca. All rights reserved."
   },
   "wa": {
-    "bubble": "Request a quote on WhatsApp!"
+    "bubble": "Let's chat about your event!"
   },
   "perfect_for": {
     "label": "PERFECT FOR",
