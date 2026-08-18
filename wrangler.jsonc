@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bbqcarioca",
+  "compatibility_date": "2026-08-18",
+  "assets": {
+    "directory": "apps/web/public",
+    "html_handling": "auto-trailing-slash"
+  },
+  "routes": [
+    {
+      "pattern": "bbqcarioca.work",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.bbqcarioca.work",
+      "custom_domain": true
+    }
+  ]
+}
