@@ -1,0 +1,18 @@
+{
+  "name": "@bbqcarioca/web",
+  "version": "2.0.0",
+  "private": true,
+  "description": "BBQ do Carioca Sovereign Landing Page - Cloudflare Pages Enterprise Architecture",
+  "scripts": {
+    "dev": "npx serve public",
+    "deploy": "npx wrangler pages deploy public --project-name=bbqdocarioca"
+  },
+  "keywords": [
+    "bbqcarioca",
+    "churrasco",
+    "florida",
+    "cloudflare-pages"
+  ],
+  "author": "Jeferson Amorim",
+  "license": "UNLICENSED"
+}
