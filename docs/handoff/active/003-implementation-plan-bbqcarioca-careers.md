@@ -42,7 +42,7 @@ O foco desta implementação é o **Portal de Careers & Talentos (Zero-PDF Frict
 2. **O Formulário "Zero-PDF Friction":**
    - Utilizar o novo hook `useActionState` do React 19 para orquestrar a submissão assíncrona.
    - Utilizar `useFormStatus` para capturar `pending` states nos botões sem dependência pesada de Effects.
-   - Campos obrigatórios (conforme o spec original): Nome, Email, Cidade, ZIP Code, Função (BBQ Chef, Server, etc.), Anos de Experiência, Idiomas, Disponibilidade.
+   - Campos obrigatórios (conforme o spec original): Nome, Email, Cidade, ZIP Code, Função (BBQ Chef, Server, etc.), Anos de Experiência, Idiomas, Disponibilidade e Autorização Legal de Trabalho nos EUA (NUNCA pedir SSN na Fase 0).
    - Campos de Contato: Checkbox explícito para "I use WhatsApp" e campo opcional de celular.
 3. **Upload de Mídia (Imagens/Portfólio):**
    - Integração com a API de `/upload-url` antes de submeter o form final, ou envio direto dos blobs caso a imagem seja processada localmente.

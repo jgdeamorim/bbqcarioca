@@ -250,7 +250,7 @@ O Worker executa múltiplas transações simultâneas de forma segura (exemplo: 
 ## Parte III: Roadmap e Compliance de Privacidade (Florida Privacy Act)
 
 1. **Zero-PDF Friction & R2 Presigned Uploads:** O sistema abandona a prática obsoleta de exigir currículos em PDF (alta fricção). O candidato preenche suas habilidades diretamente num formulário web moderno e amigável (React 19). O Cloudflare R2 via URL assinada é reservado EXCLUSIVAMENTE para uploads de fotos (foto de perfil, portfólio de churrasco ou imagem de certificações), garantindo velocidade e zero parsing de PDFs.
-2. **Cron Trigger de Expurgo PII:** Worker configurado com Cron Trigger mensal (`0 0 1 * *`) para deletar permanentemente os arquivos de foto no R2 e registros no D1 de candidatos inativos ou rejeitados há mais de 180 dias.
+2. **Cron Trigger de Expurgo PII:** A retenção não é hardcoded. O fluxo usa `retention_until` no banco de dados. Um Cron Trigger mensal (`0 0 1 * *`) varre o banco e executa o expurgo físico/anonimização baseado numa política configurável no SuperAdmin (ex: deleção ao fim do período contratual de exclusividade).
 
 ```text
 MVP v1 (Base Soberana + Geocodificação Inicial)
