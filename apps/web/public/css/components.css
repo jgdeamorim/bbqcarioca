@@ -525,6 +525,10 @@ textarea.form-control { resize: vertical; min-height: 90px; }
   content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%);
   border: 6px solid transparent; border-left-color: #FFFFFF;
 }
+html[lang="en"] .wa-bubble [data-lang="en"],
+html[lang="pt"] .wa-bubble [data-lang="pt"] {
+  display: block !important;
+}
 .wa-close {
   position: absolute; top: -7px; right: -7px;
   width: 18px; height: 18px; border-radius: 50%;
