@@ -4,106 +4,54 @@
 * **Data:** 2026-08-18
 * **Autor:** Jeferson Amorim (Founder) & Antigravity (Pair AI)
 * **Domínio:** BBQ do Carioca (`jgdeamorim/bbqcarioca`)
-* **Impacto:** Field-Service Operations Engine, Smart Talent Matching (Score %), Calendário Operacional, DB Relacional D1, Estratégia de TLDs (`.com` vs `.work`) e Custo $0/mês (Fase 0)
+* **Impacto:** Location Intelligence, Cross-Docking Hubs, Smart Matching Engine, Field-Service Management, DB D1 Relacional e Estratégia de TLDs (`.com` vs `.work`)
 
 ---
 
 ## Contexto e Problema
 
-O projeto BBQ do Carioca necessita de mais do que um simples banco de currículos (ATS). Para atender à demanda de catering na Flórida (Casamentos, Eventos Corporativos, Festas Privadas de BBQ), o sistema deve evoluir para um **Talent & Service Operations OS**, onde a solicitação de um evento gera automaticamente as necessidades de equipe e o algoritmo calcula os candidatos mais compatíveis.
+O projeto BBQ do Carioca necessita de um **Talent & Field-Service Operations OS** para a operação de catering na Flórida. Na logística de eventos, a distância simples em linha reta entre o candidato e o local do evento é insuficiente. A operação de catering exige a avaliação de **Hubs / Cross-Docks de Logística** (pontos de encontro de equipe, insumos e equipamentos de churrasco), além da estimativa realista de **Distância e Tempo de Deslocamento (Travel Time)** nas rodovias da Flórida.
 
 Ratificou-se que:
 1. **`db.json` é expressamente proibido para produção**, sendo reservado apenas para mocks locais.
-2. **E-mail é o canal oficial primário obrigatório**, com **WhatsApp e SMS como canais operacionais opcionais**.
-3. O domínio **`bbqdocarioca.work`** consolida os 3 pilares operacionais: **TALENT** (Candidatos/Chefs), **SERVICES** (Catering/Eventos) e **OPERATIONS** (Smart Scheduling/Matching).
-4. O algoritmo calcula um **Match Score (%) determinístico**, recomendando os melhores candidatos, enquanto a decisão final permanece sempre sob confirmação do **SuperAdmin (Human-in-the-Loop)**.
+2. **E-mail é o canal oficial obrigatório**, mantendo **WhatsApp e SMS como canais operacionais opcionais**.
+3. A localização do candidato baseia-se no **ZIP Code / Cidade** informados (respeitando a privacidade PII), e **não** na geolocalização do IP do navegador.
+4. O cálculo de distância inicial no MVP usa a fórmula matemática de **Haversine no D1/Worker ($0 de APIs de mapas)**.
 
 ---
 
 ## Decisão de Arquitetura
 
-Decidiu-se adotar a **BBQ Talent & Service Platform** sob a arquitetura de **Field-Service Management (FSM)** rodando na infraestrutura serverless da Cloudflare (D1 + R2 + Workers + Zero Trust).
+Decidiu-se incorporar o módulo de **Location Intelligence & Cross-Docking Hubs** ao motor de Smart Matching da **BBQ Talent & Service Platform**.
 
-### 🏛️ Três Pilares da Plataforma (`bbqdocarioca.work`)
+### 📍 1. O Triângulo Logístico de Operações (3 Nós Geográficos)
 
 ```text
-┌────────────────────────────────────────────────────────────────────────┐
-│                      BBQ DO CARIOCA WORK PLATFORM                      │
-├────────────────────────────────────────────────────────────────────────┤
-│                                                                        │
-│   1. TALENT NETWORK         2. SERVICES & CATERING     3. OPERATIONS   │
-│   Candidates / Chefs        Weddings / Corporate       Smart Matching  │
-│   Pitmasters / Staff        Private BBQ Services       Event Calendar  │
-│                                                                        │
-└───────────────────────────────────┬────────────────────────────────────┘
-                                    ▼
-                       [ Smart Matching Engine ]
-                                    │
-               ┌────────────────────┴────────────────────┐
-               ▼                                         ▼
-   [ Match Score % Calculation ]              [ Conflict Detection ]
-   (Role, City, Radius, Rating)               (Double-booking Preventer)
-               │                                         │
-               └────────────────────┬────────────────────┘
-                                    ▼
-                         SuperAdmin Confirmation
-                         (admin.bbqdocarioca.work)
+               [ CANDIDATO ]
+            Residência / ZIP Code
+                      │
+                      │ (Distância 1: Candidato ➔ Hub)
+                      ▼
+            [ CROSS-DOCK / HUB ]
+          Equipamentos, Veículos e Staff
+                      │
+                      │ (Distância 2: Hub ➔ Evento)
+                      ▼
+                 [ EVENTO ]
+         Local de Catering na Flórida
 ```
 
----
+### 🧮 2. Smart Matching Engine com Rating Logístico
 
-## ⚡ Motor de Smart Matching & Cálculo de Match Score (%)
-
-O algoritmo avalia os talentos disponíveis e gera uma pontuação determinística:
-
-$$\text{Match Score} = (w_1 \cdot \text{Role}) + (w_2 \cdot \text{Availability}) + (w_3 \cdot \text{Distance}) + (w_4 \cdot \text{Experience}) + (w_5 \cdot \text{Language}) + (w_6 \cdot \text{Reliability})$$
+$$\text{Distance Score} = f(\text{Distância Candidato} \rightarrow \text{Hub}) + f(\text{Distância Hub} \rightarrow \text{Evento}) + \text{Tempo Estimado (Travel Time)}$$
 
 ```text
-CANDIDATE: Carlos Silva (BBQ Chef)
-──────────────────────────────────────────────────
-Role Match:             100%
-Availability:           100%
-Distance (Boca Raton):   92%  (Raio < 25 miles)
-Experience (6 yrs):      95%
-Languages (EN/PT):      100%
-Reliability Rating:      94%  (Audit history)
-──────────────────────────────────────────────────
-TOTAL MATCH SCORE:       95%  ➔ #1 RECOMMENDED
-```
-
-### 🚨 Detecção de Conflitos de Agenda (Conflict Preventer)
-Se um talento já possui alocação em um evento (`Aug 29 · 5 PM - 10 PM · Boca Raton`), o sistema bloqueia automaticamente a escalação concorrente (`Aug 29 · 6 PM - 11 PM · Miami`) e exibe **`CONFLICT DETECTED`**.
-
----
-
-## 🔄 Máquina de Estados Operacionais do Evento & Subtituição Rápida
-
-```text
-   REQUESTED (Solicitação recebida)
-       │
-       ▼
-   MATCHING (Cálculo de Match Score %)
-       │
-       ▼
-   PROPOSED (SuperAdmin selecionou equipe)
-       │
-       ▼
-   INVITED (Notificação enviada por E-mail/WhatsApp)
-       │
-       ▼
-   ACCEPTED (Talento confirmou presença)
-       │
-       ▼
-   CONFIRMED (Equipe fechada e validada)
-       │
-       ▼
-   IN_PROGRESS ➔ COMPLETED (Evento concluído)
-
-   --- TRATAMENTO DE EXCEÇÃO & REPOSIÇÃO RÁPIDA ---
-   CANCELLED / NO_SHOW / DECLINED
-       │
-       ▼
-   REPLACEMENT_REQUIRED ➔ Dispara Smart Match do 2º colocado instantaneamente
+EVENTO: BBQ Wedding (Fort Lauderdale, FL)
+HUB PRÓXIMO: Fort Lauderdale Cross-Dock #01 (4.2 miles do evento)
+-----------------------------------------------------------------------
+CANDIDATO 1: João Santos (Fort Lauderdale) ➔ Evento direto: 5.1 mi (97% Match)
+CANDIDATO 2: Carlos Silva (Boca Raton) ➔ Hub: 8 mi ➔ Evento: 12 mi = Total 20 mi (94% Match)
+CANDIDATO 3: Marcos Oliveira (Miami) ➔ Hub: 24 mi ➔ Evento: 12 mi = Total 36 mi (89% Match)
 ```
 
 ---
@@ -111,34 +59,63 @@ Se um talento já possui alocação em um evento (`Aug 29 · 5 PM - 10 PM · Boc
 ## Schema Expandido do Banco de Dados D1 (SQLite)
 
 ```sql
--- 1. Talentos e Prestadores
+-- 1. Locais e Coordenadas (Candidatos, Hubs, Eventos)
+CREATE TABLE IF NOT EXISTS locations (
+    id TEXT PRIMARY KEY,
+    location_type TEXT NOT NULL, -- CANDIDATE, HUB, CROSS_DOCK, EVENT
+    name TEXT NOT NULL,
+    address TEXT,
+    city TEXT NOT NULL,
+    state TEXT NOT NULL DEFAULT 'FL',
+    zip_code TEXT NOT NULL,
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL,
+    is_active INTEGER DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Hubs de Operação & Cross-Docking
+CREATE TABLE IF NOT EXISTS hubs (
+    id TEXT PRIMARY KEY,
+    location_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    staff_capacity INTEGER DEFAULT 20,
+    equipment_capacity_events INTEGER DEFAULT 5,
+    pickup_window_start TIME,
+    pickup_window_end TIME,
+    service_areas TEXT, -- JSON Array: ["Boca Raton", "Fort Lauderdale", "Delray Beach"]
+    FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
+);
+
+-- 3. Tabela Unificada de Talentos e Prestadores
 CREATE TABLE IF NOT EXISTS talents (
     id TEXT PRIMARY KEY,
+    primary_location_id TEXT,
     full_name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     phone TEXT,
     whatsapp_phone TEXT,
     has_whatsapp INTEGER DEFAULT 0,
     preferred_contact_method TEXT NOT NULL DEFAULT 'EMAIL',
-    city TEXT NOT NULL,
-    state TEXT NOT NULL DEFAULT 'FL',
-    max_travel_miles INTEGER DEFAULT 35,
     talent_type TEXT NOT NULL, -- BBQ Chef, Pitmaster, Grill Assistant, Server, Bartender, Coordinator
     experience_years INTEGER NOT NULL,
     specialties TEXT, -- JSON Array
     languages TEXT NOT NULL, -- JSON Array
     is_legally_authorized_us TEXT NOT NULL DEFAULT 'YES',
+    max_travel_miles INTEGER DEFAULT 35,
     reliability_rating REAL DEFAULT 5.0,
     status TEXT NOT NULL DEFAULT 'NEW',
     notes TEXT,
     retention_until DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (primary_location_id) REFERENCES locations(id) ON DELETE SET NULL
 );
 
--- 2. Solicitações de Serviços / Eventos de Catering
+-- 4. Solicitações de Serviços / Eventos de Catering
 CREATE TABLE IF NOT EXISTS service_requests (
     id TEXT PRIMARY KEY,
+    event_location_id TEXT NOT NULL,
     client_name TEXT NOT NULL,
     client_email TEXT NOT NULL,
     client_phone TEXT NOT NULL,
@@ -146,39 +123,42 @@ CREATE TABLE IF NOT EXISTS service_requests (
     event_date DATE NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
-    location_city TEXT NOT NULL,
-    location_address TEXT NOT NULL,
     guest_count INTEGER NOT NULL,
     status TEXT NOT NULL DEFAULT 'REQUESTED', -- REQUESTED, MATCHING, PROPOSED, CONFIRMED, COMPLETED, CANCELLED
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_location_id) REFERENCES locations(id) ON DELETE CASCADE
 );
 
--- 3. Necessidades de Equipe Calculadas por Evento
+-- 5. Necessidades de Equipe Calculadas por Evento
 CREATE TABLE IF NOT EXISTS event_staff_requirements (
     id TEXT PRIMARY KEY,
     request_id TEXT NOT NULL,
-    required_role TEXT NOT NULL, -- Pitmaster, Grill Assistant, Server, Bartender
+    required_role TEXT NOT NULL,
     required_count INTEGER NOT NULL DEFAULT 1,
     hourly_rate REAL,
     FOREIGN KEY (request_id) REFERENCES service_requests(id) ON DELETE CASCADE
 );
 
--- 4. Alocações de Equipe (Escala & Matching)
+-- 6. Alocações de Equipe (Escala & Matching)
 CREATE TABLE IF NOT EXISTS staff_assignments (
     id TEXT PRIMARY KEY,
     request_id TEXT NOT NULL,
     talent_id TEXT NOT NULL,
+    assigned_hub_id TEXT,
     role_assigned TEXT NOT NULL,
     match_score_pct REAL NOT NULL,
+    distance_miles REAL,
+    estimated_travel_minutes INTEGER,
     assignment_status TEXT NOT NULL DEFAULT 'PROPOSED', -- PROPOSED, INVITED, ACCEPTED, CONFIRMED, DECLINED, REPLACEMENT_REQUIRED
     invited_at DATETIME,
     responded_at DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (request_id) REFERENCES service_requests(id) ON DELETE CASCADE,
-    FOREIGN KEY (talent_id) REFERENCES talents(id) ON DELETE CASCADE
+    FOREIGN KEY (talent_id) REFERENCES talents(id) ON DELETE CASCADE,
+    FOREIGN KEY (assigned_hub_id) REFERENCES hubs(id) ON DELETE SET NULL
 );
 
--- 5. Documentos no R2
+-- 7. Documentos no R2 & Logs de Auditoria
 CREATE TABLE IF NOT EXISTS talent_documents (
     id TEXT PRIMARY KEY,
     talent_id TEXT NOT NULL,
@@ -190,7 +170,6 @@ CREATE TABLE IF NOT EXISTS talent_documents (
     FOREIGN KEY (talent_id) REFERENCES talents(id) ON DELETE CASCADE
 );
 
--- 6. Logs de Auditoria
 CREATE TABLE IF NOT EXISTS audit_logs (
     id TEXT PRIMARY KEY,
     actor_email TEXT NOT NULL,
@@ -206,17 +185,17 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 ## 🗺️ Roadmap de Implementação Incremental
 
 ```text
-MVP v1 (Base Soberana)
+MVP v1 (Base Soberana + Geocodificação Inicial)
 - /careers em bbqdocarioca.work (Formulário + Turnstile + Worker + D1)
-- Tabela `talents` + SuperAdmin em admin.bbqdocarioca.work (Zero Trust)
-- Filtro por Cidade, Função e Status de Candidatos
+- Cadastro com ZIP Code/Cidade ➔ Cálculo Haversine ($0 API Maps)
+- Tabela `talents` + `locations` + SuperAdmin em admin.bbqdocarioca.work (Zero Trust)
 
-Fase 2 (Smart Operations & Event Matcher)
-- Tabelas `service_requests`, `event_staff_requirements` e `staff_assignments`
-- Calculadora de Match Score % baseada em papel, localização e disponibilidade
+Fase 2 (Cross-Dock Hubs & Smart Match Engine)
+- Cadastro de Hubs/Bases Operacionais na Flórida
+- Cálculo do Triângulo Logístico (Candidato ➔ Hub ➔ Evento)
 - Detecção visual de conflitos de horário no Calendário do SuperAdmin
 
 Fase 3 (Multi-Canal & Convocação Rápida)
 - Botão WhatsApp Dispatch (wa.me) no SuperAdmin
-- Ativação do Cloudflare Email Sending (US$ 5/mês Workers Paid) para confirmações automáticas
+- Ativação do Cloudflare Email Sending (US$ 5/mês Workers Paid)
 ```
