@@ -510,31 +510,28 @@ textarea.form-control { resize: vertical; min-height: 90px; }
   border: 2px solid #25D366; animation: pulse-ring 2.2s ease-out infinite;
 }
 .wa-bubble {
-  position: absolute; right: calc(100% + 16px); top: 50%;
+  position: absolute; right: calc(100% + 15px); top: 50%;
   transform: translateY(-50%) scale(.95);
-  background: #FFFFFF; color: #111827;
-  padding: 12px 20px; border-radius: 999px; /* Pill shape as requested */
-  font-family: 'Manrope', sans-serif; font-size: .85rem; font-weight: 700; white-space: nowrap;
-  box-shadow: 0 10px 30px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.15);
-  opacity: 0; transition: opacity .3s ease, transform .3s ease; pointer-events: none;
-  display: inline-flex; align-items: center; justify-content: center;
+  background: #fff; color: #1a1a1a;
+  padding: 10px 16px; border-radius: 14px;
+  font-size: .82rem; font-weight: 600; white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none;
 }
 .wa-bubble.show { opacity: 1; transform: translateY(-50%) scale(1); pointer-events: auto; }
 .wa-bubble::after {
   content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%);
-  border: 6px solid transparent; border-left-color: #FFFFFF;
+  border: 6px solid transparent; border-left-color: #fff;
 }
 .wa-close {
-  position: absolute; top: -6px; right: 0;
+  position: absolute; top: -8px; right: -8px;
   width: 20px; height: 20px; border-radius: 50%;
-  background: #374151; color: #FFFFFF; font-size: .7rem;
+  background: #333; color: #fff; font-size: .7rem;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; border: none; line-height: 1;
-  transition: background .2s;
+  cursor: pointer; border: none;
 }
-.wa-close:hover { background: #111827; }
 @media (max-width: 480px) {
-  .wa-bubble { font-size: .78rem; padding: 10px 16px; max-width: 220px; white-space: normal; border-radius: 24px; }
+  .wa-bubble { font-size: .75rem; padding: 8px 12px; max-width: 210px; white-space: normal; }
 }
 
 /* ── LEGAL COMPLIANCE MODAL (HTML5 <dialog> GLASSMORPHISM 2026+) ── */
