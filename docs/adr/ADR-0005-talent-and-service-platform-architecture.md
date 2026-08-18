@@ -249,8 +249,8 @@ O Worker executa múltiplas transações simultâneas de forma segura (exemplo: 
 
 ## Parte III: Roadmap e Compliance de Privacidade (Florida Privacy Act)
 
-1. **R2 Signed Presigned Uploads:** O upload de currículos em PDF vai direto do navegador para o R2 Bucket via URL assinada temporária (expiração em 15 minutos), evitando o estouro dos 128MB de memória do Worker.
-2. **Cron Trigger de Expurgo PII:** Worker configurado com Cron Trigger mensal (`0 0 1 * *`) para deletar permanentemente os arquivos R2 e registros de candidatos inativos ou rejeitados há mais de 180 dias.
+1. **Zero-PDF Friction & R2 Presigned Uploads:** O sistema abandona a prática obsoleta de exigir currículos em PDF (alta fricção). O candidato preenche suas habilidades diretamente num formulário web moderno e amigável (React 19). O Cloudflare R2 via URL assinada é reservado EXCLUSIVAMENTE para uploads de fotos (foto de perfil, portfólio de churrasco ou imagem de certificações), garantindo velocidade e zero parsing de PDFs.
+2. **Cron Trigger de Expurgo PII:** Worker configurado com Cron Trigger mensal (`0 0 1 * *`) para deletar permanentemente os arquivos de foto no R2 e registros no D1 de candidatos inativos ou rejeitados há mais de 180 dias.
 
 ```text
 MVP v1 (Base Soberana + Geocodificação Inicial)
