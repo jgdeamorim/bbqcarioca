@@ -13,10 +13,20 @@ function handleQuote(e) {
     ? (grill === 'yes' ? 'Sim' : 'Não — levar churrasqueira')
     : (grill === 'yes' ? 'Yes' : 'No — bring one');
 
-  const msgText = lang === 'pt'
-    ? `Olá BBQ do Carioca! Gostaria de um orçamento.\n\n📅 Data: ${date}\n📍 Cidade: ${city}\n👥 Convidados: ${guests}\n🔥 Churrasqueira: ${grillLabel}\n🥩 Observações: ${notes}`
-    : `Hi BBQ do Carioca! I'd like a free quote.\n\n📅 Date: ${date}\n📍 City: ${city}\n👥 Guests: ${guests}\n🔥 Grill: ${grillLabel}\n🥩 Notes: ${notes}`;
+  // Pacote de intenção de negócio (Intent Payload)
+  const intentPayload = {
+    date,
+    city,
+    guests,
+    grill: grillLabel,
+    notes,
+    source: 'landing_page_quote_form',
+    timestamp: new Date().toISOString()
+  };
 
-  const encodedMsg = encodeURIComponent(msgText);
-  window.open(`https://wa.me/15614034603?text=${encodedMsg}`, '_blank', 'noopener,noreferrer');
+  // Criptografa o JSON em Base64 seguro para URL
+  const encodedPayload = btoa(encodeURIComponent(JSON.stringify(intentPayload)));
+  
+  // Redireciona para o Carrier de Vanity URL (Cloudflare Edge -> React Portal)
+  window.location.href = `/client#init=${encodedPayload}`;
 }
