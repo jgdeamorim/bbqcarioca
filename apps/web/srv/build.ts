@@ -56,13 +56,10 @@ export function buildStaticLegalModals() {
 </dialog>
 `;
 
-  // Replace any previous dynamic dialog with inlined static modals
-  const dialogRegex = /<!-- ═+ LEGAL COMPLIANCE MODAL[s]? ═+ -->[\s\S]*?<\/dialog>/gi;
-  if (dialogRegex.test(html)) {
-    html = html.replace(dialogRegex, modalBlockHtml.trim());
-  } else {
-    html = html.replace('</footer>', '</footer>\n' + modalBlockHtml.trim());
-  }
+  // Clean any previous legal compliance modals
+  const dialogRegex = /<!-- ═+ LEGAL COMPLIANCE MODAL[\s\S]*?<\/dialog>\s*/gi;
+  html = html.replace(dialogRegex, '');
+  html = html.replace('</footer>', '</footer>\n' + modalBlockHtml.trim());
 
   // Update footer button click handlers to 0ms direct DOM showModal()
   html = html.replace(/onclick="openLegalModal\('privacy'\)"/g, `onclick="openLegalModal('privacy')"`);
