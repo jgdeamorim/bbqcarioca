@@ -120,5 +120,34 @@
   },
   "wa": {
     "bubble": "Solicite seu ORÇAMENTO no WhatsApp!"
+  },
+  "perfect_for": {
+    "label": "IDEAL PARA",
+    "title": "Qualquer ocasião que merece comemoração",
+    "desc": "De churrascos íntimos no quintal a grandes eventos corporativos no sul da Flórida.",
+    "card1_title": "Reuniões em Casa",
+    "card1_desc": "Aproveite a família enquanto o Bruno cuida da grelha, brasa e serviço no seu quintal.",
+    "card2_title": "Aniversários e Festas",
+    "card2_desc": "Torne seu aniversário inesquecível com churrasco brasileiro ao vivo e picanha servida sem parar.",
+    "card3_title": "Eventos Corporativos",
+    "card3_desc": "Impressione clientes e recompense sua equipe com uma experiência de churrascaria brasileira no seu escritório ou local.",
+    "card4_title": "Casamentos e Recepções",
+    "card4_desc": "Serviço elegante, rústico e inesquecível de buffet de carnes preparado sob medida para o dia da sua recepção."
+  },
+  "faq": {
+    "label": "PERGUNTAS FREQUENTES",
+    "title": "Tudo o que você precisa saber",
+    "q1": "Quais cidades da Flórida o BBQ Carioca atende?",
+    "a1": "Atendemos todo o sul da Flórida, incluindo Boca Raton, Delray Beach, Palm Beach, Fort Lauderdale, Miami, West Palm Beach e regiões próximas. Para eventos corporativos ou maiores, atendemos também Orlando.",
+    "q2": "O que está incluído nos pacotes de churrasco?",
+    "a2": "Nossos pacotes incluem churrasqueiro profissional (Chef Bruno), churrasqueira de brasa, cortes nobres selecionados (Picanha, Fraldinha, Costela, Linguiça), entradas (pão de alho), acompanhamentos (farofa, vinagrete, arroz), pratos, talheres descartáveis premium e limpeza da área da churrasqueira.",
+    "q3": "Quanto tempo dura o serviço de churrasco no evento?",
+    "a3": "Chegamos 2 horas antes do horário de servir para montar a estrutura e acender a brasa. O serviço de churrasco à vontade (rodízio/buffet) dura entre 3 e 4 horas contínuas de atendimento para seus convidados.",
+    "q4": "Qual o número mínimo e máximo de convidados?",
+    "a4": "Atendemos desde pequenas festas residenciais (a partir de 15 convidados) até grandes eventos corporativos, aniversários e casamentos com mais de 200 convidados.",
+    "q5": "Como funciona a reserva da data e o pagamento?",
+    "a5": "Para garantir a data na agenda, solicitamos um sinal de 20% no momento da reserva. O valor restante é pago no dia do evento. Aceitamos Zelle, Cartões de Crédito, Venmo e Dinheiro.",
+    "q6": "E se chover no dia do meu evento?",
+    "a6": "Nossa equipe possui tendas profissionais de proteção contra chuva e sol para a área da churrasqueira. O fogo não apaga e seu churrasco acontece com perfeita qualidade, independentemente do tempo!"
   }
 }

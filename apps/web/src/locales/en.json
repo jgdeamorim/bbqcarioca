@@ -120,5 +120,34 @@
   },
   "wa": {
     "bubble": "Request a quote on WhatsApp!"
+  },
+  "perfect_for": {
+    "label": "PERFECT FOR",
+    "title": "Any occasion worth celebrating",
+    "desc": "From intimate backyard BBQs to grand corporate events across South Florida.",
+    "card1_title": "Backyard Gatherings",
+    "card1_desc": "Relax with family while Bruno handles the grill, charcoal, and service right in your backyard.",
+    "card2_title": "Birthdays & Parties",
+    "card2_desc": "Make your birthday unforgettable with live Brazilian barbecue and hot picanha served nonstop.",
+    "card3_title": "Corporate Events",
+    "card3_desc": "Impress clients and reward your team with a high-end Brazilian steakhouse experience at your office or venue.",
+    "card4_title": "Weddings & Receptions",
+    "card4_desc": "Elegant, rustic, and unforgettable meat buffet service tailored for your special reception day."
+  },
+  "faq": {
+    "label": "FREQUENTLY ASKED QUESTIONS",
+    "title": "Everything you need to know",
+    "q1": "Which Florida cities does BBQ Carioca serve?",
+    "a1": "We serve all of South Florida, including Boca Raton, Delray Beach, Palm Beach, Fort Lauderdale, Miami, West Palm Beach, and surrounding areas. For corporate or larger events, we also serve Orlando.",
+    "q2": "What is included in the catering packages?",
+    "a2": "Our packages include a professional Pitmaster (Chef Bruno), charcoal grill setup, prime beef cuts (Picanha, Top Sirloin, Ribs, Sausages), appetizers (garlic bread), traditional sides (farofa, vinaigrette, rice), premium disposable plates & cutlery, and grill area cleanup.",
+    "q3": "How long does the BBQ service last during the event?",
+    "a3": "We arrive 2 hours prior to serving time to set up and start the fire. The continuous live barbecue buffet service lasts 3 to 4 hours for your guests.",
+    "q4": "What is the minimum and maximum guest capacity?",
+    "a4": "We cater from small backyard parties (starting at 15 guests) to large corporate functions, birthdays, and weddings with over 200 guests.",
+    "q5": "How does date reservation and payment work?",
+    "a5": "To reserve your event date, we require a 20% deposit. The remaining balance is paid on the day of the event. We accept Zelle, Credit Cards, Venmo, and Cash.",
+    "q6": "What if it rains on the day of my event?",
+    "a6": "Our team provides professional rain tents for the grill area. The fire stays hot and your event runs smoothly regardless of weather!"
   }
 }
