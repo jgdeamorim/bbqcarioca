@@ -14,10 +14,684 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,600;9..144,0,700;9..144,0,800;9..144,0,900;9..144,1,700&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/tokens.css" />
-  <link rel="stylesheet" href="css/animations.css" />
-  <link rel="stylesheet" href="css/layout.css" />
-  <link rel="stylesheet" href="css/components.css" />
+  <style>
+    :root {
+      --charcoal-950: #0B0908;
+      --charcoal-900: #141110;
+      --charcoal-800: #1E1917;
+      --ember-500: #FF6B35;
+      --ember-700: #C2410C;
+      --gold-400: #D9A441;
+      --cream-50: #FAF6EE;
+      --smoke-400: #A69D93;
+      --line: rgba(217,164,65,.16);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; scroll-behavior: smooth; }
+
+    body {
+      background: var(--charcoal-950);
+      color: var(--cream-50);
+      font-family: 'Manrope', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── TYPOGRAPHY ── */
+    .font-display { font-family: 'Fraunces', serif; }
+    .font-mono    { font-family: 'IBM Plex Mono', monospace; }
+
+    /* ── LANG TOGGLE ── */
+    [data-lang="pt"] { display: none; }
+    html[lang="pt"] [data-lang="en"] { display: none; }
+    html[lang="pt"] [data-lang="pt"] { display: unset; }
+
+    /* ── REVEALS ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .75s cubic-bezier(.22,1,.36,1), transform .75s cubic-bezier(.22,1,.36,1);
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+    .reveal-d1 { transition-delay: .08s; }
+    .reveal-d2 { transition-delay: .18s; }
+    .reveal-d3 { transition-delay: .28s; }
+    .reveal-d4 { transition-delay: .38s; }
+
+    /* ── HEADER ── */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 60;
+      background: rgba(11,9,8,.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+      height: 64px;
+      display: flex; align-items: center;
+    }
+    .header-inner {
+      max-width: 1160px; margin: 0 auto; padding: 0 20px;
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo-link {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .logo-text {
+      font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 800;
+      letter-spacing: -.02em; color: var(--cream-50);
+    }
+    .logo-text em { color: var(--ember-500); font-style: normal; }
+
+    nav { display: flex; align-items: center; gap: 12px; }
+    .lang-toggle {
+      display: flex; align-items: center; gap: 2px;
+      font-family: 'IBM Plex Mono', monospace; font-size: .75rem;
+    }
+    .lang-btn {
+      background: none; border: none; cursor: pointer;
+      padding: 5px 10px; border-radius: 6px;
+      color: var(--smoke-400); transition: color .2s, background .2s;
+    }
+    .lang-btn.active { background: var(--charcoal-800); color: var(--cream-50); }
+    .cta-nav {
+      display: none;
+      align-items: center; gap: 8px;
+      background: var(--ember-500);
+      color: var(--cream-50); font-weight: 700; font-size: .85rem;
+      padding: 9px 20px; border-radius: 999px;
+      text-decoration: none; transition: background .2s, box-shadow .2s;
+    }
+    .cta-nav:hover { background: var(--ember-700); box-shadow: 0 0 24px rgba(255,107,53,.4); }
+    @media(min-width:640px) { .cta-nav { display: flex; } }
+    a:focus-visible, button:focus-visible, input:focus-visible,
+    select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--ember-500); outline-offset: 3px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; min-height: 100svh;
+      display: flex; align-items: flex-end;
+      padding-top: 64px; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('img/bg-slider-01.png');
+      background-size: cover; background-position: center 30%;
+      filter: brightness(.92) saturate(1.1);
+      transform: scale(1.03);
+      transition: transform 8s ease;
+    }
+    .hero-bg.loaded { transform: scale(1); }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(11,9,8,.88) 0%,
+        rgba(11,9,8,.45) 40%,
+        rgba(11,9,8,.1) 75%,
+        transparent 100%
+      );
+    }
+    .hero-overlay-side {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to right,
+        rgba(11,9,8,.6) 0%,
+        rgba(11,9,8,.15) 50%,
+        transparent 100%
+      );
+    }
+    #ember-canvas {
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 1;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 1160px; margin: 0 auto; padding: 0 20px;
+      width: 100%; padding-bottom: 72px;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-bottom: 20px;
+    }
+    .eyebrow-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--ember-500);
+      animation: pulse-dot 2s ease infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(.75); }
+    }
+    .eyebrow-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: .72rem; letter-spacing: .18em;
+      color: var(--gold-400); text-transform: uppercase;
+    }
+    .hero-h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      font-weight: 800; line-height: 1.06;
+      color: var(--cream-50); margin-bottom: 22px;
+      max-width: 760px;
+    }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--smoke-400); line-height: 1.65;
+      max-width: 520px; margin-bottom: 36px;
+    }
+    .hero-ctas {
+      display: flex; flex-wrap: wrap; gap: 12px;
+      margin-bottom: 44px;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: var(--ember-500); color: var(--cream-50);
+      font-weight: 700; font-size: .95rem;
+      padding: 15px 28px; border-radius: 999px;
+      text-decoration: none; transition: background .2s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(255,107,53,.32);
+    }
+    .btn-primary:hover { background: var(--ember-700); box-shadow: 0 6px 28px rgba(255,107,53,.45); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 9px;
+      border: 1px solid var(--line); color: var(--cream-50);
+      font-weight: 600; font-size: .95rem;
+      padding: 15px 28px; border-radius: 999px;
+      text-decoration: none; transition: border-color .2s;
+    }
+    .btn-secondary:hover { border-color: var(--gold-400); }
+    .hero-tags {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .hero-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: .7rem;
+      padding: 6px 14px; border-radius: 999px;
+      border: 1px solid var(--line); color: var(--smoke-400);
+    }
+
+    /* ── MARQUEE ── */
+    .marquee-track {
+      background: var(--charcoal-900);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      overflow: hidden; padding: 14px 0;
+    }
+    .marquee-inner {
+      display: flex; gap: 0;
+      animation: scroll-left 22s linear infinite;
+      width: max-content;
+    }
+    .marquee-inner:hover { animation-play-state: paused; }
+    @keyframes scroll-left {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .marquee-item {
+      display: inline-flex; align-items: center; gap: 16px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: .72rem; letter-spacing: .22em;
+      color: var(--smoke-400); padding: 0 28px;
+      text-transform: uppercase; white-space: nowrap;
+    }
+    .marquee-dot { color: var(--ember-500); font-size: 1rem; }
+
+    /* ── SECTION COMMONS ── */
+    .section { padding: 88px 20px; }
+    .section-alt { background: var(--charcoal-900); }
+    .section-inner { max-width: 1160px; margin: 0 auto; }
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: .7rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--gold-400); margin-bottom: 12px;
+    }
+    .section-h2 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.9rem, 4vw, 2.9rem);
+      font-weight: 800; line-height: 1.12; color: var(--cream-50);
+    }
+    .section-head { margin-bottom: 52px; text-align: center; }
+
+    /* ── RELIEF BAND ── */
+    .relief {
+      background: linear-gradient(135deg, var(--charcoal-900), var(--charcoal-800));
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 52px 20px; text-align: center;
+    }
+    .relief-inner { max-width: 900px; margin: 0 auto; }
+    .relief-h2 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 700; color: var(--cream-50); line-height: 1.2;
+    }
+    .relief-icon { color: var(--ember-500); margin-bottom: 14px; display: block; }
+
+    /* ── EXPERIENCE CARDS ── */
+    .exp-grid {
+      display: grid; gap: 20px;
+      grid-template-columns: 1fr;
+    }
+    @media(min-width:768px) { .exp-grid { grid-template-columns: repeat(3,1fr); } }
+    .exp-card {
+      background: var(--charcoal-900);
+      border: 1px solid var(--line);
+      border-radius: 20px; overflow: hidden;
+      transition: border-color .25s, transform .25s;
+    }
+    .exp-card:hover { border-color: rgba(255,107,53,.5); transform: translateY(-4px); }
+    .exp-card-img {
+      width: 100%; height: 220px; object-fit: cover;
+      display: block; filter: brightness(.85) saturate(1.1);
+      transition: filter .4s;
+    }
+    .exp-card:hover .exp-card-img { filter: brightness(.95) saturate(1.2); }
+    .exp-card-body { padding: 28px; }
+    .exp-card-icon {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,107,53,.1);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .exp-card-title {
+      font-family: 'Fraunces', serif; font-size: 1.15rem;
+      font-weight: 700; color: var(--cream-50); margin-bottom: 10px;
+    }
+    .exp-card-text { color: var(--smoke-400); font-size: .9rem; line-height: 1.65; }
+
+    /* ── MEET SECTION ── */
+    .meet-grid {
+      display: grid; gap: 48px;
+      grid-template-columns: 1fr;
+      align-items: center;
+    }
+    @media(min-width:768px) { .meet-grid { grid-template-columns: 1fr 1fr; } }
+    .meet-img-wrap {
+      position: relative; border-radius: 20px; overflow: hidden;
+      aspect-ratio: 4/5;
+      border: 1px solid var(--line);
+    }
+    .meet-img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center;
+      filter: brightness(.95) saturate(1.05);
+    }
+    .meet-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(11,9,8,.9) 0%, transparent 55%);
+    }
+    .meet-img-footer {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 28px;
+    }
+    .meet-name {
+      font-family: 'Fraunces', serif; font-size: 1.5rem;
+      font-weight: 700; color: var(--cream-50);
+    }
+    .meet-title-tag {
+      font-family: 'IBM Plex Mono', monospace; font-size: .65rem;
+      letter-spacing: .18em; color: var(--gold-400);
+      margin-top: 4px; display: block;
+    }
+    .rio-badge {
+      position: absolute; top: 20px; left: 20px;
+      background: rgba(11,9,8,.85); backdrop-filter: blur(8px);
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 8px 14px;
+    }
+    .rio-badge-text {
+      font-family: 'IBM Plex Mono', monospace; font-size: .62rem;
+      letter-spacing: .15em; color: var(--gold-400);
+    }
+    .meet-copy { color: var(--smoke-400); font-size: 1rem; line-height: 1.75; margin-bottom: 20px; }
+    .meet-copy em { color: var(--cream-50); font-style: italic; }
+    .meet-copy-note {
+      font-family: 'IBM Plex Mono', monospace; font-size: .78rem;
+      color: var(--smoke-400); margin-bottom: 28px;
+    }
+    .meet-sig {
+      font-family: 'Fraunces', serif; font-size: 1.3rem;
+      font-weight: 700; font-style: italic; color: var(--ember-500);
+    }
+
+    /* ── PACKAGES ── */
+    .pkg-grid {
+      display: grid; gap: 20px;
+      grid-template-columns: 1fr;
+    }
+    @media(min-width:768px) { .pkg-grid { grid-template-columns: repeat(3,1fr); } }
+    .pkg-card {
+      background: var(--charcoal-900);
+      border: 1px solid var(--line);
+      border-radius: 20px; padding: 36px;
+      display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
+      transition: transform .25s;
+    }
+    .pkg-card:hover { transform: translateY(-4px); }
+    .pkg-card.featured {
+      border-color: rgba(255,107,53,.5);
+      background: linear-gradient(160deg, var(--charcoal-800) 0%, var(--charcoal-900) 100%);
+    }
+    .pkg-badge {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%) translateY(-50%);
+      font-family: 'IBM Plex Mono', monospace; font-size: .65rem; letter-spacing: .16em;
+      background: var(--ember-500); color: var(--cream-50);
+      padding: 5px 14px; border-radius: 999px;
+    }
+    .pkg-badge-inline {
+      font-family: 'IBM Plex Mono', monospace; font-size: .65rem; letter-spacing: .14em;
+      color: var(--gold-400); margin-bottom: 6px; display: block;
+    }
+    .pkg-title {
+      font-family: 'Fraunces', serif; font-size: 1.2rem;
+      font-weight: 700; color: var(--cream-50); margin-bottom: 4px;
+    }
+    .pkg-price {
+      font-family: 'IBM Plex Mono', monospace; font-size: 1.6rem;
+      color: var(--ember-500); margin-bottom: 24px;
+    }
+    .pkg-price.neutral { color: var(--cream-50); }
+    .pkg-price span { font-size: .85rem; color: var(--smoke-400); }
+    .pkg-list {
+      list-style: none; flex: 1; margin-bottom: 28px;
+    }
+    .pkg-list li {
+      display: flex; gap: 10px; align-items: flex-start;
+      color: var(--smoke-400); font-size: .88rem;
+      padding: 6px 0; border-bottom: 1px solid var(--line);
+    }
+    .pkg-list li:last-child { border-bottom: none; }
+    .pkg-check { color: var(--ember-500); flex-shrink: 0; margin-top: 1px; }
+    .pkg-check.gold { color: var(--gold-400); }
+    .pkg-cta {
+      display: block; text-align: center;
+      font-weight: 700; font-size: .9rem;
+      padding: 14px; border-radius: 999px;
+      text-decoration: none; transition: all .2s;
+    }
+    .pkg-cta.primary {
+      background: var(--ember-500); color: var(--cream-50);
+      box-shadow: 0 4px 18px rgba(255,107,53,.3);
+    }
+    .pkg-cta.primary:hover { background: var(--ember-700); }
+    .pkg-cta.outline {
+      border: 1px solid var(--line); color: var(--cream-50);
+    }
+    .pkg-cta.outline:hover { border-color: var(--gold-400); }
+    .pkg-note {
+      text-align: center; color: var(--smoke-400); font-size: .82rem;
+      margin-top: 32px;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .steps-grid {
+      display: grid; gap: 32px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media(min-width:1024px) { .steps-grid { grid-template-columns: repeat(4,1fr); } }
+    .step { text-align: center; }
+    .step-num {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 1.05rem;
+      color: var(--gold-400);
+    }
+    .step-title {
+      font-family: 'Fraunces', serif; font-size: 1rem;
+      font-weight: 700; color: var(--cream-50); line-height: 1.35;
+    }
+
+    /* ── IDEAL FOR ── */
+    .ideal-grid {
+      display: grid; gap: 16px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media(min-width:768px) { .ideal-grid { grid-template-columns: repeat(4,1fr); } }
+    .ideal-tile {
+      background: var(--charcoal-800);
+      border: 1px solid var(--line); border-radius: 16px;
+      padding: 28px 20px; text-align: center;
+      transition: border-color .2s, transform .2s;
+    }
+    .ideal-tile:hover { border-color: var(--ember-500); transform: translateY(-2px); }
+    .ideal-icon { font-size: 1.8rem; margin-bottom: 12px; display: block; }
+    .ideal-title {
+      font-family: 'Fraunces', serif; font-size: .95rem;
+      font-weight: 700; color: var(--cream-50);
+    }
+
+    /* ── TESTIMONIALS ── */
+    .reviews-grid {
+      display: grid; gap: 20px;
+      grid-template-columns: 1fr;
+    }
+    @media(min-width:640px) { .reviews-grid { grid-template-columns: repeat(2,1fr); } }
+    @media(min-width:1024px) { .reviews-grid { grid-template-columns: repeat(3,1fr); } }
+    .review-card {
+      background: var(--charcoal-900);
+      border: 1px solid var(--line);
+      border-radius: 20px; overflow: hidden;
+      transition: border-color .25s, transform .25s;
+    }
+    .review-card:hover { border-color: rgba(217,164,65,.35); transform: translateY(-3px); }
+    .review-img-wrap {
+      position: relative; overflow: hidden; height: 200px;
+    }
+    .review-img {
+      width: 100%; height: 100%; object-fit: cover; object-position: top;
+      filter: brightness(.75) saturate(.9);
+      transition: transform .5s, filter .3s;
+    }
+    .review-card:hover .review-img { transform: scale(1.04); filter: brightness(.85); }
+    .review-img-fade {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 80%;
+      background: linear-gradient(to top, var(--charcoal-900), transparent);
+      pointer-events: none;
+    }
+    .review-body { padding: 20px 24px 24px; }
+    .review-stars { display: flex; gap: 3px; margin-bottom: 12px; }
+    .review-star { color: var(--gold-400); font-size: .85rem; }
+    .review-quote {
+      color: var(--cream-50); font-size: .92rem; line-height: 1.65;
+      font-style: italic; margin-bottom: 16px;
+      border-bottom: 1px solid var(--line); padding-bottom: 16px;
+    }
+    .review-name {
+      font-family: 'Fraunces', serif; font-size: .95rem;
+      font-weight: 700; color: var(--cream-50);
+    }
+    .review-meta {
+      font-family: 'IBM Plex Mono', monospace; font-size: .65rem;
+      color: var(--gold-400); letter-spacing: .12em; margin-top: 2px;
+    }
+    .reviews-social {
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; margin-top: 40px; flex-wrap: wrap;
+    }
+    .social-avatars { display: flex; }
+    .social-avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 2px solid var(--charcoal-900);
+      object-fit: cover; margin-left: -10px;
+    }
+    .social-avatar:first-child { margin-left: 0; }
+    .social-text { font-size: .85rem; color: var(--smoke-400); }
+    .social-text strong { color: var(--cream-50); }
+
+    /* ── SERVICE AREA ── */
+    .area-chips {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      justify-content: center;
+    }
+    .area-chip {
+      font-family: 'IBM Plex Mono', monospace; font-size: .72rem;
+      padding: 8px 16px; border-radius: 999px;
+      border: 1px solid var(--line); color: var(--smoke-400);
+      transition: border-color .2s, color .2s;
+    }
+    .area-chip:hover { border-color: var(--ember-500); color: var(--cream-50); }
+    .area-chip.hl { border-color: var(--ember-500); color: var(--cream-50); }
+
+    /* ── QUOTE FORM ── */
+    .form-wrap {
+      max-width: 680px; margin: 0 auto;
+      background: var(--charcoal-900); border: 1px solid var(--line);
+      border-radius: 24px; padding: 48px;
+    }
+    @media(max-width:600px) { .form-wrap { padding: 28px 20px; border-radius: 16px; } }
+    .form-grid {
+      display: grid; gap: 16px;
+      grid-template-columns: 1fr;
+    }
+    @media(min-width:520px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+    .form-field label {
+      display: block; font-family: 'IBM Plex Mono', monospace;
+      font-size: .68rem; letter-spacing: .14em; color: var(--smoke-400);
+      margin-bottom: 7px; text-transform: uppercase;
+    }
+    .form-control {
+      width: 100%; background: var(--charcoal-800);
+      border: 1px solid var(--line); border-radius: 12px;
+      padding: 13px 16px; color: var(--cream-50);
+      font-family: 'Manrope', sans-serif; font-size: .9rem;
+      transition: border-color .2s;
+      appearance: none; -webkit-appearance: none;
+    }
+    .form-control::placeholder { color: rgba(166,157,147,.45); }
+    .form-control:focus { outline: none; border-color: var(--ember-500); }
+    .form-control option { background: var(--charcoal-800); }
+    .form-full { grid-column: 1 / -1; }
+    textarea.form-control { resize: vertical; min-height: 90px; }
+    .form-submit {
+      width: 100%; background: var(--ember-500);
+      color: var(--cream-50); font-weight: 700; font-size: 1rem;
+      padding: 16px; border-radius: 999px;
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: background .2s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(255,107,53,.35);
+      margin-top: 24px;
+    }
+    .form-submit:hover { background: var(--ember-700); box-shadow: 0 6px 28px rgba(255,107,53,.5); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--line);
+      background: var(--charcoal-950);
+      padding: 56px 20px 32px;
+    }
+    .footer-inner { max-width: 1160px; margin: 0 auto; }
+    .footer-top {
+      display: flex; flex-wrap: wrap; gap: 40px;
+      justify-content: space-between; margin-bottom: 40px;
+    }
+    .footer-brand-name {
+      font-family: 'Fraunces', serif; font-size: 1.3rem;
+      font-weight: 800; color: var(--cream-50); margin-bottom: 8px;
+    }
+    .footer-brand-sub { color: var(--smoke-400); font-size: .85rem; max-width: 260px; line-height: 1.6; }
+    .footer-contact { font-size: .85rem; color: var(--smoke-400); line-height: 1.8; }
+    .footer-contact a { color: var(--ember-500); text-decoration: none; }
+    .footer-bottom {
+      border-top: 1px solid var(--line); padding-top: 24px;
+      display: flex; flex-wrap: wrap; justify-content: space-between;
+      align-items: center; gap: 12px;
+      font-size: .78rem; color: var(--smoke-400);
+    }
+    .footer-lang { display: flex; gap: 16px; }
+    .footer-lang-btn {
+      background: none; border: none; cursor: pointer;
+      color: var(--smoke-400); font-size: .78rem;
+      transition: color .2s;
+    }
+    .footer-lang-btn:hover { color: var(--cream-50); }
+
+    /* ── WHATSAPP WIDGET ── */
+    .wa-widget { position: fixed; bottom: 24px; right: 24px; z-index: 90; display: flex; align-items: center; justify-content: flex-end; }
+    .wa-btn {
+      width: 39px; height: 39px; border-radius: 50%;
+      background: #25D366; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 15px rgba(37,211,102,.45);
+      transition: transform .25s, box-shadow .25s;
+      position: relative; text-decoration: none; flex-shrink: 0;
+    }
+    .wa-btn:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(37,211,102,.55); }
+    @keyframes pulse-ring {
+      0% { transform: scale(.9); opacity: .6; }
+      100% { transform: scale(1.45); opacity: 0; }
+    }
+    .wa-btn::before {
+      content: ''; position: absolute; inset: -3px; border-radius: 50%;
+      border: 2px solid #25D366; animation: pulse-ring 2.2s ease-out infinite;
+    }
+    .wa-bubble {
+      position: absolute; right: calc(100% + 15px); top: 50%;
+      transform: translateY(-50%) scale(.95);
+      background: #fff; color: #1a1a1a;
+      padding: 10px 16px; border-radius: 14px;
+      font-size: .82rem; font-weight: 600; white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+      opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none;
+    }
+    .wa-bubble.show { opacity: 1; transform: translateY(-50%) scale(1); pointer-events: auto; }
+    .wa-bubble::after {
+      content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%);
+      border: 6px solid transparent; border-left-color: #fff;
+    }
+    .wa-close {
+      position: absolute; top: -8px; right: -8px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #333; color: #fff; font-size: .7rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; border: none;
+    }
+    @media (max-width: 480px) {
+      .wa-bubble { font-size: .75rem; padding: 8px 12px; max-width: 210px; white-space: normal; }
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes flicker {
+      0%,100% { transform: scaleY(1) translateY(0); opacity: 1; }
+      25%  { transform: scaleY(1.08) translateY(-2px); opacity: .9; }
+      50%  { transform: scaleY(.95) translateY(1px); }
+      75%  { transform: scaleY(1.05) translateY(-1px); opacity: .95; }
+    }
+    .flame { animation: flicker 1.9s ease-in-out infinite; transform-origin: bottom center; }
+    .flame-2 { animation-delay: .35s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .flame, .wa-btn::before { animation: none; }
+      .marquee-inner { animation: none; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* ── MOBILE NAV (hamburger) ── */
+    .mob-toggle {
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--charcoal-800); border: none; cursor: pointer;
+      color: var(--cream-50);
+    }
+    @media(min-width:900px) { .mob-toggle { display: none; } }
+    .mob-menu {
+      display: none; position: fixed; inset: 64px 0 0;
+      background: var(--charcoal-950); z-index: 55;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 32px;
+    }
+    .mob-menu.open { display: flex; }
+    .mob-link {
+      font-family: 'Fraunces', serif; font-size: 1.5rem;
+      font-weight: 700; color: var(--cream-50); text-decoration: none;
+    }
+    .mob-link:hover { color: var(--ember-500); }
+  </style>
 
   <script type="application/ld+json">
   {
@@ -53,7 +727,7 @@
       </div>
       <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27d%20like%20a%20quote%20for%20my%20event." target="_blank" rel="noopener" class="cta-nav" style="margin-left:12px">
         <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        <span data-i18n="nav.quote">Get Quote</span>
+        <span data-lang="en">Get Quote</span><span data-lang="pt">Orçamento</span>
       </a>
       <button class="mob-toggle" id="mob-toggle" aria-label="Toggle menu" aria-expanded="false">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -66,11 +740,11 @@
 
 <!-- Mobile Nav -->
 <div class="mob-menu" id="mob-menu" role="dialog" aria-label="Mobile navigation">
-  <a href="#experience" class="mob-link" onclick="closeMob()"><span data-i18n="nav.experience">Experience</span></a>
-  <a href="#meet" class="mob-link" onclick="closeMob()"><span data-i18n="nav.about">About</span></a>
-  <a href="#packages" class="mob-link" onclick="closeMob()"><span data-i18n="nav.packages">Packages</span></a>
-  <a href="#quote" class="mob-link" onclick="closeMob()"><span data-i18n="nav.quote">Get Quote</span></a>
-  <a href="https://wa.me/15614034603" target="_blank" rel="noopener" class="btn-primary" style="font-size:.95rem;padding:14px 28px" data-i18n="nav.whatsapp">WhatsApp</a>
+  <a href="#experience" class="mob-link" onclick="closeMob()"><span data-lang="en">Experience</span><span data-lang="pt">Experiência</span></a>
+  <a href="#meet" class="mob-link" onclick="closeMob()"><span data-lang="en">About</span><span data-lang="pt">Sobre</span></a>
+  <a href="#packages" class="mob-link" onclick="closeMob()"><span data-lang="en">Packages</span><span data-lang="pt">Pacotes</span></a>
+  <a href="#quote" class="mob-link" onclick="closeMob()"><span data-lang="en">Get Quote</span><span data-lang="pt">Orçamento</span></a>
+  <a href="https://wa.me/15614034603" target="_blank" rel="noopener" class="btn-primary" style="font-size:.95rem;padding:14px 28px">WhatsApp</a>
 </div>
 
 <main>
@@ -85,35 +759,38 @@
   <div class="hero-content">
     <div class="hero-eyebrow reveal">
       <span class="eyebrow-dot"></span>
-      <span class="eyebrow-text" data-i18n="hero.eyebrow">
-        LIVE-FIRE BRAZILIAN CHURRASCO • FLORIDA, USA
+      <span class="eyebrow-text">
+        <span data-lang="en">LIVE-FIRE BRAZILIAN CHURRASCO • FLORIDA, USA</span>
+        <span data-lang="pt">CHURRASCO BRASILEIRO AO VIVO • FLÓRIDA, EUA</span>
       </span>
     </div>
 
-    <h1 class="hero-h1 reveal reveal-d1" data-i18n-html="hero.headline">
-      Authentic Brazilian<br>Churrasco, Fired<br>Live at Your Event.
+    <h1 class="hero-h1 reveal reveal-d1">
+      <span data-lang="en">Authentic Brazilian<br>Churrasco, Fired<br>Live at Your Event.</span>
+      <span data-lang="pt">Churrasco brasileiro<br>autêntico, assado ao<br>vivo no seu evento.</span>
     </h1>
 
-    <p class="hero-sub reveal reveal-d2" data-i18n="hero.sub">
-      A professional churrasqueiro brings the fire, the premium cuts and the full service — so you can stay with your guests.
+    <p class="hero-sub reveal reveal-d2">
+      <span data-lang="en">A professional churrasqueiro brings the fire, the premium cuts and the full service — so you can stay with your guests.</span>
+      <span data-lang="pt">Um churrasqueiro profissional leva o fogo, os cortes premium e o serviço completo — você fica com seus convidados.</span>
     </p>
 
     <div class="hero-ctas reveal reveal-d3">
       <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27d%20like%20a%20free%20quote%20for%20my%20event." target="_blank" rel="noopener" class="btn-primary">
         <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        <span data-i18n="hero.cta_primary">Get My Free Quote</span>
+        <span data-lang="en">Get My Free Quote</span><span data-lang="pt">Pedir Meu Orçamento</span>
       </a>
       <a href="#packages" class="btn-secondary">
-        <span data-i18n="hero.cta_secondary">See Packages</span>
+        <span data-lang="en">See Packages</span><span data-lang="pt">Ver Pacotes</span>
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </div>
 
     <div class="hero-tags reveal reveal-d4">
-      <span class="hero-tag" data-i18n="hero.tag_1">On-site live fire</span>
-      <span class="hero-tag" data-i18n="hero.tag_2">Premium Brazilian cuts</span>
-      <span class="hero-tag" data-i18n="hero.tag_3">Bilingual EN/PT</span>
-      <span class="hero-tag" data-i18n="hero.tag_4">Florida-wide service</span>
+      <span class="hero-tag"><span data-lang="en">On-site live fire</span><span data-lang="pt">Fogo ao vivo no local</span></span>
+      <span class="hero-tag"><span data-lang="en">Premium Brazilian cuts</span><span data-lang="pt">Cortes brasileiros premium</span></span>
+      <span class="hero-tag"><span data-lang="en">Bilingual EN/PT</span><span data-lang="pt">Bilíngue EN/PT</span></span>
+      <span class="hero-tag"><span data-lang="en">Florida-wide service</span><span data-lang="pt">Atendemos toda a Flórida</span></span>
     </div>
   </div>
 </section>
@@ -133,8 +810,9 @@
         <path class="flame flame-2" d="M12 23c-3.5 0-6-2.5-6-6 0-2.5 1.5-4.5 3-6.5.5 2 1.5 3 3 3 0-3 2-6.5 5-9-1 4 1 6 1 9 2 0 3-1.5 3-4 1.5 2 3 4 3 7 0 3.5-2.5 6-6 6.5z"/>
       </svg>
     </span>
-    <p class="relief-h2 reveal" data-i18n="relief.text">
-      You host. We master the fire.
+    <p class="relief-h2 reveal">
+      <span data-lang="en">You host. We master the fire.</span>
+      <span data-lang="pt">Você cuida dos convidados. Nós cuidamos do fogo.</span>
     </p>
   </div>
 </div>
@@ -143,8 +821,8 @@
 <section class="section" id="experience">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal" data-i18n="experience.label">THE EXPERIENCE</p>
-      <h2 class="section-h2 reveal reveal-d1" data-i18n="experience.title">Why clients choose us</h2>
+      <p class="section-label reveal"><span data-lang="en">THE EXPERIENCE</span><span data-lang="pt">A EXPERIÊNCIA</span></p>
+      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">Why clients choose us</span><span data-lang="pt">Por que nos escolhem</span></h2>
     </div>
     <div class="exp-grid">
       <article class="exp-card reveal">
@@ -158,8 +836,8 @@
           <div class="exp-card-icon">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="#FF6B35"><path class="flame" d="M12 23c-3.5 0-6-2.5-6-6 0-2.5 1.5-4.5 3-6.5.5 2 1.5 3 3 3 0-3 2-6.5 5-9-1 4 1 6 1 9 2 0 3-1.5 3-4 1.5 2 3 4 3 7 0 3.5-2.5 6-6 6.5z"/></svg>
           </div>
-          <h3 class="exp-card-title" data-i18n="experience.card1_title">Live Fire, Brazilian Style</h3>
-          <p class="exp-card-text" data-i18n="experience.card1_text">Skewers over glowing charcoal, the way it's done in Brazil. No ovens, no shortcuts — the fire is the show.</p>
+          <h3 class="exp-card-title"><span data-lang="en">Live Fire, Brazilian Style</span><span data-lang="pt">Fogo de chão, jeito brasileiro</span></h3>
+          <p class="exp-card-text"><span data-lang="en">Skewers over glowing charcoal, the way it's done in Brazil. No ovens, no shortcuts — the fire is the show.</span><span data-lang="pt">Espeto sobre a brasa, do jeito que se faz no Brasil. Sem forno, sem atalho — o fogo é o espetáculo.</span></p>
         </div>
       </article>
       <article class="exp-card reveal reveal-d1">
@@ -173,8 +851,8 @@
           <div class="exp-card-icon">
             <svg width="22" height="22" fill="none" stroke="#FF6B35" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           </div>
-          <h3 class="exp-card-title" data-i18n="experience.card2_title">Premium Cuts</h3>
-          <p class="exp-card-text" data-i18n="experience.card2_text">Picanha and hand-selected cuts, seasoned simply, grilled to perfection in front of your guests.</p>
+          <h3 class="exp-card-title"><span data-lang="en">Premium Cuts</span><span data-lang="pt">Cortes Premium</span></h3>
+          <p class="exp-card-text"><span data-lang="en">Picanha and hand-selected cuts, seasoned simply, grilled to perfection in front of your guests.</span><span data-lang="pt">Picanha e cortes selecionados, temperados com simplicidade e grelhados na frente dos seus convidados.</span></p>
         </div>
       </article>
       <article class="exp-card reveal reveal-d2">
@@ -188,8 +866,8 @@
           <div class="exp-card-icon">
             <svg width="22" height="22" fill="none" stroke="#FF6B35" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           </div>
-          <h3 class="exp-card-title" data-i18n="experience.card3_title">Full Service & Setup</h3>
-          <p class="exp-card-text" data-i18n="experience.card3_text">We bring the grill, the structure and the service. You bring the guests.</p>
+          <h3 class="exp-card-title"><span data-lang="en">Full Service & Setup</span><span data-lang="pt">Serviço Completo</span></h3>
+          <p class="exp-card-text"><span data-lang="en">We bring the grill, the structure and the service. You bring the guests.</span><span data-lang="pt">Levamos a churrasqueira, a estrutura e o serviço. Você só chama os convidados.</span></p>
         </div>
       </article>
     </div>
@@ -211,20 +889,21 @@
           <div class="meet-img-overlay"></div>
           <div class="meet-img-footer">
             <div class="meet-name">Bruno Carioca</div>
-            <span class="meet-title-tag" data-i18n="meet.title_tag">FOUNDER · CHURRASCO SPECIALIST</span>
+            <span class="meet-title-tag">FOUNDER · CHURRASCO SPECIALIST</span>
           </div>
           <div class="rio-badge">
-            <div class="rio-badge-text" data-i18n="meet.badge">RIO DE JANEIRO — WHERE IT STARTED</div>
+            <div class="rio-badge-text">RIO DE JANEIRO — WHERE IT STARTED</div>
           </div>
         </div>
       </div>
       <div class="reveal reveal-d1">
-        <p class="section-label" data-i18n="meet.label">FROM RIO WITH FIRE</p>
-        <h2 class="section-h2" style="margin-bottom:24px" data-i18n="meet.title">The man behind the fire.</h2>
-        <p class="meet-copy" data-i18n-html="meet.resenha_copy">
-          Long before Florida, he built his name the Brazilian way — skewer in one hand and hours of <em>resenha</em> around the grill. The cold beer stayed in Rio. The fire came with him.
+        <p class="section-label"><span data-lang="en">FROM RIO WITH FIRE</span><span data-lang="pt">DO RIO COM FOGO</span></p>
+        <h2 class="section-h2" style="margin-bottom:24px"><span data-lang="en">The man behind the fire.</span><span data-lang="pt">O homem por trás do fogo.</span></h2>
+        <p class="meet-copy">
+          <span data-lang="en">Long before Florida, he built his name the Brazilian way — skewer in one hand and hours of <em>resenha</em> around the grill. The cold beer stayed in Rio. The fire came with him.</span>
+          <span data-lang="pt">Antes da Flórida, ele fez nome do jeito brasileiro — espeto numa mão e horas de resenha em volta da brasa. A gelada ficou no Rio. O fogo, ele trouxe.</span>
         </p>
-        <p class="meet-copy-note" data-i18n-html="meet.resenha_note"><em>resenha</em> (n.) — the untranslatable Brazilian art of good company around the fire.</p>
+        <p class="meet-copy-note" data-lang="en"><em>resenha</em> (n.) — the untranslatable Brazilian art of good company around the fire.</p>
         <p class="meet-sig">— O Carioca</p>
       </div>
     </div>
@@ -235,56 +914,57 @@
 <section class="section" id="packages">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal" data-i18n="packages.label">PACKAGES</p>
-      <h2 class="section-h2 reveal reveal-d1" data-i18n="packages.title">Choose your experience</h2>
+      <p class="section-label reveal"><span data-lang="en">PACKAGES</span><span data-lang="pt">PACOTES</span></p>
+      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">Choose your experience</span><span data-lang="pt">Escolha sua experiência</span></h2>
     </div>
     <div class="pkg-grid">
       <!-- Signature (anchor) -->
       <article class="pkg-card featured reveal">
-        <span class="pkg-badge" data-i18n="packages.badge_signature">SIGNATURE</span>
-        <h3 class="pkg-title" style="margin-top:12px" data-i18n="packages.title_signature">Premium Churrasco Experience</h3>
-        <p class="pkg-price" data-i18n-html="packages.price_signature">US$70–100<span>+/guest</span></p>
+        <span class="pkg-badge"><span data-lang="en">SIGNATURE</span><span data-lang="pt">ASSINATURA</span></span>
+        <h3 class="pkg-title" style="margin-top:12px"><span data-lang="en">Premium Churrasco Experience</span><span data-lang="pt">Experiência Premium de Churrasco</span></h3>
+        <p class="pkg-price">US$70–100<span>+/guest</span></p>
         <ul class="pkg-list" aria-label="Package includes">
-          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-i18n="packages.sig_item_1">Custom menu & hand-selected premium cuts</span></li>
-          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-i18n="packages.sig_item_2">Full service & elevated presentation</span></li>
-          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-i18n="packages.sig_item_3">Ideal for 20+ guests</span></li>
+          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-lang="en">Custom menu & hand-selected premium cuts</span><span data-lang="pt">Cardápio personalizado e cortes premium selecionados</span></li>
+          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-lang="en">Full service & elevated presentation</span><span data-lang="pt">Serviço completo e apresentação elevada</span></li>
+          <li><span class="pkg-check" aria-hidden="true">✓</span><span data-lang="en">Ideal for 20+ guests</span><span data-lang="pt">Ideal para 20+ convidados</span></li>
         </ul>
-        <a href="https://wa.me/15614034603?text=Hi%2C%20I%27m%20interested%20in%20the%20Premium%20Churrasco%20Experience." target="_blank" rel="noopener" class="pkg-cta primary" data-i18n="packages.cta_request">
-          Request This Package
+        <a href="https://wa.me/15614034603?text=Hi%2C%20I%27m%20interested%20in%20the%20Premium%20Churrasco%20Experience." target="_blank" rel="noopener" class="pkg-cta primary">
+          <span data-lang="en">Request This Package</span><span data-lang="pt">Solicitar este Pacote</span>
         </a>
       </article>
 
       <!-- Full BBQ -->
       <article class="pkg-card reveal reveal-d1">
-        <span class="pkg-badge-inline" data-i18n="packages.badge_popular">MOST BOOKED</span>
-        <h3 class="pkg-title" data-i18n="packages.title_full">Full Churrasco</h3>
-        <p class="pkg-price neutral" data-i18n="packages.price_full">from US$500</p>
+        <span class="pkg-badge-inline"><span data-lang="en">MOST BOOKED</span><span data-lang="pt">MAIS PEDIDO</span></span>
+        <h3 class="pkg-title"><span data-lang="en">Full Churrasco</span><span data-lang="pt">Churrasco Completo</span></h3>
+        <p class="pkg-price neutral">from US$500</p>
         <ul class="pkg-list">
-          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-i18n="packages.full_item_1">Specialist + full structure & grill</span></li>
-          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-i18n="packages.full_item_2">Menu-defined meats & sides</span></li>
-          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-i18n="packages.full_item_3">Ideal for small & medium events</span></li>
+          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-lang="en">Specialist + full structure & grill</span><span data-lang="pt">Especialista + estrutura completa e churrasqueira</span></li>
+          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-lang="en">Menu-defined meats & sides</span><span data-lang="pt">Carnes e acompanhamentos definidos no cardápio</span></li>
+          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-lang="en">Ideal for small & medium events</span><span data-lang="pt">Ideal para eventos pequenos e médios</span></li>
         </ul>
-        <a href="https://wa.me/15614034603?text=Hi%2C%20I%27m%20interested%20in%20the%20Full%20Churrasco%20package." target="_blank" rel="noopener" class="pkg-cta outline" data-i18n="packages.cta_request">
-          Request This Package
+        <a href="https://wa.me/15614034603?text=Hi%2C%20I%27m%20interested%20in%20the%20Full%20Churrasco%20package." target="_blank" rel="noopener" class="pkg-cta outline">
+          <span data-lang="en">Request This Package</span><span data-lang="pt">Solicitar este Pacote</span>
         </a>
       </article>
 
       <!-- The Churrasqueiro -->
       <article class="pkg-card reveal reveal-d2">
-        <h3 class="pkg-title" style="margin-top:22px" data-i18n="packages.title_chef">The Churrasqueiro</h3>
-        <p class="pkg-price neutral" data-i18n-html="packages.price_chef">US$50–75<span>/hour</span></p>
+        <h3 class="pkg-title" style="margin-top:22px"><span data-lang="en">The Churrasqueiro</span><span data-lang="pt">O Churrasqueiro</span></h3>
+        <p class="pkg-price neutral">US$50–75<span>/hour</span></p>
         <ul class="pkg-list">
-          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-i18n="packages.chef_item_1">Professional on-site specialist</span></li>
-          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-i18n="packages.chef_item_2">Prep, fire & service</span></li>
-          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-i18n="packages.chef_item_3">You provide meats & sides</span></li>
+          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-lang="en">Professional on-site specialist</span><span data-lang="pt">Especialista profissional no local</span></li>
+          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-lang="en">Prep, fire & service</span><span data-lang="pt">Preparo, fogo e serviço</span></li>
+          <li><span class="pkg-check gold" aria-hidden="true">✓</span><span data-lang="en">You provide meats & sides</span><span data-lang="pt">Você fornece carnes e acompanhamentos</span></li>
         </ul>
-        <a href="https://wa.me/15614034603?text=Hi%2C%20I%27m%20interested%20in%20The%20Churrasqueiro%20service." target="_blank" rel="noopener" class="pkg-cta outline" data-i18n="packages.cta_request">
-          Request This Package
+        <a href="https://wa.me/15614034603?text=Hi%2C%20I%27m%20interested%20in%20The%20Churrasqueiro%20service." target="_blank" rel="noopener" class="pkg-cta outline">
+          <span data-lang="en">Request This Package</span><span data-lang="pt">Solicitar este Pacote</span>
         </a>
       </article>
     </div>
-    <p class="pkg-note reveal" data-i18n-html="packages.example_note">
-      Example: a full package for 10 guests starts around <strong style="color:var(--cream-50)">US$600</strong>, depending on menu and setup.
+    <p class="pkg-note reveal">
+      <span data-lang="en">Example: a full package for 10 guests starts around <strong style="color:var(--cream-50)">US$600</strong>, depending on menu and setup.</span>
+      <span data-lang="pt">Exemplo: pacote completo para 10 convidados a partir de <strong style="color:var(--cream-50)">US$600</strong>, dependendo do cardápio e estrutura.</span>
     </p>
   </div>
 </section>
@@ -293,122 +973,54 @@
 <section class="section section-alt" id="how">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal" data-i18n="how.label">HOW IT WORKS</p>
-      <h2 class="section-h2 reveal reveal-d1" data-i18n="how.title">Simple. Professional. Stress-free.</h2>
+      <p class="section-label reveal"><span data-lang="en">HOW IT WORKS</span><span data-lang="pt">COMO FUNCIONA</span></p>
+      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">Simple. Professional. Stress-free.</span><span data-lang="pt">Simples. Profissional. Sem estresse.</span></h2>
     </div>
     <div class="steps-grid">
       <div class="step reveal">
         <div class="step-num" aria-hidden="true">01</div>
-        <h3 class="step-title" data-i18n="how.step1_title">Tell us about your event</h3>
+        <h3 class="step-title"><span data-lang="en">Tell us about your event</span><span data-lang="pt">Conte sobre seu evento</span></h3>
       </div>
       <div class="step reveal reveal-d1">
         <div class="step-num" aria-hidden="true">02</div>
-        <h3 class="step-title" data-i18n="how.step2_title">We design your menu</h3>
+        <h3 class="step-title"><span data-lang="en">We design your menu</span><span data-lang="pt">Montamos seu cardápio</span></h3>
       </div>
       <div class="step reveal reveal-d2">
         <div class="step-num" aria-hidden="true">03</div>
-        <h3 class="step-title" data-i18n="how.step3_title">We bring the fire</h3>
+        <h3 class="step-title"><span data-lang="en">We bring the fire</span><span data-lang="pt">Levamos o fogo</span></h3>
       </div>
       <div class="step reveal reveal-d3">
         <div class="step-num" aria-hidden="true">04</div>
-<!-- ══════════════════════════════════════ IDEAL FOR (PIN MOTION SCROLL) ══════════════════════════════════════ -->
-<section class="section section-alt pin-scroll-section" id="ideal">
-  <div class="container mx-auto px-4 max-w-6xl">
-    <div class="pin-scroll-grid">
-      
-      <!-- Coluna Esquerda: PINADA / STICKY -->
-      <div class="pin-scroll-sticky-col">
-        <div class="sticky-head-box p-6 bg-charcoal-800 border border-line rounded-2xl backdrop-blur-md">
-          <p class="section-label mb-2" data-i18n="perfect_for.label">PERFECT FOR</p>
-          <h2 class="section-h2 text-3xl md:text-4xl font-display font-bold text-cream-50 leading-tight" data-i18n="perfect_for.title">
-            Any occasion worth celebrating
-          </h2>
-          <p class="mt-4 text-smoke-400 text-sm leading-relaxed" data-i18n="perfect_for.desc">
-            From intimate backyard BBQs to grand corporate events across South Florida.
-          </p>
-        </div>
+        <h3 class="step-title"><span data-lang="en">You enjoy the party</span><span data-lang="pt">Você curte a festa</span></h3>
       </div>
+    </div>
+  </div>
+</section>
 
-      <!-- Coluna Direita: CARDS ROLANTES -->
-      <div class="pin-scroll-cards-col space-y-6">
-        
-        <!-- Tile 1: Backyard Gatherings -->
-        <article class="ideal-card-pin group">
-          <div class="ideal-card-inner flex items-start gap-5">
-            <div class="ideal-icon-badge flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-charcoal-800 to-charcoal-950 border border-gold-500/30 flex items-center justify-center text-gold-400 group-hover:border-ember-500 group-hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] group-hover:scale-105 transition-all duration-300 relative overflow-hidden">
-              <div class="absolute inset-0 bg-ember-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <svg class="w-7 h-7 relative z-10 transition-transform duration-300 group-hover:rotate-[-6deg]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 10.5L12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 20v-9.5z" stroke="currentColor" class="text-gold-400 group-hover:text-ember-400 transition-colors"/>
-                <path d="M9 21v-6a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 15v6" stroke="#FF6B35" stroke-width="1.8"/>
-                <path d="M12 8a1.5 1.5 0 0 1 1.5 1.5c0 1.2-1.5 2-1.5 2s-1.5-.8-1.5-2A1.5 1.5 0 0 1 12 8z" fill="#FF6B35" stroke="none" class="animate-pulse"/>
-              </svg>
-            </div>
-            <div class="pt-1">
-              <h3 class="ideal-title-lg font-display text-xl font-bold text-cream-50 mb-1.5 group-hover:text-gold-300 transition-colors" data-i18n="perfect_for.card1_title">Backyard Gatherings</h3>
-              <p class="ideal-desc text-smoke-400 text-sm leading-relaxed" data-i18n="perfect_for.card1_desc">Relax with family while Bruno handles the grill, charcoal, and service right in your backyard.</p>
-            </div>
-          </div>
-        </article>
-
-        <!-- Tile 2: Birthdays & Parties -->
-        <article class="ideal-card-pin group">
-          <div class="ideal-card-inner flex items-start gap-5">
-            <div class="ideal-icon-badge flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-charcoal-800 to-charcoal-950 border border-gold-500/30 flex items-center justify-center text-gold-400 group-hover:border-ember-500 group-hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] group-hover:scale-105 transition-all duration-300 relative overflow-hidden">
-              <div class="absolute inset-0 bg-ember-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <svg class="w-7 h-7 relative z-10 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 20h16a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1z" stroke="currentColor"/>
-                <path d="M6 14v-4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v4" stroke="currentColor"/>
-                <path d="M8 9V6M12 9V6M16 9V6" stroke="#FF6B35" stroke-width="1.8"/>
-                <circle cx="8" cy="4" r="1" fill="#FFB703" stroke="none" class="animate-ping"/>
-                <circle cx="12" cy="4" r="1" fill="#FF6B35" stroke="none"/>
-                <circle cx="16" cy="4" r="1" fill="#FFB703" stroke="none" class="animate-ping"/>
-              </svg>
-            </div>
-            <div class="pt-1">
-              <h3 class="ideal-title-lg font-display text-xl font-bold text-cream-50 mb-1.5 group-hover:text-gold-300 transition-colors" data-i18n="perfect_for.card2_title">Birthdays & Parties</h3>
-              <p class="ideal-desc text-smoke-400 text-sm leading-relaxed" data-i18n="perfect_for.card2_desc">Make your birthday unforgettable with live Brazilian barbecue and hot picanha served nonstop.</p>
-            </div>
-          </div>
-        </article>
-
-        <!-- Tile 3: Corporate Events -->
-        <article class="ideal-card-pin group">
-          <div class="ideal-card-inner flex items-start gap-5">
-            <div class="ideal-icon-badge flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-charcoal-800 to-charcoal-950 border border-gold-500/30 flex items-center justify-center text-gold-400 group-hover:border-ember-500 group-hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] group-hover:scale-105 transition-all duration-300 relative overflow-hidden">
-              <div class="absolute inset-0 bg-ember-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <svg class="w-7 h-7 relative z-10 transition-transform duration-300 group-hover:translate-y-[-2px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor"/>
-                <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="#FF6B35" stroke-width="1.8"/>
-                <path d="M12 12v3" stroke="currentColor"/>
-                <circle cx="12" cy="12" r="1.5" fill="#FFB703" stroke="none"/>
-              </svg>
-            </div>
-            <div class="pt-1">
-              <h3 class="ideal-title-lg font-display text-xl font-bold text-cream-50 mb-1.5 group-hover:text-gold-300 transition-colors" data-i18n="perfect_for.card3_title">Corporate Events</h3>
-              <p class="ideal-desc text-smoke-400 text-sm leading-relaxed" data-i18n="perfect_for.card3_desc">Impress clients and reward your team with a high-end Brazilian steakhouse experience at your office or venue.</p>
-            </div>
-          </div>
-        </article>
-
-        <!-- Tile 4: Weddings & Receptions -->
-        <article class="ideal-card-pin group">
-          <div class="ideal-card-inner flex items-start gap-5">
-            <div class="ideal-icon-badge flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-charcoal-800 to-charcoal-950 border border-gold-500/30 flex items-center justify-center text-gold-400 group-hover:border-ember-500 group-hover:shadow-[0_0_20px_rgba(255,107,53,0.3)] group-hover:scale-105 transition-all duration-300 relative overflow-hidden">
-              <div class="absolute inset-0 bg-ember-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <svg class="w-7 h-7 relative z-10 transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="#FF6B35" stroke-width="1.8"/>
-                <path d="M12 7.5a2.5 2.5 0 0 1 2.5 2.5" stroke="#FFB703" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div class="pt-1">
-              <h3 class="ideal-title-lg font-display text-xl font-bold text-cream-50 mb-1.5 group-hover:text-gold-300 transition-colors" data-i18n="perfect_for.card4_title">Weddings & Receptions</h3>
-              <p class="ideal-desc text-smoke-400 text-sm leading-relaxed" data-i18n="perfect_for.card4_desc">Elegant, rustic, and unforgettable meat buffet service tailored for your special reception day.</p>
-            </div>
-          </div>
-        </article>
-
+<!-- ══════════════════════════════════════ IDEAL FOR ══════════════════════════════════════ -->
+<section class="section" id="ideal">
+  <div class="section-inner">
+    <div class="section-head">
+      <p class="section-label reveal"><span data-lang="en">PERFECT FOR</span><span data-lang="pt">IDEAL PARA</span></p>
+      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">Any occasion worth celebrating</span><span data-lang="pt">Qualquer ocasião que merece comemoração</span></h2>
+    </div>
+    <div class="ideal-grid">
+      <div class="ideal-tile reveal">
+        <span class="ideal-icon" aria-hidden="true">🏡</span>
+        <p class="ideal-title"><span data-lang="en">Backyard Gatherings</span><span data-lang="pt">Reuniões em Casa</span></p>
       </div>
-
+      <div class="ideal-tile reveal reveal-d1">
+        <span class="ideal-icon" aria-hidden="true">🎂</span>
+        <p class="ideal-title"><span data-lang="en">Birthdays & Parties</span><span data-lang="pt">Aniversários</span></p>
+      </div>
+      <div class="ideal-tile reveal reveal-d2">
+        <span class="ideal-icon" aria-hidden="true">💼</span>
+        <p class="ideal-title"><span data-lang="en">Corporate Events</span><span data-lang="pt">Confraternizações</span></p>
+      </div>
+      <div class="ideal-tile reveal reveal-d3">
+        <span class="ideal-icon" aria-hidden="true">💍</span>
+        <p class="ideal-title"><span data-lang="en">Weddings & Receptions</span><span data-lang="pt">Casamentos</span></p>
+      </div>
     </div>
   </div>
 </section>
@@ -417,8 +1029,8 @@
 <section class="section section-alt" id="reviews">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal" data-i18n="reviews.label">TESTIMONIALS</p>
-      <h2 class="section-h2 reveal reveal-d1" data-i18n="reviews.title">What clients say</h2>
+      <p class="section-label reveal"><span data-lang="en">TESTIMONIALS</span><span data-lang="pt">DEPOIMENTOS</span></p>
+      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">What clients say</span><span data-lang="pt">O que os clientes dizem</span></h2>
     </div>
 
     <div class="reviews-grid">
@@ -432,11 +1044,12 @@
           <div class="review-stars" aria-label="5 out of 5 stars">
             <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
           </div>
-          <blockquote class="review-quote" data-i18n="reviews.review1_quote">
-            "Bruno brought the whole experience to our backyard. The picanha was unbelievable — guests were literally lining up for seconds. Worth every cent."
+          <blockquote class="review-quote">
+            <span data-lang="en">"Bruno brought the whole experience to our backyard. The picanha was unbelievable — guests were literally lining up for seconds. Worth every cent."</span>
+            <span data-lang="pt">"Bruno trouxe a experiência completa para o nosso quintal. A picanha foi inacreditável — os convidados ficaram na fila para repetir. Valeu cada centavo."</span>
           </blockquote>
           <p class="review-name">Marcus A.</p>
-          <p class="review-meta" data-i18n="reviews.review1_meta">BOCA RATON, FL · BIRTHDAY PARTY</p>
+          <p class="review-meta">BOCA RATON, FL · <span data-lang="en">BIRTHDAY PARTY</span><span data-lang="pt">ANIVERSÁRIO</span></p>
         </div>
       </article>
 
@@ -450,11 +1063,12 @@
           <div class="review-stars" aria-label="5 out of 5 stars">
             <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
           </div>
-          <blockquote class="review-quote" data-i18n="reviews.review2_quote">
-            "We hired him for our company holiday party in West Palm. The setup was seamless, the food was incredible. Everyone kept asking where we found him."
+          <blockquote class="review-quote">
+            <span data-lang="en">"We hired him for our company holiday party in West Palm. The setup was seamless, the food was incredible. Everyone kept asking where we found him."</span>
+            <span data-lang="pt">"Contratamos para nossa festa corporativa. A organização foi impecável, a comida incrível. Todo mundo perguntou onde encontramos ele."</span>
           </blockquote>
           <p class="review-name">Jennifer L.</p>
-          <p class="review-meta" data-i18n="reviews.review2_meta">WEST PALM BEACH, FL · CORPORATE EVENT</p>
+          <p class="review-meta">WEST PALM BEACH, FL · <span data-lang="en">CORPORATE EVENT</span><span data-lang="pt">EVENTO CORPORATIVO</span></p>
         </div>
       </article>
 
@@ -468,11 +1082,12 @@
           <div class="review-stars" aria-label="5 out of 5 stars">
             <span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span><span class="review-star" aria-hidden="true">★</span>
           </div>
-          <blockquote class="review-quote" data-i18n="reviews.review3_quote">
-            "I'm Brazilian and I was skeptical — until I tasted it. This is the real thing. Authentic churrasco the way my family makes it. Highly recommended."
+          <blockquote class="review-quote">
+            <span data-lang="en">"I'm Brazilian and I was skeptical — until I tasted it. This is the real thing. Authentic churrasco the way my family makes it. Highly recommended."</span>
+            <span data-lang="pt">"Sou brasileiro e estava cético — até provar. Isso é de verdade. Churrasco autêntico do jeito que minha família faz. Recomendo muito."</span>
           </blockquote>
           <p class="review-name">Rafael M.</p>
-          <p class="review-meta" data-i18n="reviews.review3_meta">MIAMI, FL · FAMILY GATHERING</p>
+          <p class="review-meta">MIAMI, FL · <span data-lang="en">FAMILY GATHERING</span><span data-lang="pt">REUNIÃO DE FAMÍLIA</span></p>
         </div>
       </article>
     </div>
@@ -485,8 +1100,9 @@
         <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80&auto=format&fit=crop&faces=1" alt="" class="social-avatar" loading="lazy" aria-hidden="true"/>
         <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80&auto=format&fit=crop&faces=1" alt="" class="social-avatar" loading="lazy" aria-hidden="true"/>
       </div>
-      <p class="social-text" data-i18n-html="reviews.social_html">
-        <strong>★ 5.0</strong> — Trusted by families, companies & couples across Florida
+      <p class="social-text">
+        <span data-lang="en"><strong>★ 5.0</strong> — Trusted by families, companies & couples across Florida</span>
+        <span data-lang="pt"><strong>★ 5.0</strong> — Escolhido por famílias, empresas e casais em toda a Flórida</span>
       </p>
     </div>
   </div>
@@ -496,10 +1112,11 @@
 <section class="section" id="area">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal" data-i18n="area.label">SERVICE AREA</p>
-      <h2 class="section-h2 reveal reveal-d1" data-i18n="area.title">We serve all of Florida</h2>
-      <p style="color:var(--smoke-400);margin-top:12px;font-size:.9rem" class="reveal reveal-d2" data-i18n="area.sub">
-        Based in Palm Beach County (561). Available statewide for larger events.
+      <p class="section-label reveal"><span data-lang="en">SERVICE AREA</span><span data-lang="pt">ÁREA DE ATENDIMENTO</span></p>
+      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">We serve all of Florida</span><span data-lang="pt">Atendemos toda a Flórida</span></h2>
+      <p style="color:var(--smoke-400);margin-top:12px;font-size:.9rem" class="reveal reveal-d2">
+        <span data-lang="en">Based in Palm Beach County (561). Available statewide for larger events.</span>
+        <span data-lang="pt">Base em Palm Beach County (561). Disponíveis para todo o estado em eventos maiores.</span>
       </p>
     </div>
     <div class="area-chips">
@@ -522,109 +1139,30 @@
   </div>
 </section>
 
-<!-- ══════════════════════════════════════ FAQ (PERGUNTAS FREQUENTES) ══════════════════════════════════════ -->
-<section id="faq" class="section section-alt py-20 bg-charcoal-900 text-cream-50">
-  <div class="container mx-auto px-4 max-w-4xl">
-    <!-- Header -->
-    <div class="section-head text-center mb-12">
-      <p class="section-label reveal" data-i18n="faq.label">FREQUENTLY ASKED QUESTIONS</p>
-      <h2 class="section-h2 reveal reveal-d1" data-i18n="faq.title">Everything you need to know</h2>
-    </div>
-
-    <!-- Accordion Group -->
-    <div class="faq-accordion space-y-4 max-w-3xl mx-auto">
-      <!-- Item 1: Área de Atendimento -->
-      <details class="faq-item group bg-charcoal-800 border border-line rounded-xl p-5 cursor-pointer transition-all hover:border-gold-500/40">
-        <summary class="faq-question font-display text-lg font-semibold flex justify-between items-center list-none text-cream-50">
-          <span data-i18n="faq.q1">Which Florida cities does BBQ Carioca serve?</span>
-          <svg class="w-5 h-5 text-gold-400 transition-transform group-open:rotate-180 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </summary>
-        <p class="faq-answer mt-4 text-smoke-400 text-sm leading-relaxed" data-i18n="faq.a1">
-          We serve all of South Florida, including Boca Raton, Delray Beach, Palm Beach, Fort Lauderdale, Miami, West Palm Beach, and surrounding areas. For corporate or larger events, we also serve Orlando.
-        </p>
-      </details>
-
-      <!-- Item 2: O que está incluído -->
-      <details class="faq-item group bg-charcoal-800 border border-line rounded-xl p-5 cursor-pointer transition-all hover:border-gold-500/40">
-        <summary class="faq-question font-display text-lg font-semibold flex justify-between items-center list-none text-cream-50">
-          <span data-i18n="faq.q2">What is included in the catering packages?</span>
-          <svg class="w-5 h-5 text-gold-400 transition-transform group-open:rotate-180 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </summary>
-        <p class="faq-answer mt-4 text-smoke-400 text-sm leading-relaxed" data-i18n="faq.a2">
-          Our packages include a professional Pitmaster (Chef Bruno), charcoal grill setup, prime beef cuts (Picanha, Top Sirloin, Ribs, Sausages), appetizers (garlic bread), traditional sides (farofa, vinaigrette, rice), premium disposable plates & cutlery, and grill area cleanup.
-        </p>
-      </details>
-
-      <!-- Item 3: Duração do Serviço -->
-      <details class="faq-item group bg-charcoal-800 border border-line rounded-xl p-5 cursor-pointer transition-all hover:border-gold-500/40">
-        <summary class="faq-question font-display text-lg font-semibold flex justify-between items-center list-none text-cream-50">
-          <span data-i18n="faq.q3">How long does the BBQ service last during the event?</span>
-          <svg class="w-5 h-5 text-gold-400 transition-transform group-open:rotate-180 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </summary>
-        <p class="faq-answer mt-4 text-smoke-400 text-sm leading-relaxed" data-i18n="faq.a3">
-          We arrive 2 hours prior to serving time to set up and start the fire. The continuous live barbecue buffet service lasts 3 to 4 hours for your guests.
-        </p>
-      </details>
-
-      <!-- Item 4: Número Mínimo de Convidados -->
-      <details class="faq-item group bg-charcoal-800 border border-line rounded-xl p-5 cursor-pointer transition-all hover:border-gold-500/40">
-        <summary class="faq-question font-display text-lg font-semibold flex justify-between items-center list-none text-cream-50">
-          <span data-i18n="faq.q4">What is the minimum and maximum guest capacity?</span>
-          <svg class="w-5 h-5 text-gold-400 transition-transform group-open:rotate-180 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </summary>
-        <p class="faq-answer mt-4 text-smoke-400 text-sm leading-relaxed" data-i18n="faq.a4">
-          We cater from small backyard parties (starting at 15 guests) to large corporate functions, birthdays, and weddings with over 200 guests.
-        </p>
-      </details>
-
-      <!-- Item 5: Reserva e Pagamento -->
-      <details class="faq-item group bg-charcoal-800 border border-line rounded-xl p-5 cursor-pointer transition-all hover:border-gold-500/40">
-        <summary class="faq-question font-display text-lg font-semibold flex justify-between items-center list-none text-cream-50">
-          <span data-i18n="faq.q5">How does date reservation and payment work?</span>
-          <svg class="w-5 h-5 text-gold-400 transition-transform group-open:rotate-180 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </summary>
-        <p class="faq-answer mt-4 text-smoke-400 text-sm leading-relaxed" data-i18n="faq.a5">
-          To reserve your event date, we require a 20% deposit. The remaining balance is paid on the day of the event. We accept Zelle, Credit Cards, Venmo, and Cash.
-        </p>
-      </details>
-
-      <!-- Item 6: Política de Chuva -->
-      <details class="faq-item group bg-charcoal-800 border border-line rounded-xl p-5 cursor-pointer transition-all hover:border-gold-500/40">
-        <summary class="faq-question font-display text-lg font-semibold flex justify-between items-center list-none text-cream-50">
-          <span data-i18n="faq.q6">What if it rains on the day of my event?</span>
-          <svg class="w-5 h-5 text-gold-400 transition-transform group-open:rotate-180 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </summary>
-        <p class="faq-answer mt-4 text-smoke-400 text-sm leading-relaxed" data-i18n="faq.a6">
-          Our team provides professional rain tents for the grill area. The fire stays hot and your event runs smoothly regardless of weather!
-        </p>
-      </details>
-    </div>
-  </div>
-</section>
-
 <!-- ══════════════════════════════════════ QUOTE FORM ══════════════════════════════════════ -->
 <section class="section section-alt" id="quote">
   <div class="section-inner">
     <div class="section-head">
-      <p class="section-label reveal" data-i18n="quote.label">FREE QUOTE</p>
-      <h2 class="section-h2 reveal reveal-d1" data-i18n="quote.title">Let's plan your event</h2>
-      <p style="color:var(--smoke-400);margin-top:12px;font-size:.9rem" class="reveal reveal-d2" data-i18n="quote.sub">
-        Fill in the details and we'll reply on WhatsApp, usually within a few hours.
+      <p class="section-label reveal"><span data-lang="en">FREE QUOTE</span><span data-lang="pt">ORÇAMENTO GRÁTIS</span></p>
+      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">Let's plan your event</span><span data-lang="pt">Vamos planejar seu evento</span></h2>
+      <p style="color:var(--smoke-400);margin-top:12px;font-size:.9rem" class="reveal reveal-d2">
+        <span data-lang="en">Fill in the details and we'll reply on WhatsApp, usually within a few hours.</span>
+        <span data-lang="pt">Preencha os dados e respondemos no WhatsApp, geralmente em poucas horas.</span>
       </p>
     </div>
     <div class="form-wrap reveal">
       <form id="quote-form" novalidate onsubmit="handleQuote(event)">
         <div class="form-grid">
           <div class="form-field">
-            <label for="event-date"><span data-i18n="quote.field_date">Event Date</span></label>
+            <label for="event-date"><span data-lang="en">Event Date</span><span data-lang="pt">Data do Evento</span></label>
             <input type="date" id="event-date" name="date" class="form-control" required />
           </div>
           <div class="form-field">
-            <label for="event-city"><span data-i18n="quote.field_city">City / Area</span></label>
-            <input type="text" id="event-city" name="city" class="form-control" placeholder="e.g. Boca Raton" data-i18n-placeholder="quote.placeholder_city" required />
+            <label for="event-city"><span data-lang="en">City / Area</span><span data-lang="pt">Cidade / Região</span></label>
+            <input type="text" id="event-city" name="city" class="form-control" placeholder="e.g. Boca Raton" required />
           </div>
           <div class="form-field">
-            <label for="event-guests"><span data-i18n="quote.field_guests">Est. Guests</span></label>
+            <label for="event-guests"><span data-lang="en">Est. Guests</span><span data-lang="pt">Convidados Estimados</span></label>
             <select id="event-guests" name="guests" class="form-control" required>
               <option value="" disabled selected data-i18n="quote.select_guests">Select guest count…</option>
               <option value="1–10">1–10</option>
@@ -635,20 +1173,20 @@
             </select>
           </div>
           <div class="form-field">
-            <label for="event-grill"><span data-i18n="quote.field_grill">Have a grill?</span></label>
+            <label for="event-grill"><span data-lang="en">Have a grill?</span><span data-lang="pt">Tem churrasqueira?</span></label>
             <select id="event-grill" name="grill" class="form-control">
               <option value="yes" data-i18n="quote.grill_yes">Yes, grill available</option>
               <option value="no" data-i18n="quote.grill_no">No — please bring setup</option>
             </select>
           </div>
           <div class="form-field form-full">
-            <label for="event-notes"><span data-i18n="quote.field_notes">Meats & notes (optional)</span></label>
-            <textarea id="event-notes" name="notes" class="form-control" placeholder="Picanha, sausage, vegetarian sides…" data-i18n-placeholder="quote.placeholder_notes" rows="3"></textarea>
+            <label for="event-notes"><span data-lang="en">Meats & notes (optional)</span><span data-lang="pt">Carnes e observações (opcional)</span></label>
+            <textarea id="event-notes" name="notes" class="form-control" placeholder="Picanha, sausage, vegetarian sides…" rows="3"></textarea>
           </div>
         </div>
         <button type="submit" class="form-submit">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          <span data-i18n="quote.submit">Get My Free Quote on WhatsApp</span>
+          <span data-lang="en">Get My Free Quote on WhatsApp</span><span data-lang="pt">Pedir Orçamento no WhatsApp</span>
         </button>
       </form>
     </div>
@@ -663,8 +1201,9 @@
     <div class="footer-top">
       <div>
         <p class="footer-brand-name">BBQ do Carioca</p>
-        <p class="footer-brand-sub" data-i18n="footer.sub">
-          Authentic Brazilian churrasco with flavor, quality and service in Florida.
+        <p class="footer-brand-sub">
+          <span data-lang="en">Authentic Brazilian churrasco with flavor, quality and service in Florida.</span>
+          <span data-lang="pt">Churrasco brasileiro com sabor, qualidade e atendimento na Flórida.</span>
         </p>
       </div>
       <div class="footer-contact">
@@ -674,7 +1213,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p data-i18n="footer.rights">© 2026 BBQ do Carioca. All rights reserved.</p>
+      <p>© 2026 BBQ do Carioca. All rights reserved.</p>
       <div class="footer-lang">
         <button id="footer-lang-en" class="footer-lang-btn">English</button>
         <button id="footer-lang-pt" class="footer-lang-btn">Português</button>
@@ -687,16 +1226,168 @@
 <div class="wa-widget">
   <div id="wa-bubble" class="wa-bubble">
     <button class="wa-close" id="wa-close" aria-label="Close notification">×</button>
-    <span data-i18n="wa.bubble">Let's chat about your event!</span>
+    <span data-lang="en">Let's chat about your event!</span>
+    <span data-lang="pt">Vamos conversar sobre seu evento?</span>
   </div>
   <a href="https://wa.me/15614034603?text=Hi%20BBQ%20do%20Carioca%2C%20I%27d%20like%20a%20quote%20for%20my%20event." target="_blank" rel="noopener" class="wa-btn" aria-label="Chat on WhatsApp">
     <svg width="28" height="28" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
   </a>
 </div>
 
+<script>
+/* ── LANGUAGE ── */
+function setLang(lang) {
+  document.documentElement.lang = lang;
+  try { localStorage.setItem('bbq-lang', lang); } catch(e){}
+  ['lang-en', 'footer-lang-en'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', lang === 'en');
+  });
+  ['lang-pt', 'footer-lang-pt'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', lang === 'pt');
+  });
+}
+document.getElementById('lang-en')?.addEventListener('click', () => setLang('en'));
+document.getElementById('lang-pt')?.addEventListener('click', () => setLang('pt'));
+document.getElementById('footer-lang-en')?.addEventListener('click', () => setLang('en'));
+document.getElementById('footer-lang-pt')?.addEventListener('click', () => setLang('pt'));
+try { if (localStorage.getItem('bbq-lang') === 'pt') setLang('pt'); } catch(e){}
+
+/* ── MOBILE MENU ── */
+const mobMenu = document.getElementById('mob-menu');
+const mobToggle = document.getElementById('mob-toggle');
+function closeMob() {
+  if (mobMenu) mobMenu.classList.remove('open');
+  if (mobToggle) mobToggle.setAttribute('aria-expanded','false');
+  document.body.style.overflow = '';
+}
+if (mobToggle && mobMenu) {
+  mobToggle.addEventListener('click', () => {
+    const open = mobMenu.classList.toggle('open');
+    mobToggle.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+}
+
+/* ── SCROLL REVEALS ── */
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }});
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* ── HERO BG LOAD ── */
+const heroBg = document.getElementById('hero-bg');
+if (heroBg) {
+  const img = new Image();
+  img.onload = () => heroBg.classList.add('loaded');
+  img.src = 'img/bg-slider-01.png';
+}
+
+/* ── MARQUEE ── */
+(function buildMarquee() {
+  const items = ['PICANHA','COSTELA','LINGUIÇA','PÃO DE ALHO','FRANGO','MAMINHA','ALCATRA','VINAGRETE'];
+  const marqueeEl = document.getElementById('marquee');
+  let html = '';
+  const repeat = 4;
+  for (let r = 0; r < repeat; r++) {
+    items.forEach(item => {
+      html += `<span class="marquee-item">${item}<span class="marquee-dot" aria-hidden="true">•</span></span>`;
+    });
+  }
+  marqueeEl.innerHTML = html;
+})();
+
+/* ── EMBER PARTICLES ── */
+(function initEmbers() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const canvas = document.getElementById('ember-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  function spawnParticle() {
+    return {
+      x: rand(0, W),
+      y: H + rand(10, 40),
+      vx: rand(-0.5, 0.5),
+      vy: rand(-1.2, -2.4),
+      life: 1,
+      decay: rand(0.004, 0.009),
+      size: rand(1.5, 3.5),
+      color: Math.random() > .5 ? '#FF6B35' : '#D9A441'
+    };
+  }
+
+  for (let i = 0; i < 35; i++) {
+    const p = spawnParticle();
+    p.y = rand(0, H);
+    p.life = rand(0.1, 1);
+    particles.push(p);
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, W, H);
+    if (particles.length < 55 && Math.random() < .35) particles.push(spawnParticle());
+    particles = particles.filter(p => {
+      p.x += p.vx + Math.sin(p.y * 0.02) * 0.3;
+      p.y += p.vy;
+      p.life -= p.decay;
+      if (p.life <= 0) return false;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = p.life * 0.7;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      return true;
+    });
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+/* ── WHATSAPP BUBBLE ── */
+const bubble = document.getElementById('wa-bubble');
+if (bubble) {
+  setTimeout(() => bubble.classList.add('show'), 15000);
+  document.getElementById('wa-close')?.addEventListener('click', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    bubble.classList.remove('show');
+  });
+}
+
+/* ── QUOTE FORM ── */
+function handleQuote(e) {
+  e.preventDefault();
+  const f = e.target;
+  const lang = document.documentElement.lang;
+  const date    = f.date.value    || '—';
+  const city    = f.city.value    || '—';
+  const guests  = f.guests.value  || '—';
+  const grill   = f.grill.value;
+  const notes   = f.notes.value   || '—';
+
+  const grillLabel = lang === 'pt'
+    ? (grill === 'yes' ? 'Sim' : 'Não — levar churrasqueira')
+    : (grill === 'yes' ? 'Yes' : 'No — bring one');
+
+  const msgText = lang === 'pt'
+    ? `Olá BBQ do Carioca! Gostaria de um orçamento.\n\n📅 Data: ${date}\n📍 Cidade: ${city}\n👥 Convidados: ${guests}\n🔥 Churrasqueira: ${grillLabel}\n🥩 Observações: ${notes}`
+    : `Hi BBQ do Carioca! I'd like a free quote.\n\n📅 Date: ${date}\n📍 City: ${city}\n👥 Guests: ${guests}\n🔥 Grill: ${grillLabel}\n🥩 Notes: ${notes}`;
+
+  const encodedMsg = encodeURIComponent(msgText);
+  window.open(`https://wa.me/15614034603?text=${encodedMsg}`, '_blank', 'noopener,noreferrer');
+}
+</script>
 <script src="js/i18n.js"></script>
-<script src="js/embers.js"></script>
-<script src="js/quote-form.js"></script>
-<script src="js/app.js"></script>
 </body>
 </html>

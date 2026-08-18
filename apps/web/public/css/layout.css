@@ -148,37 +148,3 @@ footer {
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; border: none;
 }
-
-/* ── PIN MOTION SCROLL ── */
-.pin-scroll-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2.5rem;
-}
-
-@media (min-width: 768px) {
-  .pin-scroll-grid {
-    grid-template-columns: 340px 1fr;
-  }
-
-  .pin-scroll-sticky-col {
-    position: sticky;
-    top: 120px;
-    height: fit-content;
-  }
-}
-
-.ideal-card-pin {
-  background: rgba(26, 22, 21, 0.7);
-  border: 1px solid var(--line);
-  border-radius: 1rem;
-  padding: 1.75rem;
-  backdrop-filter: blur(12px);
-  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.ideal-card-pin:hover {
-  border-color: rgba(255, 107, 53, 0.4);
-  transform: translateX(6px);
-  box-shadow: 0 10px 30px -10px rgba(255, 107, 53, 0.15);
-}
