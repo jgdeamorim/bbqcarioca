@@ -1236,28 +1236,36 @@
 function setLang(lang) {
   document.documentElement.lang = lang;
   try { localStorage.setItem('bbq-lang', lang); } catch(e){}
-  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-  document.getElementById('lang-pt').classList.toggle('active', lang === 'pt');
+  ['lang-en', 'footer-lang-en'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', lang === 'en');
+  });
+  ['lang-pt', 'footer-lang-pt'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', lang === 'pt');
+  });
 }
-document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
-document.getElementById('lang-pt').addEventListener('click', () => setLang('pt'));
-document.getElementById('footer-lang-en').addEventListener('click', () => setLang('en'));
-document.getElementById('footer-lang-pt').addEventListener('click', () => setLang('pt'));
+document.getElementById('lang-en')?.addEventListener('click', () => setLang('en'));
+document.getElementById('lang-pt')?.addEventListener('click', () => setLang('pt'));
+document.getElementById('footer-lang-en')?.addEventListener('click', () => setLang('en'));
+document.getElementById('footer-lang-pt')?.addEventListener('click', () => setLang('pt'));
 try { if (localStorage.getItem('bbq-lang') === 'pt') setLang('pt'); } catch(e){}
 
 /* ── MOBILE MENU ── */
 const mobMenu = document.getElementById('mob-menu');
 const mobToggle = document.getElementById('mob-toggle');
 function closeMob() {
-  mobMenu.classList.remove('open');
-  mobToggle.setAttribute('aria-expanded','false');
+  if (mobMenu) mobMenu.classList.remove('open');
+  if (mobToggle) mobToggle.setAttribute('aria-expanded','false');
   document.body.style.overflow = '';
 }
-mobToggle.addEventListener('click', () => {
-  const open = mobMenu.classList.toggle('open');
-  mobToggle.setAttribute('aria-expanded', String(open));
-  document.body.style.overflow = open ? 'hidden' : '';
-});
+if (mobToggle && mobMenu) {
+  mobToggle.addEventListener('click', () => {
+    const open = mobMenu.classList.toggle('open');
+    mobToggle.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+}
 
 /* ── SCROLL REVEALS ── */
 const obs = new IntersectionObserver((entries) => {
@@ -1267,9 +1275,11 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
 /* ── HERO BG LOAD ── */
 const heroBg = document.getElementById('hero-bg');
-const img = new Image();
-img.onload = () => heroBg.classList.add('loaded');
-img.src = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1800&q=85&auto=format&fit=crop';
+if (heroBg) {
+  const img = new Image();
+  img.onload = () => heroBg.classList.add('loaded');
+  img.src = 'img/bg-slider-01.png';
+}
 
 /* ── MARQUEE ── */
 (function buildMarquee() {
@@ -1344,11 +1354,13 @@ img.src = 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1800&q=85
 
 /* ── WHATSAPP BUBBLE ── */
 const bubble = document.getElementById('wa-bubble');
-setTimeout(() => bubble.classList.add('show'), 2200);
-document.getElementById('wa-close').addEventListener('click', (e) => {
-  e.preventDefault(); e.stopPropagation();
-  bubble.classList.remove('show');
-});
+if (bubble) {
+  setTimeout(() => bubble.classList.add('show'), 2200);
+  document.getElementById('wa-close')?.addEventListener('click', (e) => {
+    e.preventDefault(); e.stopPropagation();
+    bubble.classList.remove('show');
+  });
+}
 
 /* ── QUOTE FORM ── */
 function handleQuote(e) {
@@ -1365,11 +1377,12 @@ function handleQuote(e) {
     ? (grill === 'yes' ? 'Sim' : 'Não — levar churrasqueira')
     : (grill === 'yes' ? 'Yes' : 'No — bring one');
 
-  const msg = lang === 'pt'
-    ? `Olá BBQ do Carioca! Gostaria de um orçamento.%0A%0A📅 Data: ${date}%0A📍 Cidade: ${city}%0A👥 Convidados: ${guests}%0A🔥 Churrasqueira: ${grillLabel}%0A🥩 Observações: ${notes}`
-    : `Hi BBQ do Carioca! I'd like a free quote.%0A%0A📅 Date: ${date}%0A📍 City: ${city}%0A👥 Guests: ${guests}%0A🔥 Grill: ${grillLabel}%0A🥩 Notes: ${notes}`;
+  const msgText = lang === 'pt'
+    ? `Olá BBQ do Carioca! Gostaria de um orçamento.\n\n📅 Data: ${date}\n📍 Cidade: ${city}\n👥 Convidados: ${guests}\n🔥 Churrasqueira: ${grillLabel}\n🥩 Observações: ${notes}`
+    : `Hi BBQ do Carioca! I'd like a free quote.\n\n📅 Date: ${date}\n📍 City: ${city}\n👥 Guests: ${guests}\n🔥 Grill: ${grillLabel}\n🥩 Notes: ${notes}`;
 
-  window.open(`https://wa.me/15614034603?text=${msg}`, '_blank', 'noopener,noreferrer');
+  const encodedMsg = encodeURIComponent(msgText);
+  window.open(`https://wa.me/15614034603?text=${encodedMsg}`, '_blank', 'noopener,noreferrer');
 }
 </script>
 </body>
