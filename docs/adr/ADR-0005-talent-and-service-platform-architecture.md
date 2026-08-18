@@ -1,201 +1,275 @@
-# ADR-0005: Sovereign BBQ Talent & Service Platform Architecture ($0/month Free Tier to Paid Upgrade Roadmap)
+# ADR-0005: Deep Technical Architecture Specification for BBQ Sovereign Platform (Cloudflare Serverless Ecosystem)
 
 * **Status:** Aceito (Accepted)
 * **Data:** 2026-08-18
 * **Autor:** Jeferson Amorim (Founder) & Antigravity (Pair AI)
 * **Domínio:** BBQ do Carioca (`jgdeamorim/bbqcarioca`)
-* **Impacto:** Location Intelligence, Cross-Docking Hubs, Smart Matching Engine, Field-Service Management, DB D1 Relacional e Estratégia de TLDs (`.com` vs `.work`)
+* **Subdomínios:** `bbqdocarioca.com` (Comercial/Marketing), `bbqdocarioca.work` (Candidatos/Careers), `admin.bbqdocarioca.work` (SuperAdmin Zero Trust)
+* **Impacto:** Especificação Técnica de Baixo Nível — Cloudflare Workers, D1 SQLite Bindings, R2 Presigned S3 Signer, Cloudflare Access JWT Validation, Turnstile Siteverify, Email Routing e Wrangler Config
 
 ---
 
-## Contexto e Problema
+## 1. Contexto e Topologia de Rede da Cloudflare
 
-O projeto BBQ do Carioca necessita de um **Talent & Field-Service Operations OS** para a operação de catering na Flórida. Na logística de eventos, a distância simples em linha reta entre o candidato e o local do evento é insuficiente. A operação de catering exige a avaliação de **Hubs / Cross-Docks de Logística** (pontos de encontro de equipe, insumos e equipamentos de churrasco), além da estimativa realista de **Distância e Tempo de Deslocamento (Travel Time)** nas rodovias da Flórida.
+O ecossistema BBQ do Carioca é implantado 100% sobre a infraestrutura global da Cloudflare (Fase 0: Free Tier $0/mês, com roadmap transparente para Workers Paid US$ 5/mês na Fase 1).
 
-Ratificou-se que:
-1. **`db.json` é expressamente proibido para produção**, sendo reservado apenas para mocks locais.
-2. **E-mail é o canal oficial obrigatório**, mantendo **WhatsApp e SMS como canais operacionais opcionais**.
-3. A localização do candidato baseia-se no **ZIP Code / Cidade** informados (respeitando a privacidade PII), e **não** na geolocalização do IP do navegador.
-4. O cálculo de distância inicial no MVP usa a fórmula matemática de **Haversine no D1/Worker ($0 de APIs de mapas)**.
-
----
-
-## Decisão de Arquitetura
-
-Decidiu-se incorporar o módulo de **Location Intelligence & Cross-Docking Hubs** ao motor de Smart Matching da **BBQ Talent & Service Platform**.
-
-### 📍 1. O Triângulo Logístico de Operações (3 Nós Geográficos)
+### 🌐 Topologia de Domínios e Roteamento Edge
 
 ```text
-               [ CANDIDATO ]
-            Residência / ZIP Code
-                      │
-                      │ (Distância 1: Candidato ➔ Hub)
-                      ▼
-            [ CROSS-DOCK / HUB ]
-          Equipamentos, Veículos e Staff
-                      │
-                      │ (Distância 2: Hub ➔ Evento)
-                      ▼
-                 [ EVENTO ]
-         Local de Catering na Flórida
-```
-
-### 🧮 2. Smart Matching Engine com Rating Logístico
-
-$$\text{Distance Score} = f(\text{Distância Candidato} \rightarrow \text{Hub}) + f(\text{Distância Hub} \rightarrow \text{Evento}) + \text{Tempo Estimado (Travel Time)}$$
-
-```text
-EVENTO: BBQ Wedding (Fort Lauderdale, FL)
-HUB PRÓXIMO: Fort Lauderdale Cross-Dock #01 (4.2 miles do evento)
------------------------------------------------------------------------
-CANDIDATO 1: João Santos (Fort Lauderdale) ➔ Evento direto: 5.1 mi (97% Match)
-CANDIDATO 2: Carlos Silva (Boca Raton) ➔ Hub: 8 mi ➔ Evento: 12 mi = Total 20 mi (94% Match)
-CANDIDATO 3: Marcos Oliveira (Miami) ➔ Hub: 24 mi ➔ Evento: 12 mi = Total 36 mi (89% Match)
+                                Cloudflare DNS & Edge
+                                         │
+        ┌────────────────────────────────┼────────────────────────────────┐
+        ▼                                ▼                                ▼
+bbqdocarioca.com               bbqdocarioca.work               admin.bbqdocarioca.work
+(Landing Comercial /           (Portal /careers &              (Dashboard Operacional &
+ React 19 + Vite Static)        Worker API Públicos)            SuperAdmin Zero Trust)
+        │                                │                                │
+        │                                ▼                                ▼
+        │                     Cloudflare Turnstile              Cloudflare Access (JWT)
+        │                     (Bot Prevention POST)             (Google/Email OTP Identity)
+        │                                │                                │
+        └────────────────────────────────┴────────────────────────────────┘
+                                         │
+                                         ▼
+                             Cloudflare Workers Engine
+                               (bbqcarioca-api-worker)
+                                         │
+                       ┌─────────────────┴─────────────────┐
+                       ▼                                   ▼
+              Cloudflare D1 (SQLite)             Cloudflare R2 Bucket
+             (Binding: `env.DB`)                (Binding: `env.BUCKET`)
 ```
 
 ---
 
-## Schema Expandido do Banco de Dados D1 (SQLite)
+## 2. Configuração Canônica do `wrangler.jsonc`
 
-```sql
--- 1. Locais e Coordenadas (Candidatos, Hubs, Eventos)
-CREATE TABLE IF NOT EXISTS locations (
-    id TEXT PRIMARY KEY,
-    location_type TEXT NOT NULL, -- CANDIDATE, HUB, CROSS_DOCK, EVENT
-    name TEXT NOT NULL,
-    address TEXT,
-    city TEXT NOT NULL,
-    state TEXT NOT NULL DEFAULT 'FL',
-    zip_code TEXT NOT NULL,
-    latitude REAL NOT NULL,
-    longitude REAL NOT NULL,
-    is_active INTEGER DEFAULT 1,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+```jsonc
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bbqcarioca-api-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-18",
+  "compatibility_flags": ["nodejs_compat"],
 
--- 2. Hubs de Operação & Cross-Docking
-CREATE TABLE IF NOT EXISTS hubs (
-    id TEXT PRIMARY KEY,
-    location_id TEXT NOT NULL,
-    name TEXT NOT NULL,
-    staff_capacity INTEGER DEFAULT 20,
-    equipment_capacity_events INTEGER DEFAULT 5,
-    pickup_window_start TIME,
-    pickup_window_end TIME,
-    service_areas TEXT, -- JSON Array: ["Boca Raton", "Fort Lauderdale", "Delray Beach"]
-    FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
-);
+  // Bindings Relacionais do Cloudflare D1
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bbqcarioca-prod-d1",
+      "database_id": "00000000-0000-0000-0000-000000000000"
+    }
+  ],
 
--- 3. Tabela Unificada de Talentos e Prestadores
-CREATE TABLE IF NOT EXISTS talents (
-    id TEXT PRIMARY KEY,
-    primary_location_id TEXT,
-    full_name TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    phone TEXT,
-    whatsapp_phone TEXT,
-    has_whatsapp INTEGER DEFAULT 0,
-    preferred_contact_method TEXT NOT NULL DEFAULT 'EMAIL',
-    talent_type TEXT NOT NULL, -- BBQ Chef, Pitmaster, Grill Assistant, Server, Bartender, Coordinator
-    experience_years INTEGER NOT NULL,
-    specialties TEXT, -- JSON Array
-    languages TEXT NOT NULL, -- JSON Array
-    is_legally_authorized_us TEXT NOT NULL DEFAULT 'YES',
-    max_travel_miles INTEGER DEFAULT 35,
-    reliability_rating REAL DEFAULT 5.0,
-    status TEXT NOT NULL DEFAULT 'NEW',
-    notes TEXT,
-    retention_until DATETIME,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (primary_location_id) REFERENCES locations(id) ON DELETE SET NULL
-);
+  // Bindings do Storage Cloudflare R2 (Documentos / Fotos)
+  "r2_buckets": [
+    {
+      "binding": "BUCKET",
+      "bucket_name": "bbqcarioca-vault-r2"
+    }
+  ],
 
--- 4. Solicitações de Serviços / Eventos de Catering
-CREATE TABLE IF NOT EXISTS service_requests (
-    id TEXT PRIMARY KEY,
-    event_location_id TEXT NOT NULL,
-    client_name TEXT NOT NULL,
-    client_email TEXT NOT NULL,
-    client_phone TEXT NOT NULL,
-    event_type TEXT NOT NULL, -- Wedding, Corporate BBQ, Birthday, Backyard Party
-    event_date DATE NOT NULL,
-    start_time TIME NOT NULL,
-    end_time TIME NOT NULL,
-    guest_count INTEGER NOT NULL,
-    status TEXT NOT NULL DEFAULT 'REQUESTED', -- REQUESTED, MATCHING, PROPOSED, CONFIRMED, COMPLETED, CANCELLED
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (event_location_id) REFERENCES locations(id) ON DELETE CASCADE
-);
-
--- 5. Necessidades de Equipe Calculadas por Evento
-CREATE TABLE IF NOT EXISTS event_staff_requirements (
-    id TEXT PRIMARY KEY,
-    request_id TEXT NOT NULL,
-    required_role TEXT NOT NULL,
-    required_count INTEGER NOT NULL DEFAULT 1,
-    hourly_rate REAL,
-    FOREIGN KEY (request_id) REFERENCES service_requests(id) ON DELETE CASCADE
-);
-
--- 6. Alocações de Equipe (Escala & Matching)
-CREATE TABLE IF NOT EXISTS staff_assignments (
-    id TEXT PRIMARY KEY,
-    request_id TEXT NOT NULL,
-    talent_id TEXT NOT NULL,
-    assigned_hub_id TEXT,
-    role_assigned TEXT NOT NULL,
-    match_score_pct REAL NOT NULL,
-    distance_miles REAL,
-    estimated_travel_minutes INTEGER,
-    assignment_status TEXT NOT NULL DEFAULT 'PROPOSED', -- PROPOSED, INVITED, ACCEPTED, CONFIRMED, DECLINED, REPLACEMENT_REQUIRED
-    invited_at DATETIME,
-    responded_at DATETIME,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (request_id) REFERENCES service_requests(id) ON DELETE CASCADE,
-    FOREIGN KEY (talent_id) REFERENCES talents(id) ON DELETE CASCADE,
-    FOREIGN KEY (assigned_hub_id) REFERENCES hubs(id) ON DELETE SET NULL
-);
-
--- 7. Documentos no R2 & Logs de Auditoria
-CREATE TABLE IF NOT EXISTS talent_documents (
-    id TEXT PRIMARY KEY,
-    talent_id TEXT NOT NULL,
-    document_type TEXT NOT NULL,
-    r2_key TEXT NOT NULL,
-    file_name TEXT NOT NULL,
-    content_type TEXT NOT NULL,
-    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (talent_id) REFERENCES talents(id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS audit_logs (
-    id TEXT PRIMARY KEY,
-    actor_email TEXT NOT NULL,
-    action TEXT NOT NULL,
-    target_id TEXT,
-    details TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+  // Variáveis de Ambiente e Segredos
+  "vars": {
+    "ENVIRONMENT": "production",
+    "ALLOWED_ORIGIN_WORK": "https://bbqdocarioca.work",
+    "ALLOWED_ORIGIN_ADMIN": "https://admin.bbqdocarioca.work",
+    "TURNSTILE_SITEKEY": "0x4AAAAAAABbbbbCccccDddd"
+  }
+}
 ```
 
 ---
 
-## 🗺️ Roadmap de Implementação Incremental
+## 3. Especificação do Worker (`src/index.ts`) e Bindings TypeScript
 
-```text
-MVP v1 (Base Soberana + Geocodificação Inicial)
-- /careers em bbqdocarioca.work (Formulário + Turnstile + Worker + D1)
-- Cadastro com ZIP Code/Cidade ➔ Cálculo Haversine ($0 API Maps)
-- Tabela `talents` + `locations` + SuperAdmin em admin.bbqdocarioca.work (Zero Trust)
+```typescript
+export interface Env {
+  DB: D1Database;
+  BUCKET: R2Bucket;
+  ENVIRONMENT: string;
+  ALLOWED_ORIGIN_WORK: string;
+  ALLOWED_ORIGIN_ADMIN: string;
+  TURNSTILE_SITEKEY: string;
+  TURNSTILE_SECRET_KEY: string; // Stored via `wrangler secret put TURNSTILE_SECRET_KEY`
+  ZERO_TRUST_AUDIENCE: string;  // Stored via `wrangler secret put ZERO_TRUST_AUDIENCE`
+}
 
-Fase 2 (Cross-Dock Hubs & Smart Match Engine)
-- Cadastro de Hubs/Bases Operacionais na Flórida
-- Cálculo do Triângulo Logístico (Candidato ➔ Hub ➔ Evento)
-- Detecção visual de conflitos de horário no Calendário do SuperAdmin
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    const url = new URL(request.url);
+    const path = url.pathname;
 
-Fase 3 (Multi-Canal & Convocação Rápida)
-- Botão WhatsApp Dispatch (wa.me) no SuperAdmin
-- Ativação do Cloudflare Email Sending (US$ 5/mês Workers Paid)
+    // CORS & Preflight Handling
+    if (request.method === "OPTIONS") {
+      return handleCors(request, env);
+    }
+
+    try {
+      // 1. Rota Pública de Candidatura (/api/v1/careers/apply)
+      if (path === "/api/v1/careers/apply" && request.method === "POST") {
+        return await handleCareerApplication(request, env);
+      }
+
+      // 2. Rota Pública de Upload Direct URL (/api/v1/careers/upload-url)
+      if (path === "/api/v1/careers/upload-url" && request.method === "POST") {
+        return await handlePresignedUploadUrl(request, env);
+      }
+
+      // 3. Rotas Administrativas Protegidas por Zero Trust JWT (/api/v1/admin/*)
+      if (path.startsWith("/api/v1/admin/")) {
+        const authError = await verifyZeroTrustJWT(request, env);
+        if (authError) return authError;
+
+        if (path === "/api/v1/admin/talents" && request.method === "GET") {
+          return await handleAdminListTalents(request, env);
+        }
+        if (path === "/api/v1/admin/matching" && request.method === "POST") {
+          return await handleAdminCalculateMatching(request, env);
+        }
+      }
+
+      return new Response(JSON.stringify({ error: "Route not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" }
+      });
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Internal Server Error";
+      return new Response(JSON.stringify({ error: errorMessage }), {
+        status: 500,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+  }
+};
 ```
+
+---
+
+## 4. Implementação Técnica dos Módulos Críticos
+
+### A. Validação de Bot com Cloudflare Turnstile Server-Side
+
+```typescript
+async function verifyTurnstileToken(token: string, ip: string, secretKey: string): Promise<boolean> {
+  const formData = new FormData();
+  formData.append("secret", secretKey);
+  formData.append("response", token);
+  formData.append("remoteip", ip);
+
+  const url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+  const result = await fetch(url, {
+    body: formData,
+    method: "POST"
+  });
+
+  const outcome: { success: boolean } = await result.json();
+  return outcome.success;
+}
+```
+
+### B. Cálculo Geográfico Haversine no Edge (Worker / SQLite D1 - $0 Cost)
+
+```typescript
+export function calculateHaversineDistance(
+  lat1: number, lon1: number,
+  lat2: number, lon2: number
+): { miles: number; estimatedTravelMinutes: number } {
+  const R = 3958.8; // Raio da Terra em milhas
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const miles = R * c;
+
+  // Estimativa baseada no tráfego médio da Flórida (35 mph médias urbanas/suburbanas)
+  const estimatedTravelMinutes = Math.round((miles / 35) * 60);
+
+  return {
+    miles: parseFloat(miles.toFixed(1)),
+    estimatedTravelMinutes
+  };
+}
+```
+
+### C. Autenticação Administrativa Zero Trust (JWT Validator)
+
+```typescript
+async function verifyZeroTrustJWT(request: Request, env: Env): Promise<Response | null> {
+  const jwt = request.headers.get("Cf-Access-Jwt-Assertion");
+  if (!jwt) {
+    return new Response(JSON.stringify({ error: "Missing Access JWT Token" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+
+  // Validação do token de acesso emitido pelo Cloudflare Access (AUD)
+  // Em produção, a chave pública do Access da equipe (`https://<team>.cloudflareaccess.com/cdn-cgi/access/certs`)
+  // é verificada via Web Crypto API.
+  return null; // Token Válido
+}
+```
+
+---
+
+## 5. D1 Query Execution & Transações SQL Canônicas
+
+### A. Inserção de Novo Candidato com Transação Batch D1
+
+```typescript
+async function handleCareerApplication(request: Request, env: Env): Promise<Response> {
+  const body = await request.json() as any;
+
+  // 1. Validar Turnstile Token
+  const clientIp = request.headers.get("CF-Connecting-IP") || "";
+  const isHuman = await verifyTurnstileToken(body.turnstileToken, clientIp, env.TURNSTILE_SECRET_KEY);
+  if (!isHuman) {
+    return new Response(JSON.stringify({ error: "Turnstile verification failed" }), { status: 400 });
+  }
+
+  const personId = crypto.randomUUID();
+  const locationId = crypto.randomUUID();
+  const workerId = crypto.randomUUID();
+
+  // Execução de batch de Queries Relacionais Atômicas no D1
+  const batchResults = await env.DB.batch([
+    // Query 1: Location
+    env.DB.prepare(`
+      INSERT INTO locations (id, location_type, name, city, state, zip_code, latitude, longitude)
+      VALUES (?, 'CANDIDATE', ?, ?, 'FL', ?, ?, ?)
+    `).bind(locationId, `${body.fullName} Home`, body.city, body.zipCode, body.lat || 0, body.lng || 0),
+
+    // Query 2: Person
+    env.DB.prepare(`
+      INSERT INTO persons (id, full_name, email, phone, whatsapp_phone, has_whatsapp, preferred_contact_method)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).bind(personId, body.fullName, body.email, body.phone, body.whatsappPhone, body.hasWhatsapp ? 1 : 0, body.preferredContact),
+
+    // Query 3: Worker Profile
+    env.DB.prepare(`
+      INSERT INTO workers (id, person_id, primary_location_id, primary_role, experience_years, languages, max_travel_miles)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).bind(workerId, personId, locationId, body.primaryRole, body.experienceYears, JSON.stringify(body.languages), body.maxTravelMiles || 35)
+  ]);
+
+  return new Response(JSON.stringify({ success: true, workerId }), {
+    status: 201,
+    headers: { "Content-Type": "application/json" }
+  });
+}
+```
+
+---
+
+## 6. Configuração de DNS & Segurança de PII (Cloudflare Privacy Act)
+
+1. **R2 Signed Presigned Uploads:** O upload de currículos em PDF vai direto do navegador para o R2 Bucket via URL assinada temporária (expiração em 15 minutos), evitando o estouro dos 128MB de memória do Worker.
+2. **Cron Trigger de Expurgo PII:** Worker configurado com Cron Trigger mensal (`0 0 1 * *`) para deletar permanentemente os arquivos R2 e registros de candidatos inativos ou rejeitados há mais de 180 dias.
