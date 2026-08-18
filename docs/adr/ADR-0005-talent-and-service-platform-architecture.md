@@ -4,113 +4,114 @@
 * **Data:** 2026-08-18
 * **Autor:** Jeferson Amorim (Founder) & Antigravity (Pair AI)
 * **Domínio:** BBQ do Carioca (`jgdeamorim/bbqcarioca`)
-* **Impacto:** Arquitetura CRM Multi-Canal, Email Service Híbrido, Estratégia de TLDs (`.com` vs `.work`), Backend Serverless e Custo $0/mês (Fase 0) ➔ US$5/mês (Fase 1)
+* **Impacto:** Field-Service Operations Engine, Smart Talent Matching (Score %), Calendário Operacional, DB Relacional D1, Estratégia de TLDs (`.com` vs `.work`) e Custo $0/mês (Fase 0)
 
 ---
 
 ## Contexto e Problema
 
-O projeto BBQ do Carioca necessita de uma plataforma soberana de recrutamento e gestão de prestadores de serviço de catering na Flórida (Grill Masters, Auxiliares de Fogo, Garçons, Barmans, Coordenadores e Pitmasters).
+O projeto BBQ do Carioca necessita de mais do que um simples banco de currículos (ATS). Para atender à demanda de catering na Flórida (Casamentos, Eventos Corporativos, Festas Privadas de BBQ), o sistema deve evoluir para um **Talent & Service Operations OS**, onde a solicitação de um evento gera automaticamente as necessidades de equipe e o algoritmo calcula os candidatos mais compatíveis.
 
 Ratificou-se que:
-1. **`db.json` é proibido para produção**, sendo reservado exclusivamente para mocks e testes unitários locais.
-2. **E-mail é o canal oficial primário obrigatório** para o cadastro do candidato, mantendo **WhatsApp e SMS como canais operacionais opcionais**.
-3. Em 2026, a Cloudflare oferece o **Cloudflare Email Routing** totalmente gratuito no plano Free (para recepção e redirecionamento de e-mails), enquanto o disparo outbound arbitrário para candidatos via **Cloudflare Email Sending** requer o plano **Workers Paid (US$ 5/mês)** com 3.000 e-mails/mês incluídos.
-4. O domínio **`bbqdocarioca.work`** deve ser alocado especificamente para a **Plataforma de Trabalho, Talentos e Operações**, separando-o da marca comercial pública **`bbqdocarioca.com`**.
+1. **`db.json` é expressamente proibido para produção**, sendo reservado apenas para mocks locais.
+2. **E-mail é o canal oficial primário obrigatório**, com **WhatsApp e SMS como canais operacionais opcionais**.
+3. O domínio **`bbqdocarioca.work`** consolida os 3 pilares operacionais: **TALENT** (Candidatos/Chefs), **SERVICES** (Catering/Eventos) e **OPERATIONS** (Smart Scheduling/Matching).
+4. O algoritmo calcula um **Match Score (%) determinístico**, recomendando os melhores candidatos, enquanto a decisão final permanece sempre sob confirmação do **SuperAdmin (Human-in-the-Loop)**.
 
 ---
 
 ## Decisão de Arquitetura
 
-Decidiu-se adotar a **BBQ Talent & Service Platform** sob uma arquitetura híbrida de custo inicial zero ($0/mês na Fase 0) com roadmap de atualização cirúrgica para US$ 5/mês (Fase 1).
+Decidiu-se adotar a **BBQ Talent & Service Platform** sob a arquitetura de **Field-Service Management (FSM)** rodando na infraestrutura serverless da Cloudflare (D1 + R2 + Workers + Zero Trust).
 
-### 🌐 Arquitetura de Domínios e Segregação de Marcas
+### 🏛️ Três Pilares da Plataforma (`bbqdocarioca.work`)
 
 ```text
-               MARCA COMERCIAL              PLATAFORMA DE TRABALHO & OPERAÇÕES
-            bbqdocarioca.com                     bbqdocarioca.work
-                   │                                     │
-         ┌─────────┴─────────┐                 ┌─────────┼─────────┐
-         ▼                   ▼                 ▼         ▼         ▼
-    Landing Page         Orçamentos        /careers   /talent  /services
-    (Cliente Final)      (Catering)       Candidatos Talentos Parceiros
-                                                         │
-                                                         ▼
-                                             admin.bbqdocarioca.work
-                                             (SuperAdmin Zero Trust)
+┌────────────────────────────────────────────────────────────────────────┐
+│                      BBQ DO CARIOCA WORK PLATFORM                      │
+├────────────────────────────────────────────────────────────────────────┤
+│                                                                        │
+│   1. TALENT NETWORK         2. SERVICES & CATERING     3. OPERATIONS   │
+│   Candidates / Chefs        Weddings / Corporate       Smart Matching  │
+│   Pitmasters / Staff        Private BBQ Services       Event Calendar  │
+│                                                                        │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    ▼
+                       [ Smart Matching Engine ]
+                                    │
+               ┌────────────────────┴────────────────────┐
+               ▼                                         ▼
+   [ Match Score % Calculation ]              [ Conflict Detection ]
+   (Role, City, Radius, Rating)               (Double-booking Preventer)
+               │                                         │
+               └────────────────────┬────────────────────┘
+                                    ▼
+                         SuperAdmin Confirmation
+                         (admin.bbqdocarioca.work)
 ```
 
 ---
 
-## 📧 Arquitetura Híbrida de E-mail & Notificações
+## ⚡ Motor de Smart Matching & Cálculo de Match Score (%)
+
+O algoritmo avalia os talentos disponíveis e gera uma pontuação determinística:
+
+$$\text{Match Score} = (w_1 \cdot \text{Role}) + (w_2 \cdot \text{Availability}) + (w_3 \cdot \text{Distance}) + (w_4 \cdot \text{Experience}) + (w_5 \cdot \text{Language}) + (w_6 \cdot \text{Reliability})$$
 
 ```text
-Fase 0 ($0/mês - Cloudflare Free)
-Candidato Form ➔ Worker ➔ D1 / R2 ➔ Email Routing ➔ Notificação Interna pro Bruno (Sem e-mail outbound pro candidato)
-
-Fase 1 (US$ 5/mês - Workers Paid)
-Candidato Form ➔ Worker ➔ D1 / R2 ➔ Cloudflare Email Sending (env.EMAIL.send()) ➔ Confirmation & Status E-mails pro Candidato
+CANDIDATE: Carlos Silva (BBQ Chef)
+──────────────────────────────────────────────────
+Role Match:             100%
+Availability:           100%
+Distance (Boca Raton):   92%  (Raio < 25 miles)
+Experience (6 yrs):      95%
+Languages (EN/PT):      100%
+Reliability Rating:      94%  (Audit history)
+──────────────────────────────────────────────────
+TOTAL MATCH SCORE:       95%  ➔ #1 RECOMMENDED
 ```
 
-### 1. Fase 0 ($0/mês — MVP Cloudflare Free Tier):
-* **Recepção de E-mails:** Uso do **Cloudflare Email Routing** gratuito para criar endereços institucionais (`careers@bbqdocarioca.work`, `jobs@bbqdocarioca.work`, `contact@bbqdocarioca.work`).
-* **Submissão de Candidatura:** O formulário salva no D1 e faz upload no R2. Notifica o administrador (Bruno) sem gerar custo outbound.
+### 🚨 Detecção de Conflitos de Agenda (Conflict Preventer)
+Se um talento já possui alocação em um evento (`Aug 29 · 5 PM - 10 PM · Boca Raton`), o sistema bloqueia automaticamente a escalação concorrente (`Aug 29 · 6 PM - 11 PM · Miami`) e exibe **`CONFLICT DETECTED`**.
 
-### 2. Fase 1 (US$ 5/mês — Upgrade Workers Paid quando houver candidatos reais):
-* **Disparo Outbound Nativo:** Ativação do **Cloudflare Email Sending** via `env.EMAIL.send()` no Worker.
-* **Benefícios:** Autenticação de domínio SPF, DKIM e DMARC configurada automaticamente na Cloudflare sem necessidade de terceiros (SendGrid, Resend, Mailgun).
-* **Franquia Incluída:** 3.000 e-mails/mês incluídos no plano Paid de US$ 5/mês (depois US$ 0,35 por mil e-mails).
+---
 
-### 3. Abstração de Código Desacoplada (`EmailService`):
-```typescript
-export interface EmailService {
-  sendApplicationReceived(candidateEmail: string, candidateName: string): Promise<void>;
-  sendApplicationStatusChanged(candidateEmail: string, newStatus: string): Promise<void>;
-}
+## 🔄 Máquina de Estados Operacionais do Evento & Subtituição Rápida
 
-// Configuração controlada por variável de ambiente
-const EMAIL_PROVIDER = "CLOUDFLARE";
-const EMAIL_ENABLED = env.EMAIL_ENABLED === "true"; // false na Fase 0, true na Fase 1
+```text
+   REQUESTED (Solicitação recebida)
+       │
+       ▼
+   MATCHING (Cálculo de Match Score %)
+       │
+       ▼
+   PROPOSED (SuperAdmin selecionou equipe)
+       │
+       ▼
+   INVITED (Notificação enviada por E-mail/WhatsApp)
+       │
+       ▼
+   ACCEPTED (Talento confirmou presença)
+       │
+       ▼
+   CONFIRMED (Equipe fechada e validada)
+       │
+       ▼
+   IN_PROGRESS ➔ COMPLETED (Evento concluído)
+
+   --- TRATAMENTO DE EXCEÇÃO & REPOSIÇÃO RÁPIDA ---
+   CANCELLED / NO_SHOW / DECLINED
+       │
+       ▼
+   REPLACEMENT_REQUIRED ➔ Dispara Smart Match do 2º colocado instantaneamente
 ```
 
 ---
 
-## Arquitetura de Canais de Contato & Segurança PII (Privacy-by-Design)
-
-### 1. E-mail Obrigatório + WhatsApp Opcional
-* **Campos Obrigatórios:** Nome Completo, E-mail (Canal Oficial), Cidade, Estado, Área de Interesse, Anos de Experiência, Disponibilidade, Idiomas, Autorização Legal de Trabalho nos EUA e Consentimento.
-* **Campos Opcionais:** Telefone, WhatsApp (`has_whatsapp`), LinkedIn, Instagram e Upload de Currículo.
-
-### 2. Isenção Total de Dados Sensíveis Desnecessários (Sem SSN no Início)
-* **NÃO se solicita SSN (Social Security Number)** nem documentos sensíveis no formulário inicial.
-* Pergunta padrão de trabalho nos EUA: `is_legally_authorized_us` (*"Are you legally authorized to work in the United States?"* — YES / NO / REQUIRE_SPONSORSHIP).
-
-### 3. Contact Channels Dinâmicos no SuperAdmin (`admin.bbqdocarioca.work`)
-```text
-┌─────────────────────────────────────────────────────────┐
-│ JOHN SMITH — BBQ CHEF (Orlando, FL)                    │
-├─────────────────────────────────────────────────────────┤
-│ Email: john@email.com · Phone: +1 561... (WhatsApp: ✓)  │
-│ Languages: English / Portuguese · Experience: 6 years   │
-│ US Work Authorized: YES · Status: APPROVED              │
-├─────────────────────────────────────────────────────────┤
-│  [ ✉ EMAIL ]   [ 💬 WHATSAPP (wa.me) ]   [ 📱 SMS ]    │
-└─────────────────────────────────────────────────────────┘
-```
-* **WhatsApp Dispatch (Fase 2 - $0 API Cost):** Protocolo nativo `https://wa.me/phone?text=...` abrindo a conversa no navegador sem pagar Twilio/Z-API.
-
-### 4. Upload Direto via Presigned URLs no R2
-* Presigned PUT URLs do R2 enviadas ao navegador para upload direto do PDF/foto sem carregar a CPU do Worker.
-
-### 5. Política de Retenção Configurável (`retention_until`)
-* A tabela `talents` armazena `retention_until` para expurgo/anonimização auditada por Cron Trigger mensal.
-
----
-
-## Schema do Banco de Dados D1 (SQLite)
+## Schema Expandido do Banco de Dados D1 (SQLite)
 
 ```sql
--- Tabela Unificada de Talentos e Prestadores
+-- 1. Talentos e Prestadores
 CREATE TABLE IF NOT EXISTS talents (
     id TEXT PRIMARY KEY,
     full_name TEXT NOT NULL,
@@ -118,30 +119,70 @@ CREATE TABLE IF NOT EXISTS talents (
     phone TEXT,
     whatsapp_phone TEXT,
     has_whatsapp INTEGER DEFAULT 0,
-    preferred_contact_method TEXT NOT NULL DEFAULT 'EMAIL', -- EMAIL, WHATSAPP, SMS, PHONE
+    preferred_contact_method TEXT NOT NULL DEFAULT 'EMAIL',
     city TEXT NOT NULL,
     state TEXT NOT NULL DEFAULT 'FL',
-    talent_type TEXT NOT NULL, -- BBQ Chef, Pitmaster, Grill Cook, Event Staff, Server, Bartender, Caterer, etc.
-    opportunity_type TEXT NOT NULL, -- Full-time, Part-time, Contract, Event-based, Seasonal
+    max_travel_miles INTEGER DEFAULT 35,
+    talent_type TEXT NOT NULL, -- BBQ Chef, Pitmaster, Grill Assistant, Server, Bartender, Coordinator
     experience_years INTEGER NOT NULL,
-    specialties TEXT, -- JSON Array: ["Picanha", "Brisket", "Ribs"]
-    availability TEXT, -- JSON Array: ["Weekend", "Full-time"]
-    languages TEXT NOT NULL, -- JSON Array: ["English", "Portuguese"]
-    is_legally_authorized_us TEXT NOT NULL DEFAULT 'YES', -- YES, NO, REQUIRE_SPONSORSHIP
-    linkedin_url TEXT,
-    instagram_url TEXT,
-    status TEXT NOT NULL DEFAULT 'NEW', -- NEW, REVIEWING, SHORTLISTED, INTERVIEW, APPROVED, ACTIVE, REJECTED
+    specialties TEXT, -- JSON Array
+    languages TEXT NOT NULL, -- JSON Array
+    is_legally_authorized_us TEXT NOT NULL DEFAULT 'YES',
+    reliability_rating REAL DEFAULT 5.0,
+    status TEXT NOT NULL DEFAULT 'NEW',
     notes TEXT,
     retention_until DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabela de Documentos no R2
+-- 2. Solicitações de Serviços / Eventos de Catering
+CREATE TABLE IF NOT EXISTS service_requests (
+    id TEXT PRIMARY KEY,
+    client_name TEXT NOT NULL,
+    client_email TEXT NOT NULL,
+    client_phone TEXT NOT NULL,
+    event_type TEXT NOT NULL, -- Wedding, Corporate BBQ, Birthday, Backyard Party
+    event_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    location_city TEXT NOT NULL,
+    location_address TEXT NOT NULL,
+    guest_count INTEGER NOT NULL,
+    status TEXT NOT NULL DEFAULT 'REQUESTED', -- REQUESTED, MATCHING, PROPOSED, CONFIRMED, COMPLETED, CANCELLED
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. Necessidades de Equipe Calculadas por Evento
+CREATE TABLE IF NOT EXISTS event_staff_requirements (
+    id TEXT PRIMARY KEY,
+    request_id TEXT NOT NULL,
+    required_role TEXT NOT NULL, -- Pitmaster, Grill Assistant, Server, Bartender
+    required_count INTEGER NOT NULL DEFAULT 1,
+    hourly_rate REAL,
+    FOREIGN KEY (request_id) REFERENCES service_requests(id) ON DELETE CASCADE
+);
+
+-- 4. Alocações de Equipe (Escala & Matching)
+CREATE TABLE IF NOT EXISTS staff_assignments (
+    id TEXT PRIMARY KEY,
+    request_id TEXT NOT NULL,
+    talent_id TEXT NOT NULL,
+    role_assigned TEXT NOT NULL,
+    match_score_pct REAL NOT NULL,
+    assignment_status TEXT NOT NULL DEFAULT 'PROPOSED', -- PROPOSED, INVITED, ACCEPTED, CONFIRMED, DECLINED, REPLACEMENT_REQUIRED
+    invited_at DATETIME,
+    responded_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (request_id) REFERENCES service_requests(id) ON DELETE CASCADE,
+    FOREIGN KEY (talent_id) REFERENCES talents(id) ON DELETE CASCADE
+);
+
+-- 5. Documentos no R2
 CREATE TABLE IF NOT EXISTS talent_documents (
     id TEXT PRIMARY KEY,
     talent_id TEXT NOT NULL,
-    document_type TEXT NOT NULL, -- RESUME, PROFILE_PHOTO, PORTFOLIO
+    document_type TEXT NOT NULL,
     r2_key TEXT NOT NULL,
     file_name TEXT NOT NULL,
     content_type TEXT NOT NULL,
@@ -149,18 +190,7 @@ CREATE TABLE IF NOT EXISTS talent_documents (
     FOREIGN KEY (talent_id) REFERENCES talents(id) ON DELETE CASCADE
 );
 
--- Tabela de Categorias e Serviços Prestados
-CREATE TABLE IF NOT EXISTS services (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
-    slug TEXT UNIQUE NOT NULL,
-    category TEXT NOT NULL, -- BBQ Catering, Private Chef, Corporate Events, Backyard BBQ
-    description TEXT,
-    is_active INTEGER DEFAULT 1,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
--- Tabela de Logs de Auditoria
+-- 6. Logs de Auditoria
 CREATE TABLE IF NOT EXISTS audit_logs (
     id TEXT PRIMARY KEY,
     actor_email TEXT NOT NULL,
@@ -173,18 +203,20 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 
 ---
 
-## Roadmap de Execução Incremental
+## 🗺️ Roadmap de Implementação Incremental
 
 ```text
-Fase 0 ($0/mês - Cloudflare Free)
-- Dominio bbqdocarioca.work (Careers) + admin.bbqdocarioca.work (SuperAdmin Zero Trust)
-- Cloudflare D1 + R2 + Worker API + Turnstile
-- Email Routing para recebimento de e-mails institucionais
-- Dashboard com dispatch manual de WhatsApp (wa.me) e e-mail corporativo
+MVP v1 (Base Soberana)
+- /careers em bbqdocarioca.work (Formulário + Turnstile + Worker + D1)
+- Tabela `talents` + SuperAdmin em admin.bbqdocarioca.work (Zero Trust)
+- Filtro por Cidade, Função e Status de Candidatos
 
-Fase 1 (US$ 5/mês - Workers Paid)
-- Ativação do Cloudflare Email Sending (env.EMAIL.send()) para confirmação automática de candidaturas, convites para entrevistas e convocações para eventos.
+Fase 2 (Smart Operations & Event Matcher)
+- Tabelas `service_requests`, `event_staff_requirements` e `staff_assignments`
+- Calculadora de Match Score % baseada em papel, localização e disponibilidade
+- Detecção visual de conflitos de horário no Calendário do SuperAdmin
 
-Fase 2 (Operação em Escala)
-- Expansão de prestadores de serviço terceirizados (Caterers/Private Chefs) + SMS Dispatch + Analytics.
+Fase 3 (Multi-Canal & Convocação Rápida)
+- Botão WhatsApp Dispatch (wa.me) no SuperAdmin
+- Ativação do Cloudflare Email Sending (US$ 5/mês Workers Paid) para confirmações automáticas
 ```
