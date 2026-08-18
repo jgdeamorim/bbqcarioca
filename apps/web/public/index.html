@@ -111,7 +111,7 @@
       top: 0;
       left: 0;
       right: 0;
-      z-index: 60;
+      z-index: 1000;
       background: rgba(11, 9, 8, .88);
       backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--line);
@@ -274,6 +274,10 @@
       transition: background 0.2s, border-color 0.2s;
     }
 
+    .mob-toggle svg {
+      pointer-events: none;
+    }
+
     .mob-toggle:hover {
       background: var(--charcoal-800);
       border-color: var(--ember-500);
@@ -281,7 +285,7 @@
 
     @media (min-width: 900px) {
       .mob-toggle {
-        display: none;
+        display: none !important;
       }
     }
 
@@ -301,6 +305,7 @@
       padding: 32px;
       opacity: 0;
       visibility: hidden;
+      pointer-events: none;
       transform: translateY(-16px);
       transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
     }
@@ -308,6 +313,7 @@
     .mob-menu.open {
       opacity: 1;
       visibility: visible;
+      pointer-events: auto;
       transform: translateY(0);
     }
 
@@ -1897,7 +1903,7 @@
           </svg>
           <span data-lang="en">Get Quote</span><span data-lang="pt">Orçamento</span>
         </a>
-        <button class="mob-toggle" id="mob-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <button class="mob-toggle" id="mob-toggle" onclick="toggleMob(event)" aria-label="Toggle menu" aria-expanded="false">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round">
             <path d="M3 6h18M3 12h18M3 18h18" />
@@ -4883,22 +4889,24 @@
     try { if (localStorage.getItem('bbq-lang') === 'pt') setLang('pt'); } catch (e) { }
 
     /* ── MOBILE MENU ── */
-    const mobMenu = document.getElementById('mob-menu');
-    const mobToggle = document.getElementById('mob-toggle');
+    function toggleMob(e) {
+      if (e && typeof e.stopPropagation === 'function') e.stopPropagation();
+      const menu = document.getElementById('mob-menu');
+      const toggle = document.getElementById('mob-toggle');
+      if (!menu) return;
+      const isOpen = menu.classList.toggle('open');
+      if (toggle) toggle.setAttribute('aria-expanded', String(isOpen));
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
     function closeMob() {
-      if (mobMenu) mobMenu.classList.remove('open');
-      if (mobToggle) mobToggle.setAttribute('aria-expanded', 'false');
+      const menu = document.getElementById('mob-menu');
+      const toggle = document.getElementById('mob-toggle');
+      if (menu) menu.classList.remove('open');
+      if (toggle) toggle.setAttribute('aria-expanded', 'false');
       document.body.style.overflow = '';
     }
+    window.toggleMob = toggleMob;
     window.closeMob = closeMob;
-    if (mobToggle && mobMenu) {
-      mobToggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const open = mobMenu.classList.toggle('open');
-        mobToggle.setAttribute('aria-expanded', String(open));
-        document.body.style.overflow = open ? 'hidden' : '';
-      });
-    }
 
     /* ── SCROLL REVEALS ── */
     const obs = new IntersectionObserver((entries) => {
