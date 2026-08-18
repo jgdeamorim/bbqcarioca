@@ -654,6 +654,38 @@
       .wa-bubble { font-size: .75rem; padding: 8px 12px; max-width: 210px; white-space: normal; }
     }
 
+    /* ── FAQ ACCORDION ── */
+    .faq-wrap { max-width: 840px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+    .faq-item {
+      background: var(--charcoal-900);
+      border: 1px solid var(--line);
+      border-radius: 16px; overflow: hidden;
+      transition: border-color .2s;
+    }
+    .faq-item:hover { border-color: rgba(255,107,53,.35); }
+    .faq-question {
+      width: 100%; padding: 22px 24px; text-align: left;
+      background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 700;
+      color: var(--cream-50); transition: color .2s;
+    }
+    .faq-item.open .faq-question { color: var(--gold-400); }
+    .faq-icon {
+      flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+      background: var(--charcoal-800); border: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--ember-500); font-size: 1.1rem; font-weight: 400;
+      transition: transform .3s;
+    }
+    .faq-item.open .faq-icon { transform: rotate(45deg); color: var(--gold-400); }
+    .faq-answer {
+      max-height: 0; overflow: hidden;
+      transition: max-height .35s ease, padding .35s ease;
+      padding: 0 24px; color: var(--smoke-400); font-size: .92rem; line-height: 1.7;
+    }
+    .faq-item.open .faq-answer { max-height: 300px; padding: 0 24px 22px 24px; }
+
     /* ── ANIMATIONS ── */
     @keyframes flicker {
       0%,100% { transform: scaleY(1) translateY(0); opacity: 1; }
@@ -1139,6 +1171,95 @@
   </div>
 </section>
 
+<!-- ══════════════════════════════════════ FAQ ══════════════════════════════════════ -->
+<section class="section" id="faq">
+  <div class="section-inner">
+    <div class="section-head">
+      <p class="section-label reveal"><span data-lang="en">FREQUENTLY ASKED QUESTIONS</span><span data-lang="pt">PERGUNTAS FREQUENTES</span></p>
+      <h2 class="section-h2 reveal reveal-d1"><span data-lang="en">Everything you need to know</span><span data-lang="pt">Tudo o que você precisa saber</span></h2>
+    </div>
+
+    <div class="faq-wrap">
+      <!-- Q1 -->
+      <article class="faq-item reveal">
+        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+          <span><span data-lang="en">Which Florida cities does BBQ Carioca serve?</span><span data-lang="pt">Quais cidades da Flórida o BBQ Carioca atende?</span></span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer">
+          <p><span data-lang="en">We serve all of South Florida, including Boca Raton, Delray Beach, Palm Beach, Fort Lauderdale, Miami, West Palm Beach, and surrounding areas. For corporate or larger events, we also serve Orlando.</span><span data-lang="pt">Atendemos todo o sul da Flórida, incluindo Boca Raton, Delray Beach, Palm Beach, Fort Lauderdale, Miami, West Palm Beach e regiões próximas. Para eventos corporativos ou maiores, atendemos também Orlando.</span></p>
+        </div>
+      </article>
+
+      <!-- Q2 -->
+      <article class="faq-item reveal reveal-d1">
+        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+          <span><span data-lang="en">What is included in the catering packages?</span><span data-lang="pt">O que está incluído nos pacotes de churrasco?</span></span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer">
+          <p><span data-lang="en">Our packages include a professional Pitmaster (Chef Bruno), charcoal grill setup, prime beef cuts (Picanha, Top Sirloin, Ribs, Sausages), appetizers (garlic bread), traditional sides (farofa, vinaigrette, rice), premium disposable plates & cutlery, and grill area cleanup.</span><span data-lang="pt">Nossos pacotes incluem churrasqueiro profissional (Chef Bruno), churrasqueira de brasa, cortes nobres selecionados (Picanha, Fraldinha, Costela, Linguiça), entradas (pão de alho), acompanhamentos (farofa, vinagrete, arroz), pratos, talheres descartáveis premium e limpeza da área da churrasqueira.</span></p>
+        </div>
+      </article>
+
+      <!-- Q3 -->
+      <article class="faq-item reveal reveal-d2">
+        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+          <span><span data-lang="en">How long does the BBQ service last during the event?</span><span data-lang="pt">Quanto tempo dura o serviço de churrasco no evento?</span></span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer">
+          <p><span data-lang="en">We arrive 2 hours prior to serving time to set up and start the fire. The continuous live barbecue buffet service lasts 3 to 4 hours for your guests.</span><span data-lang="pt">Chegamos 2 horas antes do horário de servir para montar a estrutura e acender a brasa. O serviço de churrasco à vontade (rodízio/buffet) dura entre 3 e 4 horas contínuas de atendimento para seus convidados.</span></p>
+        </div>
+      </article>
+
+      <!-- Q4 -->
+      <article class="faq-item reveal reveal-d3">
+        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+          <span><span data-lang="en">What is the minimum and maximum guest capacity?</span><span data-lang="pt">Qual o número mínimo e máximo de convidados?</span></span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer">
+          <p><span data-lang="en">We cater from small backyard parties (starting at 15 guests) to large corporate functions, birthdays, and weddings with over 200 guests.</span><span data-lang="pt">Atendemos desde pequenas festas residenciais (a partir de 15 convidados) até grandes eventos corporativos, aniversários e casamentos com mais de 200 convidados.</span></p>
+        </div>
+      </article>
+
+      <!-- Q5 -->
+      <article class="faq-item reveal reveal-d4">
+        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+          <span><span data-lang="en">How does date reservation and payment work?</span><span data-lang="pt">Como funciona a reserva da data e o pagamento?</span></span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer">
+          <p><span data-lang="en">To reserve your event date, we require a 20% deposit. The remaining balance is paid on the day of the event. We accept Zelle, Credit Cards, Venmo, and Cash.</span><span data-lang="pt">Para garantir a data na agenda, solicitamos um sinal de 20% no momento da reserva. O valor restante é pago no dia do evento. Aceitamos Zelle, Cartões de Crédito, Venmo e Dinheiro.</span></p>
+        </div>
+      </article>
+
+      <!-- Q6 -->
+      <article class="faq-item reveal">
+        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+          <span><span data-lang="en">What if it rains on the day of my event?</span><span data-lang="pt">E se chover no dia do meu evento?</span></span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer">
+          <p><span data-lang="en">Our team provides professional rain tents for the grill area. The fire stays hot and your event runs smoothly regardless of weather!</span><span data-lang="pt">Nossa equipe possui tendas profissionais de proteção contra chuva e sol para a área da churrasqueira. O fogo não apaga e seu churrasco acontece com perfeita qualidade, independentemente do tempo!</span></p>
+        </div>
+      </article>
+
+      <!-- Q7 -->
+      <article class="faq-item reveal reveal-d1">
+        <button class="faq-question" onclick="toggleFaq(this)" aria-expanded="false">
+          <span><span data-lang="en">Can we customize the menu or request dietary options (chicken, pork, veggies)?</span><span data-lang="pt">Podemos personalizar o cardápio ou incluir opções como frango, porco ou abacaxi?</span></span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer">
+          <p><span data-lang="en">Absolutely! Beyond our signature Picanha and premium beef, we offer grilled chicken, pork ribs, grilled pineapple with cinnamon, and side options tailored to your guests' preferences.</span><span data-lang="pt">Com certeza! Além da nossa tradicional Picanha e cortes bovinos nobres, oferecemos sob medida opções de frango temperado, costela suína, abacaxi grelhado com canela e acompanhamentos adaptados para seus convidados.</span></p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
 <!-- ══════════════════════════════════════ QUOTE FORM ══════════════════════════════════════ -->
 <section class="section section-alt" id="quote">
   <div class="section-inner">
@@ -1235,6 +1356,21 @@
 </div>
 
 <script>
+/* ── FAQ TOGGLE ── */
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(el => {
+    el.classList.remove('open');
+    const b = el.querySelector('.faq-question');
+    if (b) b.setAttribute('aria-expanded', 'false');
+  });
+  if (!isOpen) {
+    item.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+  }
+}
+
 /* ── LANGUAGE ── */
 function setLang(lang) {
   document.documentElement.lang = lang;
