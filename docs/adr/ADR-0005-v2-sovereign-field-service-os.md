@@ -4,7 +4,6 @@
 * **Data:** 2026-08-18
 * **Autor:** Jeferson Amorim (Founder) & Antigravity (Pair AI)
 * **Domínio:** BBQ do Carioca (`jgdeamorim/bbqcarioca`)
-* **Impacto:** Arquitetura End-to-End, Infraestrutura Cloudflare Serverless, Stripe Payments, Service Requests, e Schema D1 Relacional Completo.
 
 ---
 
