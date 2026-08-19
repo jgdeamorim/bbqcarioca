@@ -4,46 +4,49 @@
   background: var(--charcoal-950);
   padding: 0;
   
-  /* Mobile-first: 0px bottom, 5px sides */
+  /* Layout: Centered horizontally, anchored to bottom, top gap */
   position: fixed;
+  top: 15vh; /* Mobile distance from top */
   bottom: 0;
-  left: 5px;
-  right: 5px;
-  width: calc(100vw - 10px);
-  height: 85vh; /* 15% distance from the top */
-  max-width: none;
-  max-height: none;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  width: 100%;
+  max-width: 1100px; /* Dribbble uses a max-width so it's a card on desktop */
+  height: auto;
   margin: 0;
   
   border-radius: 24px 24px 0 0;
   border-top: 1px solid var(--line);
   border-left: 1px solid var(--line);
   border-right: 1px solid var(--line);
+  border-bottom: none;
   
   overflow: hidden;
   animation: modalSlideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @keyframes modalSlideUp {
-  from { opacity: 0; transform: translateY(100%); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translate(-50%, 100%); }
+  to { opacity: 1; transform: translate(-50%, 0); }
 }
 
 .dribbble-modal::backdrop {
-  background: rgba(11, 9, 8, 0.9);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(11, 9, 8, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .dribbble-modal-close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+  /* Fix the close button to the viewport, like Dribbble, so it floats outside the modal on desktop */
+  position: fixed;
+  top: 24px;
+  right: 24px;
   background: var(--charcoal-800);
   border: 1px solid var(--line);
   color: var(--smoke-400);
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   font-size: 1.5rem;
   cursor: pointer;
@@ -72,10 +75,7 @@
 
 @media(min-width: 1024px) {
   .dribbble-modal {
-    width: 95vw;
-    height: 90vh; /* 10% distance from the top */
-    left: 2.5vw;
-    right: 2.5vw;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 40px rgba(255, 107, 53, 0.1);
+    top: 50px; /* Desktop distance from top */
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.5), 0 0 40px rgba(255, 107, 53, 0.1);
   }
 }
