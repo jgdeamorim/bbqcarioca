@@ -42,6 +42,7 @@
   <link rel="stylesheet" href="css/layout.css" />
   <link rel="stylesheet" href="css/components.css" />
   <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/dribbble-modal.css" />
 
   <style>
     :root {
@@ -5049,9 +5050,21 @@
       });
     });
   </script>
+  <!-- ══════════════════════════════════════ MODALS ══════════════════════════════════════ -->
+  <!-- Dribbble-Style Intercepted Modal for Steppers -->
+  <dialog id="dribbble-modal" class="dribbble-modal">
+    <button id="dribbble-close" class="dribbble-modal-close" aria-label="Close">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+    <iframe id="dribbble-iframe" class="dribbble-iframe" src="about:blank"></iframe>
+  </dialog>
+
   <script src="js/i18n.js"></script>
   <script src="js/quote-form.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/dribbble-modal.js"></script>
 </body>
 
 </html>
