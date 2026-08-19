@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Guardar URL original para restaurar ao fechar
   let originalUrl = window.location.pathname + window.location.search;
 
-  // Interceptar todos os links que vão para o /client/ (Stepper)
-  const clientLinks = document.querySelectorAll('a[href^="client/"], a[href^="/client/"], a[href^="https://www.bbqcarioca.work/client/"]');
+  // Interceptar todos os links que vão para o /client/ (Stepper) e /careers (Talent Pool)
+  const clientLinks = document.querySelectorAll('a[href^="client/"], a[href^="/client/"], a[href^="https://www.bbqcarioca.work/client/"], a[href^="/careers"], a[href^="careers/"]');
   
   clientLinks.forEach(link => {
     link.addEventListener('click', (e) => {
