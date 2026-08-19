@@ -27,6 +27,6 @@ function handleQuote(e) {
   // Criptografa o JSON em Base64 seguro para URL
   const encodedPayload = btoa(encodeURIComponent(JSON.stringify(intentPayload)));
   
-  // Redireciona para o Carrier de Vanity URL (Cloudflare Edge -> React Portal)
-  window.location.href = `/client#init=${encodedPayload}`;
+  // Redireciona para a Front de Agendamento
+  window.location.href = `/client/?intent=quote&init=${encodedPayload}`;
 }
