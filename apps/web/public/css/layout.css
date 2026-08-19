@@ -148,3 +148,19 @@ footer {
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; border: none;
 }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--charcoal-950);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--charcoal-800);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-400);
+}
