@@ -10,7 +10,7 @@
   left: 5px;
   right: 5px;
   width: calc(100vw - 10px);
-  height: calc(100vh - 20px);
+  height: 85vh; /* 15% distance from the top */
   max-width: none;
   max-height: none;
   margin: 0;
@@ -73,7 +73,7 @@
 @media(min-width: 1024px) {
   .dribbble-modal {
     width: 95vw;
-    height: calc(100vh - 50px);
+    height: 90vh; /* 10% distance from the top */
     left: 2.5vw;
     right: 2.5vw;
     box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 40px rgba(255, 107, 53, 0.1);
